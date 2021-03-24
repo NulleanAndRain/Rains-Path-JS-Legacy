@@ -1,3 +1,5 @@
+const _speedDivider = 8;
+
 class Entity{
 	constructor(spritesheet, x=0, y=0){
 		this.pos = new Vect2(x, y);
@@ -6,11 +8,11 @@ class Entity{
 		this.gravity = 1;
 		this.onGround=false;
 		this.movement = {left: false, right: false};
-		this.speed=2;
+		this.speed=1.5;
 		this.running = false;
 		this.offset = {'left': 0, 'right': 0, 'top': 0, 'bottom':0};
 		this.jumpVec=-9;
-		this.acceleratedJump = 'none';
+		this.acceleratedJump = false;
 
 		this.spritesheet = spritesheet;
 		this.state = 'Idle';
@@ -50,20 +52,18 @@ class Entity{
 			this.facing = 'left';
 			this.movement.left = true;
 		}
-		
-		if(this.running){
-			if(this.vel.x>-this.speed*1.5){
-				this.addVel(-this.speed/10, 0);
-			}
-		} else {
-			if(this.vel.x>-this.speed){
-				this.addVel(-this.speed/10, 0);
-			}
+
+		let _spdmult = 1;
+		if(this.running)
+			_spdmult *= 1.5;
+
+		if(this.vel.x == -this.speed*_spdmult){
+			return;
+		} else if(this.vel.x > -this.speed*_spdmult){
+			this.vel.x -= this.speed/_speedDivider;
+		} else if(this.vel.x < -this.speed*_spdmult && this.onGround){
+			this.vel.x += this.speed/_speedDivider;
 		}
-
-		if(this.vel.x == -this.speed*3/10) this.vel.x -= this.speed/2;
-
-		this.distance+=Math.abs(this.vel.x);
 	}
 	isMovigLeft(){
 		return this.movement.left;
@@ -78,26 +78,25 @@ class Entity{
 			this.movement.right = true;
 		}
 
-		if(this.running){
-			if(this.vel.x<this.speed*1.5){
-				this.addVel(this.speed/10, 0);
-			}
-		} else {
-			if(this.vel.x<this.speed){
-				this.addVel(this.speed/10, 0);
-			}
+
+		let _spdmult = 1;
+		if(this.running)
+			_spdmult *= 1.5;
+		
+		if(this.vel.x == this.speed*_spdmult){
+			return;
+		} else if(this.vel.x<this.speed*_spdmult){
+			this.vel.x += this.speed/_speedDivider;
+		} else if(this.vel.x>this.speed*_spdmult && this.onGround){
+			this.vel.x -= this.speed/_speedDivider;
 		}
-
-		if(this.vel.x == this.speed*3/10) this.vel.x += this.speed/2;
-
-		this.distance+=Math.abs(this.vel.x);
 	}
 	isMovigRight(){
 		return this.movement.right;
 	}
 
 	stopMoving(){
-		this.acceleratedJump='none';
+		this.acceleratedJump = false;
 		this.movement.left = false;
 		this.movement.right = false;
 		this.setVel(0, this.vel.y);
@@ -114,26 +113,23 @@ class Entity{
 			this.onGround=false;
 			this.vel.y = this.jumpVec;
 
-			if(this.isMovigRight()) {
-				this.vel.x*=1.5;
-				this.acceleratedJump = 'right';
-			} else if(this.isMovigLeft()){
-				this.vel.x*=1.5;
-				this.acceleratedJump = 'left';
+			if(this.onMove){
+				this.vel.x *= 1.5;
+				this.acceleratedJump = true;
 			}
 		}
 	}
 	land(y){
-		if(this.acceleratedJump!='none'){
-			if(this.acceleratedJump=='left'&&this.onMove)
-				this.setVel(this.vel.x/1.5, 0);
-			else if(this.acceleratedJump=='right'&&this.onMove)
-				this.setVel(this.vel.x/1.5, 0);
-			this.acceleratedJump='none';
+		if(!this.onGround){
+			if(this.acceleratedJump){
+				this.vel.x /= 1.5;
+				this.acceleratedJump= false;
+			}
 		}
+
 		this.onGround = true;
 		this.pos.y=y;
-		this.setVel(this.vel.x, 0);
+		this.vel.y = 0;
 	}
 
 	run(){
@@ -142,11 +138,6 @@ class Entity{
 
 	stopRun(){
 		this.running = false;
-		if(this.onMove){
-			if(this.isMovigRight())
-				 this.vel.x = this.speed;
-			else this.vel.x = -this.speed;
-		}
 	}
 
 	//entity updates
@@ -210,6 +201,7 @@ class Entity{
 				else if(this.facing=='left') this.setAnimFrame('JumpLeftUp', 4);
 			}
 		} else if(this.onMove){
+			this.distance+=Math.abs(this.vel.x);
 			if(this.facing=='right') this.setAnimFrame('RunRight', 4);
 			else if(this.facing=='left') this.setAnimFrame('RunLeft', 4);
 		} else {

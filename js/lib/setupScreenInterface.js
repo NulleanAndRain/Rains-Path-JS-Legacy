@@ -4,6 +4,9 @@ let setupScreenInterface = (canvas, context, timer) => {
 	};
 
 	let setGameInterface = (timer) =>{
+		document.getElementsByTagName('body')[0].addEventListener('contextmenu', e => {
+			e.preventDefault();
+		});
 		const interface=document.getElementById('pause_bg');
 		bottomButtonsEvents();
 		transparentInterface('pause_container')

@@ -5,7 +5,7 @@ var canvWidth = resizeConst[2];
 
 const __TEST_AREA = false;
 
-const alphaVer = 'v0.1.1 alpha';
+const alphaVer = 'v0.1.2.1 alpha';
 
 
 //		settings
@@ -24,6 +24,10 @@ var _ctx = _canvas.getContext('2d');
 window.onload = () =>{
 	const screen = document.getElementById('screen');
 	const context = screen.getContext('2d');
+
+	// screen.addEventListener('contextmenu', () => {
+	// 	preventDefault();
+	// });
 
 	document.getElementById('alphaVer').innerHTML = alphaVer;
 
@@ -75,7 +79,6 @@ window.onload = () =>{
 
 		drawContent(screen, context, Rain, camera);
 	});
-
 }
 
 let setPauseKey = (keyPause, keyPauseAlt, timer, intElems) =>{
