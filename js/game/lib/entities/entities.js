@@ -5,6 +5,10 @@ class Player extends Entity{
 		this.setOffset(4, 4, 2);
 
 		this.attackTime = 375;
+		this.castTime = 150;
+		this.skillTime = 375;
+
+		this.usingSkill = false;
 
 		this.respTimed = false;
 
@@ -29,25 +33,10 @@ class Player extends Entity{
 
 	skill(){}
 	_skill_proxy(){
-		// createBizarreParticle(
-		// 	this.pos.x+8  + (rand()-0.5)*10, 
-		// 	this.pos.y    + (rand()-0.5)*10,);
-
-
-		// createGradientTextParticle(
-		// 	this.pos.x+8, 
-		// 	this.pos.y+4,
-		// 	`Ебаный рот этого казино, блядь`,
-		// 	rainbow_gradient);
-
-		createGradientTextParticle(
-			this.pos.x+8, 
-			this.pos.y+12,
-			`${this}`,
-			blue_gradient);
-		// this.heal(100);
-
-		// createCampfireSmoke(this.pos.x+8, this.pos.y+12);
+		this.usingSkill = true;
+		this.animTime = 0;
+		this.skillCasted = false;
+		this.skill = () =>{};
 	}
 
 	attack(){}
@@ -55,11 +44,18 @@ class Player extends Entity{
 		this.attacking = true;
 		this.animTime = 0;
 		this.attack = () =>{}
-		createRainsWeapon(this, {spriteName: 'racketR', animationFrames: 5}, {spriteName: 'racketL', animationFrames: 4}, this.attackTime);
+		createRainsWeapon(this,
+			{spriteName: 'racketR', animationFrames: 5},
+			{spriteName: 'racketL', animationFrames: 5},
+			this.attackTime);
 	}
 
 	_buttonTestEvent_proxy(){
-		this.takeDamage(10, '#c26352', this.facingReverse, this.pos.x+8, this.pos.y+10);
+
+		createBizarreParticle(
+			this.pos.x+8  + (rand()-0.5)*10, 
+			this.pos.y    + (rand()-0.5)*10,);
+		// this.takeDamage(10, '#c26352', this.facingReverse, this.pos.x+8, this.pos.y+10);
 	}
 
 	//damage and heal
@@ -151,6 +147,28 @@ class Player extends Entity{
 			this.attacking = false;
 			this.animTime = 0;
 			this.attack = this._attack_proxy;
+		}
+
+		if(this.usingSkill){
+			if(this.animTime >= this.castTime && !this.skillCasted){
+				this.skillCasted = true;
+				let pos = this.pos.x;
+				if(this.facing == 'right') pos += 8;
+				createProjectile(
+					this,
+					pos,
+					this.pos.y+8,
+					5000,
+					10, 15,
+					{name: 'kunai', frames: 1},
+				);
+			}
+			if(this.animTime >= this.skillTime){
+				this.skillCasted = undefined;
+				this.usingSkill = false;
+				this.animTime = 0;
+				this.skill = this._skill_proxy;
+			}
 		}
 	}
 }
@@ -244,4 +262,144 @@ class Box extends Entity{
 	}
 
 	updateSprite = () =>{}
+}
+
+class Projectile extends Entity{
+	constructor(entity, posx, posy, lifetime, damage, sprite = {name: 'noTexture', frames: 1}){
+
+		let spr;
+		if(sprite.frames == 1)
+			spr = entity.spritesheet.getSprite(sprite.name);
+		else 
+			spr = entity.spritesheet.getSprite(`${sprite.name}0`);
+		let spritesheet = new SpriteSheet(spr.width+4, spr.width+4);
+
+		super(spritesheet, posx, posy);
+
+		this.owner = entity;
+
+		this.type = 'projectile';
+		this.maxHealth = -1;
+		this.health = this.maxHealth;
+		this.canRegenerate = false;
+
+		this.facing = entity.facing;
+
+		this.damage = damage;
+		this.damagedList = new Set();
+
+		this.sprite = sprite;
+
+		if(lifetime != -1) this._lifetime = lifetime;
+
+		this.gravityMultipler = 1;
+
+
+		this.spriteBuffer = document.createElement('canvas');
+		this.spriteBuffer.width  = spr.width + 4;
+		this.spriteBuffer.height = spr.width + 4;
+		this.bctx = this.spriteBuffer.getContext('2d');
+	}
+
+	stopMoving(){
+		if(this.vel.x != 0){
+			let sign = Math.sign(this.vel.x);
+			this.setVel(0, this.vel.y);
+			this.updateSprite();
+			if(sign > 0) this.pos.x += this.offsX/2;
+			else this.pos.x -= this.offsX/2;
+		}
+		this.vel.x = 0;
+	}
+
+	veliocityTick(deltaTime, tileCollider, camera, gravity){
+		this.vel.y += gravity*deltaTime/32 * this.gravityMultipler;
+
+		this.pos.y+=(this.vel.y*deltaTime/16);
+		if(this.canCollide) tileCollider.checkY(this, deltaTime, gravity);
+
+		this.pos.x+=(this.vel.x*deltaTime/16);
+		if(this.canCollide) tileCollider.checkX(this, deltaTime, gravity);
+
+		if(this.onGround) this.stopMoving();
+		this.veliocityTickProxy(deltaTime, tileCollider, camera, gravity);
+	}
+
+	updateProxy(deltaTime){
+		if(this.lifetime)
+			this.lifetime -= deltaTime;
+		if(this.onGround && !this.lifetime)
+			this.lifetime = this._lifetime;
+	}
+
+	remove(level){
+		level.entities.delete(this);
+	}
+
+	updateSprite(){
+		if(this.onGround) return;
+		this.bctx.clearRect(
+			0, 0, 
+			this.spriteBuffer.width,
+			this.spriteBuffer.height);
+
+
+		let rotation = this.vel.y/Math.sqrt(this.vel.x**2 + this.vel.y**2);
+
+		let mirr = 0;
+		if(this.vel.x <  0){
+			mirr = 1;
+		}
+
+		let spr;
+		if(this.sprite.frames == 1)
+			spr = this.owner.spritesheet.getSprite(this.sprite.name);
+		else {
+			let frame = Math.floor(this.animTime/150) % this.sprite.frames;
+			spr = this.owner.spritesheet.getSprite(`${this.sprite.name}${frame}`);
+		}
+
+		this.offsX = (this.spriteBuffer.width  - spr.width)  *(rotation)  /2;
+		this.offsY = (this.spriteBuffer.height - spr.height) *(1-rotation)/2;
+
+		if(this.vel.x == 0){
+			rotation = Math.PI/2;
+
+			this.bctx.setTransform(
+				1, 0,
+				0, 1,
+				4*rotation,
+				-4*(1-rotation));
+			this.bctx.rotate(rotation);
+
+			this.bctx.drawImage(spr, 2, -0.5);
+			this.offsX *= 2 -0.25;
+			this.offsY *= -1;
+			this.setOffset(this.offsX, this.offsX, this.offsY, this.offsY+2);
+		} else {
+			this.bctx.setTransform(
+				1-2*mirr, 0,
+				0, 1,
+				4*rotation + mirr*this.spriteBuffer.width*(1 - rotation),
+				-4*rotation);
+			this.bctx.rotate(rotation);
+			this.setOffset(this.offsX, this.offsX, this.offsY, this.offsY);
+			if(this.vel.x > 0){
+				this.bctx.drawImage(spr, 2, 4);
+			} else if(this.vel.x < 0){
+				this.bctx.drawImage(spr, 4+spr.width, 4, -spr.width, spr.height);
+			}
+		}
+
+	}
+
+	draw(camera, ctx=_ctx){
+		this.updateSprite();
+		ctx.drawImage(
+			this.spriteBuffer,
+			(this.pos.x - camera.pos.x),
+			(this.pos.y - camera.pos.y)
+		);
+	}
+
 }

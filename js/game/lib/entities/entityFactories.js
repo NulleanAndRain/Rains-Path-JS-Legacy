@@ -1,5 +1,6 @@
-let createEntityPart = () =>{}
+let createEntityPart  = () =>{}
 let createRainsWeapon = () =>{}
+let createProjectile  = () =>{}
 
 let setupEntityFactories = level =>{
 	createEntityPart = (entity, x=0, y=0, sprite={spriteName: 'noSprite', animationFrames: 1}, lifetime=-1) =>{
@@ -46,6 +47,7 @@ let setupEntityFactories = level =>{
 					part.spriteAlt.animationFrames);
 				if(frame<0) frame = 0;
 				part.setOffset(offsL[frame], 4, 2, 2);
+				part.pos.x += 5;
 			} else {
 				let frame = Math.floor(((part.animTime-15)/part.frameDuration)%
 					part.spriteAlt.animationFrames);
@@ -86,4 +88,20 @@ let setupEntityFactories = level =>{
 		level.entities.add(part);
 		return part;
 	}
+
+
+	createProjectile = (entity, posx, posy, lifetime, horSpeed, damage, sprite) =>{
+		let projectile = new Projectile(entity, posx, posy, lifetime, damage, sprite);
+
+		if(entity.facing == 'left')
+			projectile.setVel(-horSpeed, -2);
+		else
+			projectile.setVel(horSpeed, -2);
+
+		projectile.addVel(entity.vel.x, entity.vel.y);
+
+		level.entities.add(projectile);
+		return projectile;
+	}
 }
+

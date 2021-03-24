@@ -16,7 +16,7 @@
 	<script src="js/game/lib/level/Chunk.js"></script>
 	<script src="js/game/lib/level/ChunkColumn.js"></script>
 
-	<script src="js/lEditLib/Camera.js"></script>
+	<script src="js/game/lib/int/Camera.js"></script>
 	<script src="js/game/lib/rnd/math.js"></script>
 
 	<script src="js/lEditLib/SpriteSheet.js"></script>
@@ -97,7 +97,13 @@
 
 		<span>
 			<button id="addTile">add</button>
+		</span><hr>
+		<span>
 			<button id="toggleGrid"> toggle grid </button>
+		</span><br>
+		<span>
+			draw radius (1-5):
+			<input type="range" name="rad" id="drawRadius" min="0" max="4" step="1" value="0">
 		</span>
 	</div>
 

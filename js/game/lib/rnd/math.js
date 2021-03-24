@@ -1,32 +1,3 @@
-class Matrix {
-	constructor() {
-		this.grid = [];
-	}
-
-	forEach(callback) {
-		this.grid.forEach((column, x) => {
-			column.forEach((value, y) => {
-				callback(value, x, y);
-			});
-		});
-	}
-
-	get(x, y) {
-		const col = this.grid[x];
-		if (col) {
-			return col[y];
-		}
-		return undefined;
-	}
-
-	set(x, y, value) {
-		if (!this.grid[x]) {
-			this.grid[x] = [];
-		}
-		this.grid[x][y] = value;
-	}
-}
-
 class Vect2{
 	constructor(x, y){
 		this.set(x, y);
@@ -40,12 +11,12 @@ class Vect2{
 
 let fastSin = x =>{
 	x %= Math.PI;
-	return (x-(x*x*x)/6+(x*x*x*x*x)/120-(x*x*x*x*x*x*x)/5040);
+	return (x-(x**3)/6+(x**5)/120-(x**7)/5040);
 }
 
 let fastCos = x =>{
 	x %= Math.PI;
-	return (1-(x*x)/2+(x*x*x*x)/24-(x*x*x*x*x*x)/720+(x*x*x*x*x*x*x*x)/40320);
+	return (1-(x*x)/2+(x**4)/24-(x**6)/720+(x**8)/40320);
 }
 
 

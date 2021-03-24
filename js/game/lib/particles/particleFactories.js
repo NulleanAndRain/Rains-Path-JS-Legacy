@@ -16,6 +16,7 @@ let setupParticleFactories = (level, particles) =>{
 	createSpriteParticle = (x, y, spriteName, time=5000, updateFunc = ()=>{}) =>{
 		let particle = new Particle(x, y, time);
 		particle.sprite = particles.getSprite(spriteName);
+		if(!particle.sprite) particle.sprite = particles.getSprite('noTexture');
 
 		particle.updateProxy = updateFunc;
 
@@ -265,12 +266,12 @@ let setupParticleFactories = (level, particles) =>{
 		particle.sprite.height = size;
 		particle.speedDivider = 32;
 
-		particle.veliocityTick = (deltaTime, tileCollider, camera) =>{
+		particle.veliocityTick = (deltaTime, tileCollider, gravity, camera) =>{
 			particle.pos.y+=(particle.vel.y*deltaTime/particle.speedDivider);
-			if(particle.canCollide)tileCollider.checkYparticle(particle, camera);
+			if(particle.canCollide) tileCollider.checkYparticle(particle, camera);
 
 			particle.pos.x+=(particle.vel.x*deltaTime/particle.speedDivider);
-			if(particle.canCollide)tileCollider.checkXparticle(particle, camera);
+			if(particle.canCollide) tileCollider.checkXparticle(particle, camera);
 		}
 
 		let ctx = particle.sprite.getContext('2d');
@@ -291,11 +292,11 @@ let createBizarreParticle = (x, y, entity={vel: {x:0, y:0}}) =>{
 		if(particle.timeBuffer >= 300){
 			particle.timeBuffer = 0;
 			particle.rotation = Math.random()*0.5 - 0.25;
-			let rotMultipler = fastSin(particle.rotation);
+			// let rotMultipler = fastSin(particle.rotation);
 
 			bctx.clearRect(0, 0, 12, 12);
 
-			bctx.setTransform(1, 0, 0, 1, 6*rotMultipler, -6*rotMultipler);
+			bctx.setTransform(1, 0, 0, 1, 6*particle.rotation, -6*particle.rotation);
 			bctx.rotate(particle.rotation);
 			bctx.drawImage(particle.sprite, 2, 2);
 		}

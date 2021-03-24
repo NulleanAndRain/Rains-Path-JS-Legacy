@@ -39,11 +39,6 @@ let draw = function(){
 		levelBack	.draw(backctx, 	camera);
 		levelBG		.draw(bgctx, 	camera.subcamera);
 
-		// bgctx.strokeStyle = '#000';
-		// bgctx.strokeRect(0,0,
-		// 	bg.width,
-		// 	bg.height);
-
 		levelFront.drawPlayerDot(frontctx, camera);
 
 		camctx.filter = 'brightness(120%) blur(3px)';

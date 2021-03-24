@@ -3,7 +3,10 @@ var camSpeed = _TILESIZE;
 let setCvsDrawing = (canvas, levelFront, levelBack, levelBG, camera) =>{
 	var rect = canvas.getBoundingClientRect();
 
+	const drawRadius = document.getElementById('drawRadius');
+
 	var __draw = (e, id) =>{
+		let rad = parseInt(drawRadius.value);
 		if(__drawLayer != 'bg'){
 			let posx = Math.floor((e.clientX - rect.left)/(_TILESIZE*2))
 				+ camera.drawFromX*_CHUNKSIZE;
@@ -11,23 +14,35 @@ let setCvsDrawing = (canvas, levelFront, levelBack, levelBG, camera) =>{
 				+ camera.drawFromY*_CHUNKSIZE;
 
 			if(__drawLayer == 'front'){
-				levelFront.updateChunk(posx, posy, (x, y, chunk)=>{
-					chunk.grid[y][x] = id;
-				});
+				for(let dy = posy-rad; dy <= posy+rad; dy++){
+					for(let dx = posx-rad; dx <= posx+rad; dx++){
+						levelFront.updateChunk(dx, dy, (x, y, chunk)=>{
+							chunk.grid[y][x] = id;
+						});
+					}
+				}
 			}
 			if(__drawLayer == 'back'){
-				levelBack.updateChunk(posx, posy, (x, y, chunk)=>{
-					chunk.grid[y][x] = id;
-				});
+				for(let dy = posy-rad; dy <= posy+rad; dy++){
+					for(let dx = posx-rad; dx <= posx+rad; dx++){
+						levelBack.updateChunk(dx, dy, (x, y, chunk)=>{
+							chunk.grid[y][x] = id;
+						});
+					}
+				}
 			}
 		} else {
 			let posx = Math.floor((e.clientX - rect.left)/(_TILESIZE*4))
 				+ camera.subcamera.drawFromX*_CHUNKSIZE;
 			let posy = Math.floor((e.clientY - rect.top )/(_TILESIZE*4))
 				+ camera.subcamera.drawFromY*_CHUNKSIZE;
-			levelBG.updateChunk(posx, posy, (x, y, chunk)=>{
-				chunk.grid[y][x] = id;
-			});
+			for(let dy = posy-rad; dy <= posy+rad; dy++){
+				for(let dx = posx-rad; dx <= posx+rad; dx++){
+					levelBG.updateChunk(dx, dy, (x, y, chunk)=>{
+						chunk.grid[y][x] = id;
+					});
+				}
+			}
 		}
 	}
 

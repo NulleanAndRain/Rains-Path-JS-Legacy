@@ -12,13 +12,13 @@ class Camera {
 
 	getLevel(){}
 
-	move(player, renderPosY){
+	move(player){
 		if(player.isDowned){
 			return;
 		}
 
 		this.pos.x = player.pos.x + player.spritesheet.width/2 - this.size.x/2;
-		this.pos.y = player.pos.y-this.size.y*3/5 + 4.5 + renderPosY;
+		this.pos.y = player.pos.y-this.size.y*3/5 + 4.5;
 	}
 
 	update(){
@@ -29,20 +29,18 @@ class Camera {
 		}
 		this.drawToX = Math.ceil((this.pos.x + this.size.x + this.deposX)/_CHUNKPIXELS)+2;
 
-		this.drawFromY = Math.floor(this.pos.y/(_CHUNKPIXELS))+1;
+		this.drawFromY = Math.floor(this.pos.y/(_CHUNKPIXELS));
 		this.drawToY = Math.ceil((this.pos.y + this.size.y + this.deposY)/(_CHUNKPIXELS))+4;
-		this.deposY = -_CHUNKPIXELS;
-		if(this.drawFromY > 0 && this.pos.y % _CHUNKPIXELS != 0){
-			// this.drawFromY++;
-		} else {
-			this.drawFromY++;
+		this.deposY = _CHUNKPIXELS;
+		if(this.drawFromY >= 0 || this.pos.y % _CHUNKPIXELS == 0){
+			this.deposY = 0;
 		}
 
 		if(this.subcamera){
 			this.subcamera.pos.x = (this.pos.x + this.size.x/2 - this.subcamera.size.x)/2;
 			this.subcamera.pos.y = (this.pos.y + this.size.y/2 - this.subcamera.size.y)/4;
 
-			this.subcamera.drawFromX = Math.floor((this.pos.x/2)/(_CHUNKPIXELS*2))-1;
+			this.subcamera.drawFromX = Math.floor(this.pos.x/(_CHUNKPIXELS*4))-1;
 			this.subcamera.drawToX = Math.ceil(
 				((this.pos.x + this.size.x)/2)/(_CHUNKPIXELS*2))+2;
 			this.subcamera.deposX = _CHUNKPIXELS*2;
@@ -52,14 +50,13 @@ class Camera {
 			}
 
 
-			this.subcamera.drawFromY = Math.floor(this.subcamera.pos.y/(_CHUNKPIXELS*2))-1;
+			this.subcamera.drawFromY = Math.floor(this.pos.y/(_CHUNKPIXELS*8));
 			this.subcamera.drawToY = Math.ceil(
-				((this.pos.y + this.size.y)/4)/(_CHUNKPIXELS*4))+2;
-				this.subcamera.deposY = 0;
-			if(this.subcamera.pos.y < 0 && this.subcamera.pos.y % (_CHUNKPIXELS*4) !=0){
-				this.subcamera.drawFromY++;
-			} else {
-			}
+				(this.pos.y + this.size.y)/(_CHUNKPIXELS*8))+2;
+				this.subcamera.deposY = 2*_CHUNKPIXELS;
+			if(this.subcamera.pos.y >= 0 || this.subcamera.pos.y % (_CHUNKPIXELS*4) == 0){
+				this.subcamera.drawFromY--;
+			} 
 		}
 	}
 

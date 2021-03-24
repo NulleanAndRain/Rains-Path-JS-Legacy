@@ -8,5 +8,11 @@ class CampfireTile extends TileEntity{
 	updateSprite(){
 		let frame = Math.floor(this.animTime/75)%8;
 		this.state = `campfire${frame}`;
+
+		if(this.animTime%150 < 3){
+			if(fastRand() < 0.5){
+				createCampfireSmoke(this.pos.x+8, this.pos.y+10);
+			}
+		}
 	}
 }

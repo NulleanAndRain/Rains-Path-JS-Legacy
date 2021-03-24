@@ -60,9 +60,13 @@ let loadLenaSprite = () =>{
 			.then(LenaSprites=>LenaSprites
 				.addSprites('Lena','AttackIdleRight', 'sprites', 5, 1))
 			.then(LenaSprites=>LenaSprites
+				.addSprites('Lena','AttackIdleLeft', 'sprites', 5, 1))
+			.then(LenaSprites=>LenaSprites
 				.addSpritePart('Lena', 'racketR', 'sprites', 1, 5, 20, 12))
 			.then(LenaSprites=>LenaSprites
-				.addSpritePart('Lena', 'racketL', 'sprites', 1, 4, 16, 8))
+				.addSpritePart('Lena', 'racketL', 'sprites', 1, 5, 20, 12))
+			.then(LenaSprites=>LenaSprites
+				.addBigSprite('kunai', 'sprites/Lena/parts/kunai.png', 8, 3))
 			.then(LenaSprites=>LenaSprites
 				.addSprites('Lena', 'Downed', 'sprites', 1, 1))
 			.then(LenaSprites=>resolve(LenaSprites));

@@ -13,7 +13,7 @@ const _CHUNKPIXELS = _TILESIZE*_CHUNKSIZE;
 var canvWidth = resizeConst[canvResize];
 var _canvHeight = 1;
 
-const alphaVer = 'v0.4.0.5 alpha';
+const alphaVer = 'v0.4.1.2 alpha';
 
 var healthNum;
 var healthLine;
@@ -72,7 +72,7 @@ window.onload = () =>{
 
 		window.Rain = Rain;
 
-		let box = new Box(boxSprites, 20, 0);
+		let box = new Box(boxSprites, 40, 0);
 		level.entities.add(box);
 
 		let splashes = new Set();

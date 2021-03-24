@@ -1,7 +1,5 @@
 let drawContent = function() {
-	let _renderPosY = 0;
 	return (canvas, context, player = null, camera = null, splashes = []) =>{
-		_renderPosY = (canvas.height-_canvas.height);
 		
 		context.imageSmoothingEnabled = _smoothing;	
 
@@ -19,11 +17,10 @@ let drawContent = function() {
 
 		camera.resize(canvas.width, canvas.height);
 		
-		camera.move(player, _renderPosY);
-		// camera.pos.y += _renderPosY;
+		camera.move(player);
 
 		context.drawImage(_canvas,
-			 0, _renderPosY,
+			 0, 0,
 			 _canvas.width, 
 			 _canvas.height);
 

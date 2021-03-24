@@ -114,7 +114,7 @@ class Entity{
 		this.acceleratedJump = false;
 		this.movement.left = false;
 		this.movement.right = false;
-		this.setVel(0, this.vel.y);
+		this.vel.x = 0;
 
 		if(__collisionStops){
 			this.distance = 0;
@@ -264,7 +264,7 @@ class Entity{
 			if(this.onGround) dt = 150;
 			else dt=100;
 
-			if(this.attacking) dt = 75;
+			if(this.attacking || this.usingSkill) dt = 75;
 			let frame = Math.floor(this.animTime/dt)%frames;
 			this.state = `${name}${frame}`;
 		}
@@ -303,13 +303,14 @@ class Entity{
 			this.state = 'Confused';
 		}
 
-		if(this.attacking){
+		if(this.attacking || this.usingSkill){
 			if(!this.onGround){
 
 			} else if(this.onMove){
 
 			} else {
 				if(this.facing == 'right') this.setAnimFrame('AttackIdleRight', 5);
+				else this.setAnimFrame('AttackIdleLeft', 5);
 			}
 		} else if(
 			`${this.facing}${this.onMove}${this.onGround}`!=oldState) this.animTime = 0;
@@ -318,12 +319,10 @@ class Entity{
 
 	draw(camera, ctx=_ctx){
 		this.updateSprite();
-		ctx.imageSmoothingEnabled=false;
 		this.spritesheet.draw(
 			this.state,
 			(this.pos.x - camera.pos.x),
 			(this.pos.y - camera.pos.y), ctx);
-		ctx.imageSmoothingEnabled=_smoothing;
 	}
 
 	setOffset(left, right, top=this.offset.top, bottom=this.offset.bottom){

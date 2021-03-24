@@ -50,16 +50,7 @@ window.onload = () =>{
 	var _IDResolver = new IDResolver(spritesheet, TileIDsJSON, TileColorsJSON);
 
 	spritesheet.defineMonocolorTile('air', 'transparent')
-		// .then(spritesheet=>spritesheet.defineMonocolorTile('grass', '#1AB53E'))
-		// .then(spritesheet=>spritesheet.defineMonocolorTile('dirt', '#A96423'))
-		// .then(spritesheet=>spritesheet.defineMonocolorTile('stone', '#6D6E6A'))
 		.then(spritesheet=>{
-
-		// _IDResolver.setId(0, {name: 'air',		type: 'air'});
-		// _IDResolver.setId(1, {name: 'grass',	type: 'solid'});
-		// _IDResolver.setId(2, {name: 'dirt',		type: 'solid'});
-		// _IDResolver.setId(3, {name: 'stone',	type: 'solid'});
-
 		let levelMap 	 = new LevelMap(levelFGJSON);
 		let levelMapBack = new LevelMap(levelBackJSON);
 		let levelMapBG   = new LevelMap(levelBGJSON);

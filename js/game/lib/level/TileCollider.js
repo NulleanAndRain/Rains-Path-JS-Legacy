@@ -105,7 +105,7 @@ class TileCollider {
 			entity.pos.y + entity.offset.top, entity.pos.y
 			 + entity.spritesheet.height - entity.offset.bottom);
 
-		if(_autojump){
+		if(_autojump || entity.type == 'enemy'){
 			var bottomBlockColl = true;
 			var solidMatches = 0;
 			if(!entity.onGround || !entity.onMove || entity.vel.y != 0 ) bottomBlockColl = false;
@@ -153,8 +153,9 @@ class TileCollider {
 
 		if(!entity.onGround || !_autojump) return;
 		if(bottomBlockColl && solidMatches == 1){
-			if(this._canJump(entity))
-				entity.addVel(0, -4);
+			if(this._canJump(entity)){
+				entity.addVel(0, -3);
+			}
 		}
 	}
 
@@ -225,7 +226,7 @@ class TileCollider {
 			entity.onGround = true;
 		} else {
 			entity.onGround = false;
-
+/*
 			let y2, y3;
 			if(entity.vel.y > 0){
 				y2 = y1 + _TILESIZE;
@@ -258,7 +259,7 @@ class TileCollider {
 						entity.vel.y /= 2; 
 					}
 				}
-			});
+			});*/
 			return;
 		}
 

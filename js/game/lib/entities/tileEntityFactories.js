@@ -9,7 +9,6 @@ let setupTileEntityFactories = level => {
 		return function(TilePosX, TilePosY){
 			let campfire = new CampfireTile(spritesheet, TilePosX, TilePosY);
 			level.tileEntities.add(campfire);
-			// return campfire;
 		}
 	}();
 	factories.set('campfire', createCampfire);

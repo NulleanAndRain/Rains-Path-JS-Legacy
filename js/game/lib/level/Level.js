@@ -1,6 +1,6 @@
 class Level {
 	constructor(levelMapFG, levelMapBack, levelMapBG, sky) {
-		this.gravity = 1;
+		this.gravity = 0.9;
 
 		this.levelFront = levelMapFG;
 		this.levelBack  = levelMapBack;
@@ -37,11 +37,14 @@ class Level {
 	width(){
 		return this.levelFront.levelWidth;
 	}
-
+	get leftBorder(){
+		return this.levelFront.leftBorder;
+	}
+	get rightBorder(){
+		return this.levelFront.rightBorder;
+	}
 	heightAt(posx){
-		if(this.levelFront)
-			return this.levelFront.heightAt(posx);
-		return 0;
+		return this.levelFront.heightAt(posx);
 	}
 
 	tileEntityUpdates(entity, deltaTime, camera){
@@ -55,7 +58,7 @@ class Level {
 	}
 
 	entityUpdates(entity, deltaTime, camera){
-		if(entity.type != 'player' && !entity.parent){
+		if(entity.type != 'player' && !entity.parent && entity.type != 'projectile'){
 			if( entity.pos.x < (camera.drawFromX - 1)*_CHUNKPIXELS	||
 				entity.pos.x > (camera.drawToX   + 1)*_CHUNKPIXELS	||
 				entity.pos.y < (camera.drawFromY - 1)*_CHUNKPIXELS	||
@@ -78,7 +81,7 @@ class Level {
 			this.entityUpdates(child, deltaTime, camera);
 		});
 
-		if(entity.pos.y > this.heightAt(entity.pos.x) + _CHUNKPIXELS){
+		if(entity.pos.y > this.heightAt(entity.pos.x) + _CHUNKPIXELS*3){
 			if(entity.health > 0)
 				entity.takeDamage(
 					entity.maxHealth*2,
@@ -86,6 +89,9 @@ class Level {
 					entity.facing,
 					entity.pos.x+8,
 					entity.pos.y+12);
+			else if(entity.lifetime){
+				entity.remove(this, deltaTime);
+			}
 		}
 	}
 

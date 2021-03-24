@@ -27,7 +27,7 @@ let entityCollision = (subject, entities) =>{
 
 		if(subject.type == 'weapon'){
 			if(subject.damagedList.has(target)) return;
-			if(target.type = 'box'){
+			if(target.type = 'box' || target.health > 0){
 				subject.damagedList.add(target);
 
 				let critProc = rand();
@@ -54,6 +54,55 @@ let entityCollision = (subject, entities) =>{
 					- target.pos.x + target.offset.left)/2 + target.pos.x;
 					
 				target.takeDamage(damage, color, subject.parent.facing, posX, posY);
+			}
+		}
+
+		if(subject.type == 'projectile'){
+			if(target.health < 0 && target.type != 'box')return;
+			if(target == subject.owner){
+				if(!subject.onGround || subject.collected) return;
+				// createGradientTextParticle(
+				// 	subject.pos.x+8, 
+				// 	subject.pos.y-12,
+				// 	`${subject}`,
+				// 	blue_gradient);
+				if(subject.lifetime) subject.lifetime = -1;
+				subject.collected = true;
+			} else {
+				if(subject.onGround) return;
+				if(subject.damagedList.has(target)) return;
+					subject.damagedList.add(target);
+
+					let critProc = rand();
+
+					let damage = subject.damage;
+
+					let color = '#fff';
+					if(target.type == 'player'){
+						color = '#fcc';
+					}
+
+					if(critProc<0.15){
+						damage *= 1.5;
+						if(target.type == 'player'){
+							color = '#f88';
+						} else {
+							color = '#fc4';
+						}
+					}
+
+					damage =parseFloat(damage.toFixed(1));
+
+					subject.vel.x /= 4;
+
+					let posY = subject.pos.y + subject.offset.top + (subject.spritesheet.height
+						- subject.offset.top - subject.offset.bottom)/2;
+
+					let posX = (subject.pos.x + subject.spritesheet.width - subject.offset.right 
+						- target.pos.x + target.offset.left)/2 + target.pos.x;
+						
+					target.takeDamage(damage, color, subject.facing, posX, posY);
+				// }
 			}
 		}
 	});

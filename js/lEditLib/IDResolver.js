@@ -1,12 +1,6 @@
 class IDResolver{
 	constructor(spritesheet = new SpriteSheet(), json, colorsJson){
 		this.Tiles = [];
-
-		// this.Tiles[0] = {
-		// 	name: 'air',
-		// 	type: 'air'
-		// };
-
 		this.tileColors = new Map();
 
 		this.spritesheet = spritesheet;

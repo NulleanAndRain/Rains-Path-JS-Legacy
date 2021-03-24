@@ -28,11 +28,7 @@ class SpriteSheet{
 
 	getSprite(name){
 		let buffer = this.sprites.get(name);
-		if(buffer){
-			return buffer;
-		} else {
-			return this.sprites.get('noTexture');
-		}
+		return buffer;
 	}
 
 	defineAbs(name, posx, posy, width = this.width, height = this.height){

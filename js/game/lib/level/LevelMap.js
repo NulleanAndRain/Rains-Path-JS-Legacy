@@ -28,10 +28,15 @@ class LevelMap{
 	}
 
 	heightAt(posX){
-		let col = this.__getChunkColNoCreate(posX)
+		posX = Math.floor(posX/_CHUNKPIXELS);
+		let col = this.__getChunkColNoCreate(posX);
 		if(col)
 			return col.heightAt()*_CHUNKPIXELS;
-		return 1000;
+
+		col = this.__getChunkColNoCreate(posX-1) || this.__getChunkColNoCreate(posX+1);
+		if(col)
+			return col.heightAt()*_CHUNKPIXELS;
+		return -1000;
 	}
 
 	getTileType(x, y){
@@ -218,9 +223,26 @@ class LevelMap{
 		ctx.strokeStyle = '#f00';
 		ctx.strokeRect(
 			0, 0,
-			camera.drawWidthX*_CHUNKPIXELS,
-			camera.drawWidthY*_CHUNKPIXELS
+			(camera.drawToX-camera.drawFromX)*_CHUNKPIXELS,
+			(camera.drawToY-camera.drawFromY)*_CHUNKPIXELS
 		);
+
+
+		ctx.strokeStyle = '#F0F';
+		ctx.strokeRect(
+			camera.subcamera.pos.x % (2*_CHUNKPIXELS) + camera.subcamera.deposX,
+			camera.subcamera.pos.y % (2*_CHUNKPIXELS) + camera.subcamera.deposY,
+			camera.subcamera.size.x*2,
+			camera.subcamera.size.y*2
+		);
+
+		ctx.strokeStyle = '#fc0';
+		ctx.strokeRect(
+			0, 0,
+			(camera.subcamera.drawToX-camera.subcamera.drawFromX)*_CHUNKPIXELS*2,
+			(camera.subcamera.drawToY-camera.subcamera.drawFromY)*_CHUNKPIXELS*2
+		);
+
 
 		ctx.strokeStyle = '#00f';
 		ctx.beginPath();
