@@ -23,7 +23,8 @@ let fastCos = x =>{
 let fastRand = () =>{}
 let rand = function() {
 	var x = (new Date().getTime()%1022+1)/1024;
-	const constC = 3.9943652676605887;
+	x *= (performance.now()%0.98 + 0.01);
+	const constC = 3.9943652676605887 + (x - 0.5) * 0.001;
 	const postProcessConst = 0.95;
 
 	fastRand = () =>{
@@ -45,7 +46,10 @@ let rand = function() {
 	}
 
 	return function(){
+		x += performance.now()%15/10;
+		if(x > 1) x %= 1;
 		for(let i=0; i<3*x; i++) 
+			// x *= (performance.now()%1;%0.98 + 0.01);
 			x = (constC*(1+(x - 0.5)*0.008))*x*(1-x);
 		return postProcess(x);
 	}

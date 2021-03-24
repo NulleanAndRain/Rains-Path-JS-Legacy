@@ -108,11 +108,11 @@ class SpriteSheet{
 		}
 	}
 
-	defineMonocolorTile(name, color){
+	defineMonocolorTile(name, color, width = this.width, height = this.height){
 		return new Promise(resolve=>{
 			const buffer = document.createElement('canvas');
-			buffer.width = this.width;
-			buffer.height = this.height;
+			buffer.width = width;
+			buffer.height = height;
 			buffer
 				.getContext('2d')
 				.fillStyle = color;

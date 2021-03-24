@@ -39,9 +39,10 @@
 			<script src="js/game/lib/entities/entityFactories.js"></script>
 			<script src="js/game/lib/entities/entityCollision.js"></script>
 		<!-- tile entities -->
-			<script src="js/game/lib/entities/TileEntity.js"></script>
-			<script src="js/game/lib/entities/tileEntities.js"></script>
-			<script src="js/game/lib/entities/tileEntityFactories.js"></script>
+			<script src="js/game/lib/tileEntities/TileEntity.js"></script>
+			<script src="js/game/lib/tileEntities/tileEntities.js"></script>
+			<script src="js/game/lib/tileEntities/tileEntityFactories.js"></script>
+			<script src="js/game/lib/tileEntities/tileEntityCollision.js"></script>
 		<!-- particles -->
 			<script src="js/game/lib/particles/Particle.js"></script>
 			<script src="js/game/lib/particles/particleFactories.js"></script>
@@ -51,6 +52,7 @@
 			<script src="js/game/levels/level0/fg.json"></script>
 			<script src="js/game/levels/level0/ids.json"></script>
 			<script src="js/game/levels/level0/tileEntities.json"></script>
+			<script src="js/game/levels/level0/entities.json"></script>
 		<!-- random stuff -->
 			<script src="js/game/lib/rnd/random_stuff.js"></script>
 			<script src="js/game/lib/rnd/spriteloadFuncs.js"></script>
@@ -84,6 +86,11 @@
 	<div id="healthBar" class="flex-row">
 		<div id="healthLine" class="healthLine"></div>
 		<div id="healthNum" class="flex-row healthNum text-unselect">100/100</div>
+	</div>
+	<div id="scoreInt" class="flex-row text-unselect">000000</div>
+	<div id="skill">
+		<img id="skillIco" src="./img/sprites/int/KunaiIco.png" alt="">
+		<div id="skillCD" class="skillCD"></div>
 	</div>
 
 	<div id="pauseIco" class="interface flex-col hidden">

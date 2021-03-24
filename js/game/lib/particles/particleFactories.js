@@ -175,7 +175,7 @@ let setupParticleFactories = (level, particles) =>{
 			prevLetter = letter;
 		}
 
-		buffer.width = _width+1;
+		buffer.width = _width+3;
 		buffer.height = 12;
 
 		let bctx = buffer.getContext('2d');
@@ -241,7 +241,7 @@ let setupParticleFactories = (level, particles) =>{
 		particle.canCollide = true;
 
 
-		particle.veliocityTick = (deltaTime, tileCollider, gravity, camera) =>{
+		particle.velocityTick = (deltaTime, tileCollider, gravity, camera) =>{
 			particle.addVel(0, gravity*deltaTime/32);
 
 			particle.pos.y+=(particle.vel.y*deltaTime/particle.speedDivider);
@@ -266,7 +266,7 @@ let setupParticleFactories = (level, particles) =>{
 		particle.sprite.height = size;
 		particle.speedDivider = 32;
 
-		particle.veliocityTick = (deltaTime, tileCollider, gravity, camera) =>{
+		particle.velocityTick = (deltaTime, tileCollider, gravity, camera) =>{
 			particle.pos.y+=(particle.vel.y*deltaTime/particle.speedDivider);
 			if(particle.canCollide) tileCollider.checkYparticle(particle, camera);
 
@@ -311,12 +311,10 @@ let createBizarreParticle = (x, y, entity={vel: {x:0, y:0}}) =>{
 			bctx.drawImage(particle.sprite, 2, 2);
 
 	particle.draw = (camera, ctx=_ctx) => {
-		ctx.imageSmoothingEnabled=false;
 		ctx.drawImage(
 			particle.buffer,
 			(particle.pos.x - camera.pos.x),
 			(particle.pos.y - camera.pos.y));
-		ctx.imageSmoothingEnabled=_smoothing;
 	}
 
 	return particle;
@@ -351,7 +349,7 @@ let createSmoke = (x, y) =>{
 	for(let i=0; i<count; i++){
 		let size = Math.ceil(fastRand()*2);
 		let colorTone = fastRand()*160;
-		let colorAlpha = Math.ceil(fastRand()*0.6)+0.4;
+		let colorAlpha = fastRand()*0.6 + 0.4;
 		let color = `rgba(${colorTone},${colorTone},${colorTone},${colorAlpha})`;
 
 		let xOff = rand()*6-3;
@@ -371,7 +369,7 @@ let createCampfireSmoke = (x, y) =>{
 	for(let i=0; i<count; i++){
 		let size = Math.ceil(fastRand()*2);
 		let colorTone = rand()*120+40;
-		let colorAlpha = Math.ceil(fastRand()*0.6)+0.4;
+		let colorAlpha = fastRand()*0.6 + 0.4;
 		let color = `rgba(${colorTone},${colorTone},${colorTone},${colorAlpha})`;
 
 		let xOff = rand()*12-6;
@@ -387,4 +385,68 @@ let createCampfireSmoke = (x, y) =>{
 		velY/=10;
 		particle.vel.y = velY;
 	}
+}
+
+let createGuardianMist = entity =>{
+	let count = Math.ceil(fastRand()*3)+3;
+	for(let i=0; i<count; i++){
+		let size = Math.ceil(fastRand()*2);
+		let colorTone = rand()*30+10;
+		let colorAlpha = fastRand()*0.5 + 0.5;
+		let color = `rgba(${colorTone},${colorTone*0.9},${colorTone*1.2},${colorAlpha})`;
+
+		let xOff = 7 + rand()*10;
+		let yOff = 26 + fastRand()*4;
+
+		let particle = createPixelParticleNoGrav(
+			entity.pos.x + xOff, 
+			entity.pos.y + yOff,
+			color,
+			size,
+			1000*colorAlpha);
+
+		particle.canCollide = true;
+		particle.drawFirst = true;
+
+		particle.locPos = {x: xOff, y: yOff};
+
+		particle.updateProxy = deltaTime =>{
+			particle.locPos.x += particle.vel.x*deltaTime/16;
+			particle.locPos.y += particle.vel.y*deltaTime/16;
+			particle.pos.x = entity.pos.x + particle.locPos.x;
+			particle.pos.y = entity.pos.y + particle.locPos.y;
+		}
+
+		let velY = rand()*0.05 - 0.02;
+		particle.vel.y = velY;
+
+		let velX = rand()*0.2 - 0.1;
+		particle.vel.x = velX;
+	}
+}
+
+let createGuardianDeathMist = (entity, posY) =>{
+		let size = Math.ceil(fastRand()*2);
+		let colorTone = rand()*30+10;
+		let colorAlpha = fastRand()*0.5 + 0.2;
+		let color = `rgba(${colorTone},${colorTone*0.9},${colorTone*1.2},${colorAlpha})`;
+
+		let xOff = 10 + rand()*6;
+		let yOff = posY + fastRand()*4;
+
+		let particle = createPixelParticleNoGrav(
+			entity.pos.x + xOff, 
+			entity.pos.y + yOff,
+			color,
+			size,
+			1000*colorAlpha);
+
+		particle.canCollide = true;
+		particle.drawFirst = true;
+
+		let velY = -rand()*0.2 - 0.1;
+		particle.vel.y = velY;
+
+		let velX = rand()*0.2 - 0.1;
+		particle.vel.x = velX;
 }

@@ -1,0 +1,15 @@
+const EntitiesJSON =`[
+	{
+		"name": "guardian",
+		"friendly": true,
+		"positions": [
+			[60, 0]
+		]
+	},
+	{
+		"name": "box",
+		"positions": [
+			[40, 0]
+		]
+	}
+]`;

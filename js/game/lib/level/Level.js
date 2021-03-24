@@ -34,7 +34,7 @@ class Level {
 		this.bgctx = this.bg.getContext('2d');
 	}
 
-	width(){
+	get width(){
 		return this.levelFront.levelWidth;
 	}
 	get leftBorder(){
@@ -49,20 +49,28 @@ class Level {
 
 	tileEntityUpdates(entity, deltaTime, camera){
 		if(entity.type != 'player' && !entity.parent){
-			if( entity.pos.x < (camera.drawFromX - 1)*_CHUNKPIXELS	||
-				entity.pos.x > (camera.drawToX   + 1)*_CHUNKPIXELS	||
-				entity.pos.y < (camera.drawFromY - 1)*_CHUNKPIXELS	||
-				entity.pos.y > (camera.drawToY   + 1)*_CHUNKPIXELS) return;
+			if( entity.pos.x < camera.drawFromX *_CHUNKPIXELS	||
+				entity.pos.x > camera.drawToX   *_CHUNKPIXELS	||
+				entity.pos.y < camera.drawFromY *_CHUNKPIXELS	||
+				entity.pos.y > camera.drawToY   *_CHUNKPIXELS) return;
 		}
 		entity.update(deltaTime, this.tileCollider, camera, this.gravity);
+
+		tileEntityCollision(entity, this.entities);
+
+		if(entity.toRemove){
+			this.tileEntities.delete(entity);
+		}
 	}
 
 	entityUpdates(entity, deltaTime, camera){
-		if(entity.type != 'player' && !entity.parent && entity.type != 'projectile'){
-			if( entity.pos.x < (camera.drawFromX - 1)*_CHUNKPIXELS	||
-				entity.pos.x > (camera.drawToX   + 1)*_CHUNKPIXELS	||
-				entity.pos.y < (camera.drawFromY - 1)*_CHUNKPIXELS	||
-				entity.pos.y > (camera.drawToY   + 1)*_CHUNKPIXELS) return;
+		if(!entity.isDowned || entity.lifetime > 0){
+			if(entity.type != 'player' && !entity.parent && entity.type != 'projectile'){
+				if( entity.pos.x < (camera.drawFromX - 1)*_CHUNKPIXELS	||
+					entity.pos.x > (camera.drawToX   + 1)*_CHUNKPIXELS	||
+					entity.pos.y < (camera.drawFromY - 1)*_CHUNKPIXELS	||
+					entity.pos.y > (camera.drawToY   + 1)*_CHUNKPIXELS) return;
+			}
 		}
 		entity.update(deltaTime, this.tileCollider, camera, this.gravity);
 
@@ -82,17 +90,23 @@ class Level {
 		});
 
 		if(entity.pos.y > this.heightAt(entity.pos.x) + _CHUNKPIXELS*3){
-			if(entity.health > 0)
+			if(entity.health > 0){
 				entity.takeDamage(
 					entity.maxHealth*2,
 					'#f33',
-					entity.facing,
+					{
+						pos: {x:0, y:0},
+						spritesheet: {width:0, height:0},
+						facing: entity.facing
+					},
 					entity.pos.x+8,
 					entity.pos.y+12);
-			else if(entity.lifetime){
+			} else if(entity.lifetime){
 				entity.remove(this, deltaTime);
 			}
 		}
+
+		if(entity.AITick) entity.AITick(this.entities, deltaTime);
 	}
 
 	update(deltaTime, camera) {
@@ -110,8 +124,8 @@ class Level {
 
 		this.particles.forEach(particle => {
 			particle.update(deltaTime);
-			if(particle.veliocityTick){
-				particle.veliocityTick(deltaTime, this.tileCollider, this.gravity, camera);
+			if(particle.velocityTick){
+				particle.velocityTick(deltaTime, this.tileCollider, this.gravity, camera);
 			}
 			if(particle.timeLeft<=0){
 				if(particle.destructor) particle.destructor(deltaTime, camera);
@@ -143,7 +157,11 @@ class Level {
 		this.levelBack	.draw(this.backctx,  camera);
 		this.levelBG	.draw(this.bgctx,    camera.subcamera);
 
-		ctx.drawImage(this.sky, 0, 0);
+		ctx.drawImage(
+			this.sky,
+			(_canvas.height - this.sky.height)/2,
+			0,
+		);
 
 	_ctx.imageSmoothingEnabled = _smoothing;
 

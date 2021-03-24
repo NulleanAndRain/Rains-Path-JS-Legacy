@@ -17,8 +17,19 @@ class Camera {
 			return;
 		}
 
+		let level = this.getLevel();
+
 		this.pos.x = player.pos.x + player.spritesheet.width/2 - this.size.x/2;
-		this.pos.y = player.pos.y-this.size.y*3/5 + 4.5;
+		if(this.size.x < level.width){
+			if(this.pos.x < level.leftBorder){
+				this.pos.x = level.leftBorder;
+			}
+			if(this.pos.x > level.rightBorder - this.size.x){
+				this.pos.x = level.rightBorder - this.size.x;
+			}
+		}
+
+		this.pos.y = player.pos.y-this.size.y*3/5 + 4;
 	}
 
 	update(){
@@ -40,7 +51,7 @@ class Camera {
 			this.subcamera.pos.x = (this.pos.x + this.size.x/2 - this.subcamera.size.x)/2;
 			this.subcamera.pos.y = (this.pos.y + this.size.y/2 - this.subcamera.size.y)/4;
 
-			this.subcamera.drawFromX = Math.floor(this.pos.x/(_CHUNKPIXELS*4))-1;
+			this.subcamera.drawFromX = Math.floor(this.subcamera.pos.x/(_CHUNKPIXELS*2))-1;
 			this.subcamera.drawToX = Math.ceil(
 				((this.pos.x + this.size.x)/2)/(_CHUNKPIXELS*2))+2;
 			this.subcamera.deposX = _CHUNKPIXELS*2;
@@ -50,7 +61,7 @@ class Camera {
 			}
 
 
-			this.subcamera.drawFromY = Math.floor(this.pos.y/(_CHUNKPIXELS*8));
+			this.subcamera.drawFromY = Math.floor(this.subcamera.pos.y/(_CHUNKPIXELS*2));
 			this.subcamera.drawToY = Math.ceil(
 				(this.pos.y + this.size.y)/(_CHUNKPIXELS*8))+2;
 				this.subcamera.deposY = 2*_CHUNKPIXELS;

@@ -116,8 +116,8 @@ class TileCollider {
 				return;
 			}
 
-			if(_autojump){
-				solidMatches++
+			if(_autojump  || entity.type == 'enemy'){
+				solidMatches++;
 				if(bottomBlockColl){
 					if(_collDebug){
 						this.autojumpMatch = match;
@@ -150,6 +150,10 @@ class TileCollider {
 				}
 			}
 		});
+
+		if((entity.type == 'projectile' && solidMatches > 0) || (entity.AITick && solidMatches > 1)){
+			if(entity.blockCollideX) entity.blockCollideX();
+		}
 
 		if(!entity.onGround || !_autojump) return;
 		if(bottomBlockColl && solidMatches == 1){
@@ -209,6 +213,8 @@ class TileCollider {
 				this.collisions.add(match);
 			}
 
+			if(entity.blockCollideY) entity.blockCollideY();
+
 			if (entity.vel.y > 0) {
 				if (entity.pos.y + entity.spritesheet.height 
 					- entity.offset.bottom > match.y1){
@@ -226,7 +232,6 @@ class TileCollider {
 			entity.onGround = true;
 		} else {
 			entity.onGround = false;
-/*
 			let y2, y3;
 			if(entity.vel.y > 0){
 				y2 = y1 + _TILESIZE;
@@ -247,6 +252,12 @@ class TileCollider {
 				}
 				
 				if (entity.vel.y > 0) {
+					if(entity.type == 'projectile'){
+						// entity.vel.y = gravity*deltaTime/16;
+						// entity.pos.y = match.y1 - 2*gravity*deltaTime/16;
+						matchesNext.length = 0;
+						return;
+					}
 					if (entity.pos.y + entity.vel.y + entity.spritesheet.height 
 						- entity.offset.bottom > match.y1){
 						entity.vel.y = (match.y1 
@@ -255,11 +266,12 @@ class TileCollider {
 						matchesNext.length = 0;
 					}
 				} else if (entity.vel.y < 0) {
+					if(entity.type == 'projectile') return;
 					if (entity.pos.y + entity.vel.y < match.y2 - entity.offset.top){
 						entity.vel.y /= 2; 
 					}
 				}
-			});*/
+			});
 			return;
 		}
 

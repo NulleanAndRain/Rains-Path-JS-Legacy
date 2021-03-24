@@ -1,4 +1,4 @@
-let rainbow_gradient = [
+const rainbow_gradient = [
 	{
 		color: 'hsl(0, 100%, 50%)',
 		pos: 0
@@ -69,7 +69,7 @@ let rainbow_gradient = [
 	},
 ]
 
-let blue_gradient = [
+const blue_gradient = [
 	{
 		color: '#8585DA', //'#B7B6F6',
 		pos: 0.05
@@ -84,6 +84,45 @@ let blue_gradient = [
 	},
 	{
 		color: '#8585DA',
+		pos: 0.95
+	},
+]
+
+
+const orange_gradient = [
+	{
+		color: '#FF3300',
+		pos: 0.05
+	},
+	{
+		color: '#FF7F00',
+		pos: 0.4
+	},
+	{
+		color: '#FF7F00',
+		pos: 0.6
+	},
+	{
+		color: '#FF3300',
+		pos: 0.95
+	},
+]
+
+const red_gradient = [
+	{
+		color: '#B3543E',
+		pos: 0.05
+	},
+	{
+		color: '#E1694E',
+		pos: 0.4
+	},
+	{
+		color: '#E1694E',
+		pos: 0.6
+	},
+	{
+		color: '#B3543E',
 		pos: 0.95
 	},
 ]

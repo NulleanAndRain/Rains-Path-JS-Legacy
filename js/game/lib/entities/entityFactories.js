@@ -1,8 +1,10 @@
 let createEntityPart  = () =>{}
 let createRainsWeapon = () =>{}
 let createProjectile  = () =>{}
+let createGuardianProjectile = () =>{}
 
 let setupEntityFactories = level =>{
+	let factories = new Map();
 	createEntityPart = (entity, x=0, y=0, sprite={spriteName: 'noSprite', animationFrames: 1}, lifetime=-1) =>{
 		let part = new EntityPart(entity, x, y, sprite, lifetime);
 		level.entities.add(part);
@@ -18,12 +20,12 @@ let setupEntityFactories = level =>{
 			__xOff *= -1;
 
 		let offsR = [12, 9, 2, 9, 14];
-		let offsL = [8, 6, 0, 0, 12];
+		let offsL = [12, 8, 0, 8, 14];
 
 		let part = new EntityPart(entity, __xOff, _yOff, spriteRight, lifetime);
 
 		if(entity.facing == 'left')
-			part.setOffset(offsL[0], 4, 2, 2);
+			part.setOffset(offsL[0], 8, 2, 2);
 		else
 			part.setOffset(4, offsR[0], 2, 2);
 		part.animTime = 0;
@@ -36,7 +38,7 @@ let setupEntityFactories = level =>{
 		// console.log(spriteLeft.spriteName);
 
 		part.update = (deltaTime, tileCollider, camera, gravity) => {
-			part.veliocityTick(deltaTime, tileCollider, camera, gravity);
+			part.velocityTick(deltaTime, tileCollider, camera, gravity);
 			part.animTime+=deltaTime;
 			if(part.lifetime){
 				part.lifetime -= deltaTime;
@@ -46,7 +48,7 @@ let setupEntityFactories = level =>{
 				let frame = Math.floor(((part.animTime-15)/part.frameDuration)%
 					part.spriteAlt.animationFrames);
 				if(frame<0) frame = 0;
-				part.setOffset(offsL[frame], 4, 2, 2);
+				part.setOffset(offsL[frame], 8, 2, 2);
 				part.pos.x += 5;
 			} else {
 				let frame = Math.floor(((part.animTime-15)/part.frameDuration)%
@@ -54,6 +56,8 @@ let setupEntityFactories = level =>{
 				if(frame<0) frame = 0;
 				part.setOffset(4, offsR[frame], 2, 2);
 			}
+
+			if(part.animTime > 750) console.log(part);
 		}
 
 		part.updateSprite = () =>{
@@ -90,18 +94,87 @@ let setupEntityFactories = level =>{
 	}
 
 
-	createProjectile = (entity, posx, posy, lifetime, horSpeed, damage, sprite) =>{
-		let projectile = new Projectile(entity, posx, posy, lifetime, damage, sprite);
+	createProjectile = (entity, posx, posy, lifetime, horVel, damage, sprite) =>{
+		let projectile = new Projectile(
+			entity,
+			posx, posy,
+			lifetime,
+			damage,
+			sprite,
+			true);
 
 		if(entity.facing == 'left')
-			projectile.setVel(-horSpeed, -2);
+			projectile.setVel(-horVel, -2);
 		else
-			projectile.setVel(horSpeed, -2);
+			projectile.setVel(horVel, -2);
 
 		projectile.addVel(entity.vel.x, entity.vel.y);
 
 		level.entities.add(projectile);
 		return projectile;
 	}
+
+	createGuardianProjectile = (entity, lifetime, horVel, vertVel, damage, sprite) =>{
+		let projectile = new Projectile(
+			entity,
+			entity.pos.x+12, entity.pos.y+12,
+			lifetime,
+			damage,
+			sprite,
+			false);
+			
+		projectile.setOffset(2, 2, 2, 2);
+
+		projectile.blockCollideY = () =>{
+			projectile.lifetime = -1;
+		}
+		projectile.blockCollideX = () =>{
+			projectile.setOffset(4, 4, 4, 4);
+			projectile.lifetime = -1;
+		}
+
+		projectile.aftCollide = () =>{
+			projectile.lifetime = -1;
+		}
+
+		projectile.gravityMultipler = 0;
+
+		projectile.setVel(horVel, vertVel);
+
+		level.entities.add(projectile);
+		return projectile;
+	}
+
+	let createGuardian = function(){
+		let GuardSprite = new SpriteSheet(24, 32);
+		GuardSprite.addSprites('Guardian', 'IdleLeft', 'sprites', 4, 1)
+			.then(GuardSprite=>GuardSprite
+				.addSprites('Guardian', 'IdleRight', 'sprites', 4, 1))
+			.then(GuardSprite=>GuardSprite
+				.addSprites('Guardian', 'DeadRight', 'sprites', 4, 1))
+			.then(GuardSprite=>GuardSprite
+				.addSprites('Guardian', 'DeadLeft', 'sprites', 4, 1))
+			.then(GuardSprite=>GuardSprite
+				.addSpritePart('Guardian', 'darkMagic', 'sprites', 4, 2, 8, 8));
+		return function(x=0, y=0, sx = x, sy = y) {
+			let guardian = new Guardian(GuardSprite, x, y, sx, sy);
+			level.entities.add(guardian);
+			return guardian;
+		}
+	}();
+	factories.set('guardian', createGuardian);
+
+	let createBox = function() {
+		let BoxSprite = new SpriteSheet(16, 16);
+		BoxSprite.addSprites('Box', 'Idle', 'sprites', 1, 1);
+		return function(x, y) {
+			let box = new Box(BoxSprite, x, y);
+			level.entities.add(box);
+			return box;
+		}
+	}();
+	factories.set('box', createBox);
+
+	return factories;
 }
 

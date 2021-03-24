@@ -76,14 +76,20 @@ let keyboardFunc = (player, keyLeft, keyRight, timer) => {
 				_lastKey = keyRight;
 				player.moveRight(timer.deltaTime);
 			}
-			else player.stopMoving();
+			else {
+				if(player.onGround || player.onMove)
+					player.stopMoving();
+			}
 		}
 		if(_lastKey==keyRight){
 			if(_keyStates.get(keyLeft)=='pressed'){
 				_lastKey = keyLeft;
 				player.moveLeft(timer.deltaTime);
 			}
-			else player.stopMoving();
+			else {
+				if(player.onGround || player.onMove)
+					player.stopMoving();
+			}
 		}
 	}
 	setTimeout(()=> keyboardFunc(player, keyLeft, keyRight, timer), 0);

@@ -13,10 +13,7 @@ const _CHUNKPIXELS = _TILESIZE*_CHUNKSIZE;
 var canvWidth = resizeConst[canvResize];
 var _canvHeight = 1;
 
-const alphaVer = 'v0.4.1.2 alpha';
-
-var healthNum;
-var healthLine;
+const alphaVer = 'v0.4.3.1 alpha';
 
 //		settings
 var _smoothing = false;
@@ -24,6 +21,8 @@ var _bgBlur = true;
 var _autojump = true;
 var _shadowsEnabled = false;
 var _chunkGrid = false;
+
+var __smoothing = false;
 
 const _respawnTime = 1000;
 
@@ -44,9 +43,6 @@ window.onload = () =>{
 	const screen = document.getElementById('screen');
 	const context = screen.getContext('2d');
 
-	healthNum = document.getElementById('healthNum');
-	healthLine = document.getElementById('healthLine');
-
 	document.getElementById('alphaVer').innerHTML = alphaVer;
 
 	context.imageSmoothingEnabled = false;
@@ -63,17 +59,11 @@ window.onload = () =>{
 	Promise.all([
 		loadLevel(camera),
 		loadLenaSprite(),
-		loadBoxSprite(),
-	]).then(([level, LenaSprites, boxSprites])=>{
+	]).then(([level, LenaSprites])=>{
 
 		let pos = level.respswn;
 		let Rain = new Player(LenaSprites, pos.x, pos.y);
 		level.entities.add(Rain);
-
-		window.Rain = Rain;
-
-		let box = new Box(boxSprites, 40, 0);
-		level.entities.add(box);
 
 		let splashes = new Set();
 
@@ -88,10 +78,18 @@ window.onload = () =>{
 
 			splashes.forEach(splash =>{
 				splash.update(deltaTime);
-			})
+			});
 		}
 
 		timer.drawFrame  = () => {
+			if(__smoothing){
+				if(Rain.onMove){
+					_smoothing = true;
+				} else {
+					_smoothing = false;
+				}
+			}
+
 			level.drawFrame(camera);
 		}
 

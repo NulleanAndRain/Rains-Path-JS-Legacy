@@ -1,0 +1,32 @@
+const TileEntitiesJSON = `[
+	{
+		"name" : "campfire",
+		"positions" : [
+			[16, 9],
+			[48, 6],
+			[44, -7]
+		]
+	},
+	{
+		"name" : "crystalSmall",
+		"positions" : [
+			[-18, 15],
+			[48, 18],
+			[49, 18],
+			[50, 18],
+			[51, 18]
+		]
+	},
+	{
+		"name" : "coin",
+		"positions" : [
+			[22, 9]
+		]
+	},
+	{
+		"name": "levelEnd",
+		"positions" : [
+			[10, -12]
+		]
+	}
+]`

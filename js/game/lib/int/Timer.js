@@ -36,7 +36,7 @@ class Timer{
 		this._frametime=performance.now();
 		
 		if(!this.isPaused) window.requestAnimationFrame(() => this.updateProxy());
-		// if(!this.isPaused) setTimeout(() => this.updateProxy(), 16);
+		// if(!this.isPaused) setTimeout(() => this.updateProxy(), 13);
 	}
 
 	start(){

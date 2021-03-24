@@ -7,7 +7,7 @@ class Entity{
 		this.movement = {left: false, right: false};
 		this.speed=1.5;
 		this.running = false;
-		this.jumpVec=-9;
+		this.jumpVec=-8;
 		this.acceleratedJump = false;
 
 		this.maxHealth = 100;
@@ -17,6 +17,10 @@ class Entity{
 		this.regenTimeout = 0;
 		this.isDowned = false;
 		this.canInteract = true;
+		this.knockbackTaken = 1;
+
+		this.damageCooldown = 100;
+		this.damageCooldownTimer = 0;
 
 		this.attacking = false;
 		this.spritesheet = spritesheet;
@@ -29,6 +33,9 @@ class Entity{
 		this.animTime = 0;
 
 		this.type = 'entity';
+
+		this.__kbHor = 2;
+		this.__kbVer = -1.5;
 	}
 
 	destructor(){}
@@ -155,7 +162,7 @@ class Entity{
 
 	//entity updates
 
-	veliocityTick(deltaTime, tileCollider, camera, gravity){
+	velocityTick(deltaTime, tileCollider, camera, gravity){
 		this.vel.y += gravity*deltaTime/32;
 
 		this.pos.y+=(this.vel.y*deltaTime/16);
@@ -163,14 +170,14 @@ class Entity{
 
 		this.pos.x+=(this.vel.x*deltaTime/16);
 		if(this.canCollide) tileCollider.checkX(this, deltaTime, gravity);
-		this.veliocityTickProxy(deltaTime, tileCollider, camera, gravity);
+		this.velocityTickProxy(deltaTime, tileCollider, camera, gravity);
 	}
-	veliocityTickProxy(){}
+	velocityTickProxy(){}
 
 	updateProxy(deltaTime, tileCollider, camera, gravity){}
 
 	update(deltaTime, tileCollider, camera, gravity){
-		this.veliocityTick(deltaTime, tileCollider, camera, gravity);
+		this.velocityTick(deltaTime, tileCollider, camera, gravity);
 		this.animTime+=deltaTime;
 		this.updateProxy(deltaTime, tileCollider, camera, gravity);
 
@@ -185,6 +192,11 @@ class Entity{
 				}
 			}
 		}
+
+		if(this.damageCooldownTimer != 0){
+			this.damageCooldownTimer -= deltaTime;
+			if(this.damageCooldownTimer < 0) this.damageCooldownTimer = 0;
+		}
 	}
 
 	// skills and attack
@@ -194,18 +206,33 @@ class Entity{
 
 	//damage and heal
 
-	takeDamage(amount, color, facing, posx, posy){
+	takeDamage(amount, color, entity, posx, posy){
+		if(this.damageCooldownTimer != 0) return;
+		this.damageCooldownTimer = this.damageCooldown;
 		createTextParticle(
 			this.pos.x+8, 
 			this.pos.y-8,
 			`${amount}`, color,
 			2500);
-		createBloodSplash(posx, posy, facing);
+		createBloodSplash(posx, posy, entity.facing);
+
+
+		if(this.pos.x + this.spritesheet.width/2
+			< entity.pos.x + entity.spritesheet.width/2){
+			this.vel.x -= this.knockbackTaken*this.__kbHor;
+		} else {
+			this.vel.x += this.knockbackTaken*this.__kbHor;
+		}
+
+		this.vel.y = this.__kbVer * (this.knockbackTaken*2);
 
 		if(this.health == -1) return;
 
 		this.health -= amount;
-		if(this.health <= 0) this.health=0;
+		if(this.health <= 0){
+			this.health=0;
+			if(entity.AddScore && this.score) entity.AddScore(this.score);
+		}
 		this.regenTimeout = this.regenInterval;
 	}
 
@@ -229,6 +256,7 @@ class Entity{
 
 	remove(level, deltaTime){
 		if(!this.isDowned){
+			this.animTime = 0;
 			this.isDowned = true;
 			// this.canCollide = false;
 			this.canInteract = false;
@@ -237,7 +265,7 @@ class Entity{
 			this.stopMoving();
 			// this.setVel(-0.6, -2.5);
 
-			this.removeTimeout = 3000;
+			this.removeTimeout = 5000;
 
 			this._stopMoving = undefined;
 		} else {
@@ -270,51 +298,7 @@ class Entity{
 		}
 	}
 
-	updateSprite(){
-		if(this.isDowned){
-			this.state = 'Downed';
-			return;
-		}
-		let oldState = `${this.facing}${this.onMove}${this.onGround}`;
-		if(this.facing=='none'){
-			this.state = 'Confused';
-			return;
-		}
-
-			// console.log(this.onGround);
-		if(!this.onGround){
-			// console.log(this.onGround);
-			if(this.vel.y>0){
-				if(this.facing=='right') this.setAnimFrame('JumpRightDown', 4);
-				else if(this.facing=='left') this.setAnimFrame('JumpLeftDown', 4);
-			} else {
-				if(this.facing=='right') this.setAnimFrame('JumpRightUp', 4);
-				else if(this.facing=='left') this.setAnimFrame('JumpLeftUp', 4);
-			}
-		} else if(this.onMove){
-			this.distance+=Math.abs(this.vel.x);
-			if(this.facing=='right') this.setAnimFrame('RunRight', 4);
-			else if(this.facing=='left') this.setAnimFrame('RunLeft', 4);
-		} else if(this.onGround){
-			if(this.facing=='right') this.setAnimFrame('IdleRight', 4);
-			else if(this.facing=='left') this.setAnimFrame('IdleLeft', 4);
-			else this.state = 'Confused';
-		} else {
-			this.state = 'Confused';
-		}
-
-		if(this.attacking || this.usingSkill){
-			if(!this.onGround){
-
-			} else if(this.onMove){
-
-			} else {
-				if(this.facing == 'right') this.setAnimFrame('AttackIdleRight', 5);
-				else this.setAnimFrame('AttackIdleLeft', 5);
-			}
-		} else if(
-			`${this.facing}${this.onMove}${this.onGround}`!=oldState) this.animTime = 0;
-	}
+	updateSprite(){}
 
 
 	draw(camera, ctx=_ctx){

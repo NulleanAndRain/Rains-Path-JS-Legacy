@@ -23,8 +23,6 @@ const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft', 'KeyE', 'KeyQ', 'K
 _canvas
 _ctx
 
-healthNum;
-healthLine;
 
 //debug
 _collDebug

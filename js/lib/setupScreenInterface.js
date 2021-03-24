@@ -93,21 +93,19 @@ let setupScreenInterface = (canvas, context, timer) => {
 
 		if(localStorage.getItem('setting_smoothing')){
 			setting_smoothing_slider.classList.add('setting_checkbox_slider__active');
-			_smoothing=true;
-			_ctx.imageSmoothingEnabled = _smoothing;
+			__smoothing=true;
 		}
 
 		setting_smoothing.onclick = () =>{
 			if(localStorage.getItem('setting_smoothing')){
 				setting_smoothing_slider.classList.remove('setting_checkbox_slider__active');
-				_smoothing=false;
+				__smoothing=false;
 				localStorage.removeItem('setting_smoothing');
 			} else {
 				setting_smoothing_slider.classList.add('setting_checkbox_slider__active');
-				_smoothing=true;
+				__smoothing=true;
 				localStorage.setItem('setting_smoothing', true);
 			}
-			_ctx.imageSmoothingEnabled = _smoothing;
 		}
 
 		const setting_autojump = document.getElementById('setting_autojump');

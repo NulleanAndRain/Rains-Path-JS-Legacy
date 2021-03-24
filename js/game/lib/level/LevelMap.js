@@ -21,7 +21,7 @@ class LevelMap{
 		return -this.chunksNeg.length*_CHUNKPIXELS;
 	}
 	get rightBorder(){
-		return -this.chunksPos.length*_CHUNKPIXELS;
+		return this.chunksPos.length*_CHUNKPIXELS;
 	}
 	get levelWidth(){
 		return this.rightBorder - this.leftBorder;

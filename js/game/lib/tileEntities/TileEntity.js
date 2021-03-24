@@ -16,7 +16,14 @@ class TileEntity{
 		this.type = 'block';
 	}
 
-	veliocityTick(deltaTime, tileCollider, camera, gravity){
+	setOffset(left, right, top=this.offset.top, bottom=this.offset.bottom){
+		this.offset.left = left;
+		this.offset.right = right;
+		this.offset.top = top;
+		this.offset.bottom = bottom;
+	}
+
+	velocityTick(deltaTime, tileCollider, camera, gravity){
 		if(this.affectedByGravity) this.vel.y += gravity*deltaTime/32;
 
 		this.pos.y+=(this.vel.y*deltaTime/16);
@@ -24,12 +31,12 @@ class TileEntity{
 
 		this.pos.x+=(this.vel.x*deltaTime/16);
 		if(this.canCollide) tileCollider.checkX(this, deltaTime, gravity);
-		this.veliocityTickProxy(deltaTime, tileCollider, camera, gravity);
+		this.velocityTickProxy(deltaTime, tileCollider, camera, gravity);
 	}
-	veliocityTickProxy(){}
+	velocityTickProxy(){}
 
 	update(deltaTime, tileCollider, camera, gravity){
-		this.veliocityTick(deltaTime, tileCollider, camera, gravity);
+		this.velocityTick(deltaTime, tileCollider, camera, gravity);
 		this.animTime+=deltaTime;
 		this.updateProxy(deltaTime, tileCollider, camera, gravity);
 	}
@@ -39,11 +46,13 @@ class TileEntity{
 
 	draw(camera, ctx=_ctx){
 		this.updateSprite();
-		ctx.imageSmoothingEnabled=false;
 		this.spritesheet.draw(
 			this.state,
 			(this.pos.x - camera.pos.x),
 			(this.pos.y - camera.pos.y), ctx);
-		ctx.imageSmoothingEnabled=_smoothing;
+	}
+
+	remove(){
+		this.toRemove = true;
 	}
 }

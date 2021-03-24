@@ -8,8 +8,8 @@ let loadSky = () =>{
 		let lnrSky = sky
 			.getContext('2d')
 			.createLinearGradient(0, 0, 0, sky.height);
-		lnrSky.addColorStop(0,"#8FC2DB");
-		lnrSky.addColorStop(0.8,"#94DBDB");
+		lnrSky.addColorStop(0,"#94DBDB");
+		lnrSky.addColorStop(0.8,"#dafaea");
 		sky.getContext('2d').fillStyle = lnrSky;
 		sky.getContext('2d').fillRect(0,0,sky.width,sky.height);
 
@@ -62,6 +62,18 @@ let loadLenaSprite = () =>{
 			.then(LenaSprites=>LenaSprites
 				.addSprites('Lena','AttackIdleLeft', 'sprites', 5, 1))
 			.then(LenaSprites=>LenaSprites
+				.addSprites('Lena','AttackJumpUpRight', 'sprites', 5, 1))
+			.then(LenaSprites=>LenaSprites
+				.addSprites('Lena','AttackJumpDownRight', 'sprites', 5, 1))
+			.then(LenaSprites=>LenaSprites
+				.addSprites('Lena','AttackJumpUpLeft', 'sprites', 5, 1))
+			.then(LenaSprites=>LenaSprites
+				.addSprites('Lena','AttackJumpDownLeft', 'sprites', 5, 1))
+			.then(LenaSprites=>LenaSprites
+				.addSprites('Lena','AttackRunRight', 'sprites', 5, 1))
+			.then(LenaSprites=>LenaSprites
+				.addSprites('Lena','AttackRunLeft', 'sprites', 5, 1))
+			.then(LenaSprites=>LenaSprites
 				.addSpritePart('Lena', 'racketR', 'sprites', 1, 5, 20, 12))
 			.then(LenaSprites=>LenaSprites
 				.addSpritePart('Lena', 'racketL', 'sprites', 1, 5, 20, 12))
@@ -70,14 +82,6 @@ let loadLenaSprite = () =>{
 			.then(LenaSprites=>LenaSprites
 				.addSprites('Lena', 'Downed', 'sprites', 1, 1))
 			.then(LenaSprites=>resolve(LenaSprites));
-	});
-}
-
-let loadBoxSprite = () =>{
-	return new Promise(resolve=>{
-		let BoxSprite = new SpriteSheet(16, 16);
-		BoxSprite.addSprites('Box', 'Idle', 'sprites', 1, 1)
-			.then(BoxSprite=>resolve(BoxSprite));
 	});
 }
 
@@ -91,14 +95,34 @@ let loadParticles = () => {
 
 let loadTileEntities = (level, factories, json) =>{
 	let arr = JSON.parse(json);
+	if(arr)
 	arr.forEach(tile =>{
 		let f = factories.get(tile.name);
 		tile.positions.forEach(([x,y])=>{
-			// console.log(x, y);
 			f(x, y);
-		})
-	})
+		});
+	});
 }
+
+let loadEntities = (level, factories, json) =>{
+	let arr = JSON.parse(json);
+	if(arr)
+	arr.forEach(entity =>{
+		let f = factories.get(entity.name);
+		entity.positions.forEach(args=>{
+			let e;
+			if(args.length == 2)
+				e = f(args[0]*_TILESIZE, args[1]*_TILESIZE);
+			if(args.length == 3)
+				e = f(args[0]*_TILESIZE, args[1]*_TILESIZE, args[2]*_TILESIZE);
+			if(args.length == 4)
+				e = f(
+					args[0]*_TILESIZE, args[1]*_TILESIZE,
+					args[2]*_TILESIZE, args[3]*_TILESIZE);
+			if(entity.friendly) e.hostile = false;
+		});
+	});
+} 
 
 function loadLevel(camera) {
 	return Promise.all([
@@ -123,9 +147,11 @@ function loadLevel(camera) {
 		}
 
 		setupParticleFactories(level, particles);
-		setupEntityFactories(level);
-		let tileFactories = setupTileEntityFactories(level);
 
+		let entityFactories = setupEntityFactories(level);
+		loadEntities(level, entityFactories, EntitiesJSON);
+
+		let tileFactories = setupTileEntityFactories(level);
 		loadTileEntities(level, tileFactories, TileEntitiesJSON);
 
 		// createCampfire(16, 9);
