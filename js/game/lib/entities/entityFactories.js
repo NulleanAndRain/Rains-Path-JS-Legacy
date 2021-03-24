@@ -11,7 +11,7 @@ let setupEntityFactories = level =>{
 		return part;
 	}
 
-	createRainsWeapon = (entity, spriteRight={spriteName: 'noSprite', animationFrames: 1}, spriteLeft={spriteName: 'noSprite', animationFrames: 1}, lifetime=-1) =>{
+	createRainsWeapon = (entity, spriteRight={spriteName: 'noSprite', animationFrames: 1}, spriteLeft={spriteName: 'noSprite', animationFrames: 1}, lifetime=-1, damage = 15) =>{
 		let _xOff = 8;
 		let _yOff = 7;
 
@@ -30,8 +30,8 @@ let setupEntityFactories = level =>{
 			part.setOffset(4, offsR[0], 2, 2);
 		part.animTime = 0;
 
-		part.type = 'weapon';
-		part.damage = 10;
+		part.type = _s_weapon;
+		part.damage = damage;
 		part.damagedList = new Set();
 
 		part.spriteAlt = spriteLeft;
@@ -126,15 +126,21 @@ let setupEntityFactories = level =>{
 		projectile.setOffset(2, 2, 2, 2);
 
 		projectile.blockCollideY = () =>{
-			projectile.lifetime = -1;
+			projectile.vel.x = 0;
+			projectile.vel.y = 0;
+			projectile.canInteract = false;
+			projectile.lifetime = 1;
 		}
 		projectile.blockCollideX = () =>{
-			projectile.setOffset(4, 4, 4, 4);
-			projectile.lifetime = -1;
+			projectile.vel.x = 0;
+			projectile.vel.y = 0;
+			projectile.canInteract = false;
+			projectile.lifetime = 1;
 		}
 
 		projectile.aftCollide = () =>{
-			projectile.lifetime = -1;
+			projectile.lifetime = 1;
+			projectile.canInteract = false;
 		}
 
 		projectile.gravityMultipler = 0;

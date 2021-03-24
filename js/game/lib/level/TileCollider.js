@@ -105,7 +105,7 @@ class TileCollider {
 			entity.pos.y + entity.offset.top, entity.pos.y
 			 + entity.spritesheet.height - entity.offset.bottom);
 
-		if(_autojump || entity.type == 'enemy'){
+		if(_autojump || entity.type == _s_enemy){
 			var bottomBlockColl = true;
 			var solidMatches = 0;
 			if(!entity.onGround || !entity.onMove || entity.vel.y != 0 ) bottomBlockColl = false;
@@ -116,7 +116,7 @@ class TileCollider {
 				return;
 			}
 
-			if(_autojump  || entity.type == 'enemy'){
+			if(_autojump  || entity.type == _s_enemy){
 				solidMatches++;
 				if(bottomBlockColl){
 					if(_collDebug){
@@ -151,11 +151,11 @@ class TileCollider {
 			}
 		});
 
-		if((entity.type == 'projectile' && solidMatches > 0) || (entity.AITick && solidMatches > 1)){
+		if((entity.type == _s_projectile && solidMatches > 0) || (entity.AITick && solidMatches > 1)){
 			if(entity.blockCollideX) entity.blockCollideX();
 		}
 
-		if(!entity.onGround || !_autojump) return;
+		if(!entity.onGround || !(_autojump || entity.type != _s_player)) return;
 		if(bottomBlockColl && solidMatches == 1){
 			if(this._canJump(entity)){
 				entity.addVel(0, -3);
@@ -252,7 +252,7 @@ class TileCollider {
 				}
 				
 				if (entity.vel.y > 0) {
-					if(entity.type == 'projectile'){
+					if(entity.type == _s_projectile){
 						// entity.vel.y = gravity*deltaTime/16;
 						// entity.pos.y = match.y1 - 2*gravity*deltaTime/16;
 						matchesNext.length = 0;
@@ -266,7 +266,7 @@ class TileCollider {
 						matchesNext.length = 0;
 					}
 				} else if (entity.vel.y < 0) {
-					if(entity.type == 'projectile') return;
+					if(entity.type == _s_projectile) return;
 					if (entity.pos.y + entity.vel.y < match.y2 - entity.offset.top){
 						entity.vel.y /= 2; 
 					}

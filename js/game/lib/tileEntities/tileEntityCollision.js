@@ -13,15 +13,15 @@ let tileEntityCollision = (tile, entities) =>{
 			(target.pos.y+target.spritesheet.height-target.offset.bottom)<
 			(tile.pos.y+tile.offset.top)) return;
 
-		if(tile.type == 'treasure'){
-			if(target.type != 'player') return;
+		if(tile.type == _s_treasure){
+			if(target.type != _s_player) return;
 			target.AddScore(tile.score);
 			tile.remove();
 			return;
 		}
 
-		if(tile.type = 'levelEnd'){
-			if(target.type != 'player') return;
+		if(tile.type = _s_levelend){
+			if(target.type != _s_player) return;
 			tile.showInfo();
 			tile.remove();
 			return;

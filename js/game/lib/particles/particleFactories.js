@@ -327,10 +327,10 @@ let createBloodSplash = (x, y, direction) =>{
 		let size = Math.ceil(fastRand()*2);
 		let colorMain = Math.ceil(fastRand()*80)+110;
 		let colorOff = Math.ceil(fastRand()*16);
-		let colorAlpha = Math.ceil(fastRand()*0.6)+0.4;
+		let colorAlpha = fastRand()*0.6 + 0.4;
 		let color = `rgba(${colorMain},${colorOff},${colorOff},${colorAlpha})`;
 
-		let particle = createPixelParticle(x, y, color, size);
+		let particle = createPixelParticle(x, y, color, size, 4000 + 2000*colorAlpha);
 
 		let velX = rand()*2.5+1;
 		if(direction == 'left') velX *= -1;
@@ -422,6 +422,28 @@ let createGuardianMist = entity =>{
 
 		let velX = rand()*0.2 - 0.1;
 		particle.vel.x = velX;
+	}
+}
+
+let createGuardArmorSplash = (x, y, direction) =>{
+	let count = Math.ceil(fastRand()*8)+6;
+	// console.log(count);
+	for(let i=0; i<count; i++){
+		let size = Math.ceil(fastRand()*2);
+		let colorTone = rand()*60+30;
+		let colorAlpha = fastRand()*0.5 + 0.5;
+		let color = `rgba(${colorTone},${colorTone*0.9},${colorTone*1.2},${colorAlpha})`;
+
+		let particle = createPixelParticle(x, y, color, size, 4000 + 2000*colorAlpha);
+
+		let velX = rand()*2.5+1;
+		if(direction == 'left') velX *= -1;
+
+		let velY = rand()*5-3;
+
+
+		particle.vel.x = velX;
+		particle.vel.y = velY;
 	}
 }
 

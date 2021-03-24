@@ -109,5 +109,9 @@ let getDarkTheme = () => {
 	background-color: #282923;\
 	color: #fff;\
 }\
+\
+#pauseTitle{\
+	color: '#fff';\
+}\
 ";
 }

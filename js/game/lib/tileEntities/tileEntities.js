@@ -4,6 +4,7 @@ class CampfireTile extends TileEntity{
 		this.offset.top = 16;
 		this.canCollide = false;
 		this.affectedByGravity = false;
+		this.type = _s_campfire;
 	}
 	updateSprite(){
 		let frame = Math.floor(this.animTime/75)%8;
@@ -21,7 +22,7 @@ class Treasure extends TileEntity{
 	constructor(spritesheet, value, tilePosX=0, tilePosY=0){
 		super(spritesheet, tilePosX, tilePosY);
 		this.score = value;
-		this.type = 'treasure';
+		this.type = _s_treasure;
 		this.canInteract = true;
 		this.canCollide = false;
 		this.affectedByGravity = false;
@@ -36,7 +37,7 @@ class CrystalSmall extends Treasure{
 }
 
 class CrystalBig extends Treasure{
-	constructor(spritesheet, tilePosX=0, tilePosY=0){
+	constructor(spritesheet, tilePosX=0, tilePosY=0){  //tbd later
 		super(spritesheet, 100, tilePosX, tilePosY);
 		this.state = `crystalBig`;
 	}
@@ -56,7 +57,7 @@ class Coin extends Treasure{
 class InfoBlock extends TileEntity{
 	constructor(spritesheet, text, tilePosX=0, tilePosY=0){
 		super(spritesheet, tilePosX, tilePosY);
-		this.type = 'info';
+		this.type = _s_infoblock;
 		this.canInteract = true;
 		this.canCollide = false;
 		this.affectedByGravity = false;
@@ -79,7 +80,7 @@ class LevelEndInfo extends InfoBlock{
 			tilePosX,
 			tilePosY);
 
-		this.type = 'levelEnd';
+		this.type = _s_levelend;
 	}
 
 	updateSprite(){

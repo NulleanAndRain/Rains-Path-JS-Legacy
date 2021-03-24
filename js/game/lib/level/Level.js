@@ -48,12 +48,10 @@ class Level {
 	}
 
 	tileEntityUpdates(entity, deltaTime, camera){
-		if(entity.type != 'player' && !entity.parent){
-			if( entity.pos.x < camera.drawFromX *_CHUNKPIXELS	||
-				entity.pos.x > camera.drawToX   *_CHUNKPIXELS	||
-				entity.pos.y < camera.drawFromY *_CHUNKPIXELS	||
-				entity.pos.y > camera.drawToY   *_CHUNKPIXELS) return;
-		}
+		if( entity.pos.x < camera.drawFromX *_CHUNKPIXELS	||
+			entity.pos.x > camera.drawToX   *_CHUNKPIXELS	||
+			entity.pos.y < camera.drawFromY *_CHUNKPIXELS	||
+			entity.pos.y > camera.drawToY   *_CHUNKPIXELS) return;
 		entity.update(deltaTime, this.tileCollider, camera, this.gravity);
 
 		tileEntityCollision(entity, this.entities);
@@ -65,7 +63,7 @@ class Level {
 
 	entityUpdates(entity, deltaTime, camera){
 		if(!entity.isDowned || entity.lifetime > 0){
-			if(entity.type != 'player' && !entity.parent && entity.type != 'projectile'){
+			if(entity.type != _s_player && !entity.parent && entity.type != _s_projectile){
 				if( entity.pos.x < (camera.drawFromX - 1)*_CHUNKPIXELS	||
 					entity.pos.x > (camera.drawToX   + 1)*_CHUNKPIXELS	||
 					entity.pos.y < (camera.drawFromY - 1)*_CHUNKPIXELS	||
@@ -141,8 +139,6 @@ class Level {
 		this.backctx	.clearRect(0, 0, _canvas.width, _canvas.height);
 		this.bgctx		.clearRect(0, 0, _canvas.width, _canvas.height);
 
-		this.frontctx.strokeRect(0, 0, this.levelFront.width/2, this.front.height/2);
-
 		this.front.width  = _canvas.width;
 		this.front.height = _canvas.height;
 
@@ -169,7 +165,7 @@ class Level {
 		ctx.drawImage(
 			this.bg,
 			-camera.subcamera.pos.x % (_CHUNKPIXELS*2) - (camera.subcamera.deposX),
-			-camera.subcamera.pos.y % (_CHUNKPIXELS*2) - (camera.subcamera.deposY),
+			-camera.subcamera.pos.y % (_CHUNKPIXELS*2) - (camera.subcamera.deposY) + 0.5*_smoothing,
 			_canvas.width  + _CHUNKPIXELS*4,
 			_canvas.height + _CHUNKPIXELS*4);
 
@@ -180,13 +176,13 @@ class Level {
 		ctx.drawImage(
 			this.back,
 			-camera.pos.x % _CHUNKPIXELS - (camera.deposX),
-			-camera.pos.y % _CHUNKPIXELS - (camera.deposY));
+			-camera.pos.y % _CHUNKPIXELS - (camera.deposY) + 0.5*_smoothing);
 
 		ctx.filter = 'none';
 		ctx.drawImage(
 			this.front,
 			-camera.pos.x % _CHUNKPIXELS - (camera.deposX),
-			-camera.pos.y % _CHUNKPIXELS - (camera.deposY));
+			-camera.pos.y % _CHUNKPIXELS - (camera.deposY) + 0.5*_smoothing);
 
 
 		this.tileEntities.forEach(entity => {
@@ -204,7 +200,7 @@ class Level {
 
 
 		this.entities.forEach(entity => {
-	if(entity.type == 'player') _ctx.imageSmoothingEnabled = false;
+	if(entity.type == _s_player) _ctx.imageSmoothingEnabled = false;
 	else _ctx.imageSmoothingEnabled = _smoothing;
 			if(entity.parent) return;
 			entity.draw(camera);

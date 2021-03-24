@@ -139,13 +139,6 @@ function loadLevel(camera) {
 
 		const level = new Level(levelMapFG, levelMapBack, levelMapBG, sky);
 
-
-		sprites.execFunc = (spriteName, posx, posy, ctx=_ctx, extension = 1) =>{
-			let func = sprites.spriteFunctions.get(spriteName);
-			if(!func) return;
-			func(camera, posx, posy, ctx, extension);
-		}
-
 		setupParticleFactories(level, particles);
 
 		let entityFactories = setupEntityFactories(level);

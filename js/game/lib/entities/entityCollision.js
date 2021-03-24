@@ -27,8 +27,8 @@ let entityCollision = (subject, entities) =>{
 //
 /*------------------*/
 
-		if(subject.type == 'weapon'){
-			if(target.type == 'projectile'){
+		if(subject.type == _s_weapon){
+			if(target.type == _s_projectile){
 				if(target.onGround) return;
 				if(target.owner == subject.parent) return;
 				if(subject.pos.x < target.pos.x && target.vel.x > 0) return;
@@ -41,20 +41,20 @@ let entityCollision = (subject, entities) =>{
 				return;
 			}
 			if(subject.damagedList.has(target)) return;
-			if(target.type == 'box' || target.health > 0){
+			if(target.type == _s_box || target.health > 0){
 				subject.damagedList.add(target);
 
 				let critProc = rand();
 
 				let damage = subject.damage;
 				let color = '#fff';
-				if(target.type == 'player'){
+				if(target.type == _s_player){
 					color = '#fcc';
 				}
 
 				if(critProc<0.15){
 					damage *= 1.5;
-					if(target.type == 'player'){
+					if(target.type == _s_player){
 						color = '#f88';
 					} else {
 						color = '#fc4';
@@ -75,11 +75,11 @@ let entityCollision = (subject, entities) =>{
 
 		
 
-		if(subject.type == 'projectile'){
-			if(target.health <= 0 && target.type != 'box')return;
-			if(target.type == 'weapon') return;
+		if(subject.type == _s_projectile){
+			if(target.health <= 0 && target.type != _s_box)return;
+			if(target.type == _s_weapon) return;
 			if(target == subject.owner){
-				if(target.type != 'player') return;
+				if(target.type != _s_player) return;
 				if(!subject.onGround) return;
 				if(subject.lifetime) subject.lifetime = -1;
 				target.skillCooldownTimer = 1;
@@ -94,13 +94,13 @@ let entityCollision = (subject, entities) =>{
 				let damage = subject.damage;
 
 				let color = '#fff';
-				if(target.type == 'player'){
+				if(target.type == _s_player){
 					color = '#fcc';
 				}
 
 				if(critProc<0.15){
 					damage *= 1.5;
-					if(target.type == 'player'){
+					if(target.type == _s_player){
 						color = '#f88';
 					} else {
 						color = '#fc4';
@@ -120,20 +120,20 @@ let entityCollision = (subject, entities) =>{
 				let posX = (subject.pos.x + subject.spritesheet.width - subject.offset.right 
 					- target.pos.x + target.offset.left)/2 + target.pos.x;
 
-				if(subject.vel.x >= 0) subject.facing = 'right';
-				else subject.facing = 'left';
+				// if(subject.vel.x >= 0) subject.facing = 'right';
+				// else subject.facing = 'left';
 					
-				target.takeDamage(damage, color, subject, posX, posY);
+				target.takeDamage(damage, color, subject.owner, posX, posY);
 			}
 			return;
 		}
 
 
 
-		if(subject.type == 'enemy'){
+		if(subject.type == _s_enemy){
 			if(subject.attackCooldownTimer != 0) return;
-			if(!subject.hostile && target.type == 'player') return;
-			if(target.type == 'weapon') return;
+			if(!subject.hostile && target.type == _s_player) return;
+			if(target.type == _s_weapon) return;
 			if(target.type == subject.type) return;
 			if(target.health <= 0) return;
 
@@ -143,13 +143,13 @@ let entityCollision = (subject, entities) =>{
 
 			let damage = subject.damage;
 			let color = '#fff';
-			if(target.type == 'player'){
+			if(target.type == _s_player){
 				color = '#fcc';
 			}
 
 			if(critProc<0.15){
 				damage *= 1.5;
-				if(target.type == 'player'){
+				if(target.type == _s_player){
 					color = '#f88';
 				} else {
 					color = '#fc4';

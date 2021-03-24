@@ -32,7 +32,7 @@ class Entity{
 		this.distance = 0;
 		this.animTime = 0;
 
-		this.type = 'entity';
+		this.type = _s_entity;
 
 		this.__kbHor = 2;
 		this.__kbVer = -1.5;

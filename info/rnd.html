@@ -52,6 +52,11 @@
 	<canvas id="screen" width="1920" height="420"></canvas><br><br>
 	<canvas id="scale" width="50" height="420"></canvas>
 	<script>
+
+		for(let x =0; x<15; x++) console.log(Math.random());
+
+
+
 		const scl = document.getElementById('scale');
 		const sctx = scl.getContext('2d');
 
@@ -85,26 +90,40 @@
 		const constC = 3.9943652676605887;
 		const postProcConst = 0.95;
 
-		let postProc = t =>{
-			t+=postProcConst;
-			if(t>1) t = (1-t);
-			t-=postProcConst;
-			if(t<0) t*=-1;
-			t /= (1-postProcConst);
-			t %= 1;
-			return t;
-		}
-
-		let rand = () =>{
-			for(let i=0; i<3*x; i++) 
-				x = (constC*(1+(x - 0.5)*0.008))*x*(1-x);
-			return postProc(x);
-		}
+	let fastRand = () =>{}
+	let rand = function() {
+		var x = (new Date().getTime()%1022+1)/1024;
+		x *= (performance.now()%0.98 + 0.01);
+		const constC = 3.9943652676605887 + (x - 0.5) * 0.001;
+		const postProcessConst = 0.95;
 
 		fastRand = () =>{
 			x = (constC*(1+(x - 0.5)*0.008))*x*(1-x);
 			return x;
+		} //		slower than Math.random()
+
+		let postProcess = t =>{
+			t+=postProcessConst;
+			if(t>1) t = (1-t);
+			t-=postProcessConst;
+			if(t<0) t*=-1;
+			t /= (1-postProcessConst);
+			t %= 1;
+			if(t>1 || t<0)
+				console.log(t);
+
+			return t;
 		}
+
+		return function(){
+			x += performance.now()%15/10;
+			if(x > 1) x %= 1;
+			for(let i=0; i<3*x; i++) 
+				// x *= (performance.now()%1;%0.98 + 0.01);
+				x = (constC*(1+(x - 0.5)*0.008))*x*(1-x);
+			return postProcess(x);
+		}
+	}();
 
 		let render = () =>{
 			ctx.clearRect(0, 0, 2, 40);
@@ -112,7 +131,7 @@
 			ctx.fillStyle = '#fff';
 			ctx.fillRect(1900, 0, 10, 420);
 			ctx.fillStyle = 'rgb(200, 60, 60)';
-			ctx.fillRect(1900, 400-Math.random()*400, 2, 2);
+			ctx.fillRect(1900, 400-rand()*400, 2, 2);
 			ctx.fillStyle = '#000';
 			ctx.fillRect(1900, 401, 10, 1);
 		}
@@ -121,7 +140,7 @@
 //->
 		setInterval(() => {
 			render();
-		}, 5);
+		}, 0);
 
 //->
 		console.time('1');

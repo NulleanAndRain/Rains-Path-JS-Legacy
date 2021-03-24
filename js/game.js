@@ -13,7 +13,7 @@ const _CHUNKPIXELS = _TILESIZE*_CHUNKSIZE;
 var canvWidth = resizeConst[canvResize];
 var _canvHeight = 1;
 
-const alphaVer = 'v0.4.3.1 alpha';
+const alphaVer = 'v0.4.3.5 alpha';
 
 //		settings
 var _smoothing = false;
@@ -24,7 +24,7 @@ var _chunkGrid = false;
 
 var __smoothing = false;
 
-const _respawnTime = 1000;
+const _respawnTime = 10000;
 
 const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft', 'KeyE', 'KeyQ', 'KeyZ'];
 
@@ -64,6 +64,9 @@ window.onload = () =>{
 		let pos = level.respswn;
 		let Rain = new Player(LenaSprites, pos.x, pos.y);
 		level.entities.add(Rain);
+
+		window.Rain = Rain;
+
 
 		let splashes = new Set();
 

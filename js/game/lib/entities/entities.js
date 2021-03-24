@@ -1,7 +1,7 @@
 class Player extends Entity{
 	constructor(spritesheet, x=0, y=0){
 		super(spritesheet, x, y);
-		this.type = 'player';
+		this.type = _s_player;
 		this.setOffset(4, 4, 2);
 
 		this.attackTime = 375;
@@ -12,6 +12,9 @@ class Player extends Entity{
 		this.skillCooldown = 2500;
 		this.skillCooldownTimer = 0;
 
+		this.attackDamage = 15;
+		this.skillDamage = 10;
+
 
 		this.attackCooldown = 375;
 		this.attackCooldownTimer = 0;
@@ -19,8 +22,7 @@ class Player extends Entity{
 		this.knockbackTaken = 1;
 
 		this.score = 0;
-
-		this.__updateScore();
+		this.AddScore(0);
 	}
 
 	jump(){
@@ -39,10 +41,6 @@ class Player extends Entity{
 		this.score += score;
 		if(this.score < 0) this.score = 0;
 
-		this.__updateScore(score);
-	}
-
-	__updateScore(score){
 		if(score){
 			if(score > 0){
 				createGradientTextParticle(
@@ -51,7 +49,7 @@ class Player extends Entity{
 					`+${score}`,
 					blue_gradient,
 					1500);
-			} else {
+			} else if(score < 0){
 				createGradientTextParticle(
 					this.pos.x+16, 
 					this.pos.y+8,
@@ -94,12 +92,14 @@ class Player extends Entity{
 		createRainsWeapon(this,
 			{spriteName: 'racketR', animationFrames: 5},
 			{spriteName: 'racketL', animationFrames: 5},
-			this.attackTime);
+			this.attackTime, this.attackDamage);
 	}
 
 	buttonTestEvent(){
 
-		this.heal(100);
+		//  test only
+
+		// this.heal(100);
 
 		// createBizarreParticle(
 		// 	this.pos.x+8  + (rand()-0.5)*10, 
@@ -110,6 +110,8 @@ class Player extends Entity{
 	//damage and heal
 
 	takeDamage(amount, color, entity, posx, posy){
+		if(this.damageCooldownTimer != 0) return;
+		this.damageCooldownTimer = this.damageCooldown;
 		this.health -= amount;
 		if(this.health<0){
 			this.AddScore(-100);
@@ -249,7 +251,7 @@ class Player extends Entity{
 					pos,
 					this.pos.y+8,
 					5000,
-					10, 15,
+					10, this.skillDamage,
 					{name: 'kunai', frames: 1},
 				);
 			}
@@ -362,7 +364,7 @@ class EntityPart extends Entity{
 		let spritesheet = new SpriteSheet(sizes.width, sizes.height);
 
 		super(spritesheet, entity.pos.x+x, entity.pos.y+y);
-		this.type = 'entityPart';
+		this.type = _s_entitypart;
 		this.parent = entity;
 
 		this.frameDuration = 75;
@@ -438,7 +440,7 @@ class EntityPart extends Entity{
 class Box extends Entity{
 	constructor(spritesheet, x=0, y=0){
 		super(spritesheet, x, y);
-		this.type = 'box';
+		this.type = _s_box;
 
 		this.knockbackTaken = 0;
 
@@ -486,7 +488,7 @@ class Projectile extends Entity{
 		this.owner = entity;
 		this.ownerSpritesheet = entity.spritesheet;
 
-		this.type = 'projectile';
+		this.type = _s_projectile;
 		this.maxHealth = -1;
 		this.health = this.maxHealth;
 		this.canRegenerate = false;
@@ -660,12 +662,12 @@ class Projectile extends Entity{
 class Guardian extends Entity{
 	constructor(spritesheet, x=0, y=0, sx = x, sy = y){
 		super(spritesheet, x, y);
-		this.type = 'enemy';
+		this.type = _s_enemy;
 
 		this.facing = 'left';
 		this.setOffset(2, 2);
 
-		this.speed = 0.4;
+		this.speed = 0.5;
 		this.knockbackTaken = 0.8;
 
 		this.damage = 25;
@@ -716,7 +718,7 @@ class Guardian extends Entity{
 		if(this.hostile){
 			let playerInRadius = false;
 			entities.forEach(entity=>{
-				if(entity.type != 'player') return;
+				if(entity.type != _s_player) return;
 				if(entity.isDowned) return;
 				let dx = (this.pos.x+12 - entity.pos.x-8);
 				let dy = (this.pos.y+16 - entity.pos.y-12);
@@ -795,6 +797,36 @@ class Guardian extends Entity{
 		}
 	}
 
+	takeDamage(amount, color, entity, posx, posy){
+		if(this.damageCooldownTimer != 0) return;
+		this.damageCooldownTimer = this.damageCooldown;
+		createTextParticle(
+			this.pos.x+8, 
+			this.pos.y-8,
+			`${amount}`, color,
+			2500);
+		createGuardArmorSplash(posx, posy, entity.facing);
+
+
+		if(this.pos.x + this.spritesheet.width/2
+			< entity.pos.x + entity.spritesheet.width/2){
+			this.vel.x -= this.knockbackTaken*this.__kbHor;
+		} else {
+			this.vel.x += this.knockbackTaken*this.__kbHor;
+		}
+
+		this.vel.y = this.__kbVer * (this.knockbackTaken*2);
+
+		if(this.health == -1) return;
+
+		this.health -= amount;
+		if(this.health <= 0){
+			this.health=0;
+			if(entity.AddScore) entity.AddScore(this.score);
+		}
+		this.regenTimeout = this.regenInterval;
+	}
+
 	setAnimFrame(name, frames){
 		let frame = Math.floor(this.animTime/300)%frames;
 		if(this.state != `${name}${frame}`){
@@ -850,6 +882,7 @@ class Guardian extends Entity{
 	}
 
 	blockCollideX(){
-		this.target = undefined;
+		if(!this.playerInRadius)
+			this.target = undefined;
 	}
 }

@@ -88,15 +88,16 @@ let menuButtons = () =>{
 		}
 	}
 
-	const setting_debug = document.getElementById('setting_debug');
-	const setting_debug_slider = document.getElementById('setting_debug_slider');
+
+	const setting_autojump = document.getElementById('setting_autojump');
+	const setting_autojump_slider = document.getElementById('setting_autojump_slider');
 
 	if(localStorage.getItem('setting_autojump')){
 		setting_autojump_slider.classList.remove('setting_checkbox_slider__active');
 	}
 
 	setting_autojump.onclick = () =>{
-		if(setting_autojump_slider.classList.contains('setting_checkbox_slider__active')){
+		if(localStorage.getItem('setting_autojump')){
 			setting_autojump_slider.classList.add('setting_checkbox_slider__active');
 			localStorage.removeItem('setting_autojump');
 		} else {

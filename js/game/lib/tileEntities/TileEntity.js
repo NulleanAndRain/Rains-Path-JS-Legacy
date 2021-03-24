@@ -11,9 +11,9 @@ class TileEntity{
 
 		this.spritesheet = spritesheet;
 		this.animTime = 0;
-		this.state = 'Idle';
+		this.state = '';
 
-		this.type = 'block';
+		this.type = _s_block;
 	}
 
 	setOffset(left, right, top=this.offset.top, bottom=this.offset.bottom){

@@ -25,6 +25,7 @@ var __drawLayer = 'front';
 const leveleditor = '0.1';
 
 
+
 window.onload = () =>{
 	screen = document.getElementById('screen');
 	_ctx = screen.getContext('2d');
@@ -32,6 +33,21 @@ window.onload = () =>{
 	_ctx.imageSmoothingEnabled = false;
 	screen.width  = screen.clientWidth/2;
 	screen.height = screen.clientHeight/2;
+
+let symb1 = Symbol('player');
+let obj1 = {};
+	obj1.x1 = 'player';
+	obj1.x2 = symb1;
+let obj2 = {};
+	obj2.x1 = 'player';
+	obj2.x2 = symb1;
+console.time('string');
+if(obj1.x1 == obj2.x1) console.log('1');
+console.timeEnd('string');
+console.time('symbol');
+if(obj1.x2 == obj2.x2) console.log('2');
+console.timeEnd('symbol');
+
 
 
 	const camScreen = document.getElementById('screenAlt');
