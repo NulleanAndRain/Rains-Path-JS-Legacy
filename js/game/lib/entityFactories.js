@@ -16,7 +16,7 @@ let setupEntityFactories = level =>{
 		if(entity.facing == 'left')
 			__xOff *= -1;
 
-		let offsFar = [12, 7, 2, 7, 12];
+		let offsFar = [12, 9, 2, 9, 14];
 
 		let part = new EntityPart(entity, __xOff, _yOff, spriteRight, lifetime);
 

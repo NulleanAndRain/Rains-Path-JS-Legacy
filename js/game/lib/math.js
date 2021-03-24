@@ -76,7 +76,7 @@ let _setupRand = () =>{
 	fastRand = () =>{
 		x = (constC*(1+(x - 0.5)*0.008))*x*(1-x);
 		return x;
-	}
+	} //slower than Math.random()
 }
 
 _setupRand();

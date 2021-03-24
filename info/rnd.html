@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Rand</title>
+	<style>
+		canvas{
+			image-rendering: pixelated;
+			position: absolute;
+			left: 0;
+		}
+		#screen{
+			border-top: 1px solid #000;
+			border-bottom: 1px solid #000;
+			top: 80px;
+		}
+		#scale{
+			top: 81px;
+		}
+		#num{
+			position: absolute;
+			left: 400px;
+			top: 600px;
+		}
+		#res{
+			position: absolute;
+			left: 400px;
+			top: 630px;
+		}
+		#itr{
+			position: absolute;
+			left: 400px;
+			top: 660px;
+		}
+		#xval{
+			position: absolute;
+			left: 400px;
+			top: 690px;
+			width: 178px;
+			height: 20px;
+		}
+		#resetX{
+			position: absolute;
+			left: 400px;
+			top: 720px;
+			width: 178px;
+			height: 20px;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="screen" width="1920" height="420"></canvas><br><br>
+	<canvas id="scale" width="50" height="420"></canvas>
+	<script>
+		const scl = document.getElementById('scale');
+		const sctx = scl.getContext('2d');
+
+		sctx.font = '16px Verdana';
+		// sctx.fillRect(49, 0, 1, 420);
+
+		// sctx.fillRect(0, 0, 50, 1);
+		sctx.fillText('100%', 0, 16);
+
+		sctx.fillRect(0, 101, 30, 1);
+		sctx.fillText('75%', 0, 116);
+
+		sctx.fillRect(0, 201, 50, 1);
+		sctx.fillText('50%', 12, 216);
+
+		sctx.fillRect(0, 301, 30, 1);
+		sctx.fillText('25%', 0, 316);
+
+		sctx.fillRect(0, 401, 50, 1);
+		sctx.fillText('0%', 20, 416);
+	</script>
+	<script>
+		const cvs = document.getElementById('screen');
+		const ctx = cvs.getContext('2d');
+
+		ctx.clearRect(0, 0, 1920, 40);
+		ctx.fillRect(1900, 0, 1, 410);
+		ctx.fillRect(0, 401, 1920, 1);
+
+		var x = (new Date().getTime()%1023+1)/1024;
+		const constC = 3.9943652676605887;
+		const postProcConst = 0.95;
+
+		let postProc = t =>{
+			t+=postProcConst;
+			if(t>1) t = (1-t);
+			t-=postProcConst;
+			if(t<0) t*=-1;
+			t /= (1-postProcConst);
+			t %= 1;
+			return t;
+		}
+
+		let rand = () =>{
+			for(let i=0; i<3*x; i++) 
+				x = (constC*(1+(x - 0.5)*0.008))*x*(1-x);
+			return postProc(x);
+		}
+
+		fastRand = () =>{
+			x = (constC*(1+(x - 0.5)*0.008))*x*(1-x);
+			return x;
+		}
+
+		let render = () =>{
+			ctx.clearRect(0, 0, 2, 40);
+			ctx.drawImage(cvs, -2, 0);
+			ctx.fillStyle = '#fff';
+			ctx.fillRect(1900, 0, 10, 420);
+			ctx.fillStyle = 'rgb(200, 60, 60)';
+			ctx.fillRect(1900, 400-rand()*400, 2, 2);
+			ctx.fillStyle = '#000';
+			ctx.fillRect(1900, 401, 10, 1);
+		}
+
+
+//->
+		setInterval(() => {
+			render();
+		}, 5);
+
+//->
+		console.time('1');
+		for(let i = 0; i<200; i++){
+			rand();
+		}
+		console.timeEnd('1');
+
+		console.time('2');
+		for(let i = 0; i<200; i++){
+			Math.random();
+		}
+		console.timeEnd('2');
+
+		console.time('3');
+		for(let i = 0; i<200; i++){
+			fastRand();
+		}
+		console.timeEnd('3');
+	</script>
+</body>
+</html>

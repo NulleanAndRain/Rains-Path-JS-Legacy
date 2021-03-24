@@ -36,15 +36,30 @@ class Player extends Entity{
 
 	skill(){}
 	_skill_proxy(){
-		createBizarreParticle(
-			this.pos.x+8  + (rand()-0.5)*10, 
-			this.pos.y    + (rand()-0.5)*10,);
-		// createTextParticle(
-		// 	this.pos.x+8, 
-		// 	this.pos.y+4,
-		// 	'15', '#f88',
-		//	5000);
-		// crateBloodSplash(this.pos.x+8, this.pos.y+12, this.facing);
+		// createBizarreParticle(
+		// 	this.pos.x+8  + (rand()-0.5)*10, 
+		// 	this.pos.y    + (rand()-0.5)*10,);
+
+
+		createGradientTextParticle(
+			this.pos.x+8, 
+			this.pos.y+4,
+			`Ебаный рот этого казино, блядь`,
+			rainbow_gradient);
+
+		createGradientTextParticle(
+			this.pos.x+8, 
+			this.pos.y+12,
+			`Ты кто такой, сука, чтобы это делать, блядь?`,
+			purple_gradient);
+
+		createFullscreenSplash(
+			`You died`,
+			'#C43234');
+
+		// this.heal(100);
+
+		// createCampfireSmoke(this.pos.x+8, this.pos.y+12);
 	}
 
 	attack(){}
@@ -52,15 +67,55 @@ class Player extends Entity{
 		this.attacking = true;
 		this.animTime = 0;
 		this.attack = () =>{}
-		createRainsWeapon(this, {spriteName: 'racketR', animationFrames: 5}, {spriteName: 'racketL', animationFrames: 4}, this.attackTime-10);
+		createRainsWeapon(this, {spriteName: 'racketR', animationFrames: 5}, {spriteName: 'racketL', animationFrames: 4}, this.attackTime);
 	}
 
 	_buttonTestEvent_proxy(){
-		createRainbowTextParticle(
-			this.pos.x+8, 
-			this.pos.y+4,
-			`ты пидор`);
+		this.takeDamage(10, '#c26352', this.facingReverse, this.pos.x+8, this.pos.y+10);
 	}
+
+	//damage and heal
+
+	takeDamage(amount, color, facing, posx, posy){
+		this.health -= amount;
+		if(this.health<0) this.health = 0;
+		createTextParticle(
+			this.pos.x+8, 
+			this.pos.y-8,
+			`${amount}`, color,
+			5000);
+		createBloodSplash(posx, posy, facing);
+
+		this.regenTimeout = this.regenInterval;
+
+		healthNum.innerHTML = `${this.health}/${this.maxHealth}`;
+		healthLine.style.width = `${(this.health/this.maxHealth)*100}%`;
+	}
+
+	regen(){
+		this.health += 1;
+		if(this.health>this.maxHealth)
+			this.health = this.maxHealth;
+		healthNum.innerHTML = `${this.health}/${this.maxHealth}`;
+		healthLine.style.width = `${(this.health/this.maxHealth)*100}%`;
+	}
+
+	heal(amount){
+		let t = this.health;
+		this.health += amount;
+		if(this.health>this.maxHealth)
+			this.health = this.maxHealth;
+		createTextParticle(
+			this.pos.x+8, 
+			this.pos.y-8,
+			`${this.health - t}`, '#00F01F',
+			5000);
+
+		healthNum.innerHTML = `${this.health}/${this.maxHealth}`;
+		healthLine.style.width = `${(this.health/this.maxHealth)*100}%`;
+	}
+
+	//update
 
 	updateProxy(deltaTime, tileCollider, camera, gravity){
 		if(this.attacking && this.animTime >= this.attackTime){

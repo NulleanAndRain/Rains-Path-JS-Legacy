@@ -12,6 +12,12 @@ class Entity{
 		this.jumpVec=-9;
 		this.acceleratedJump = false;
 
+		this.maxHealth = 100;
+		this.health = this.maxHealth;
+		this.canRegenerate = true;
+		this.regenInterval = 1500;
+		this.regenTimeout = 0;
+
 		this.attacking = false;
 		this.spritesheet = spritesheet;
 		this.state = 'Idle';
@@ -45,6 +51,11 @@ class Entity{
 
 	get onMove(){
 		return this.movement.left||this.movement.right;
+	}
+
+	get facingReverse(){
+		if(this.facing == 'left') return 'right';
+		return 'left';
 	}
 
 	moveLeft(speed=this.speed){
@@ -159,6 +170,18 @@ class Entity{
 		this.veliocityTick(deltaTime, tileCollider, camera, gravity);
 		this.animTime+=deltaTime;
 		this.updateProxy(deltaTime, tileCollider, camera, gravity);
+
+
+		if(this.canRegenerate){
+			if(this.health<this.maxHealth){
+				if(this.regenTimeout <= 0){
+					this.regen();
+					this.regenTimeout = this.regenInterval;
+				} else {
+					this.regenTimeout -= deltaTime;
+				}
+			}
+		}
 	}
 
 	// skills and attack
@@ -166,13 +189,36 @@ class Entity{
 	attack(){}
 	skill(){}
 
+	//damage and heal
+
 	takeDamage(amount, color, facing, posx, posy){
+		this.health -= amount;
 		createTextParticle(
 			this.pos.x+8, 
 			this.pos.y-8,
 			`${amount}`, color,
 			5000);
-		crateBloodSplash(posx, posy, facing);
+		createBloodSplash(posx, posy, facing);
+
+		this.regenTimeout = this.regenInterval;
+	}
+
+	regen(){
+		this.health += 1;
+		if(this.health>this.maxHealth)
+			this.health = this.maxHealth;
+	}
+
+	heal(amount){
+		let t = this.health;
+		this.health += amount;
+		if(this.health>this.maxHealth)
+			this.health = this.maxHealth;
+		createTextParticle(
+			this.pos.x+8, 
+			this.pos.y-8,
+			`${this.health - t}`, '#00F01F',
+			5000);
 	}
 
 	//sprites

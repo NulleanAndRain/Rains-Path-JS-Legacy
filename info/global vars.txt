@@ -1,0 +1,40 @@
+----------------game.js----------------
+canvResize
+const resizeConst = [942, 744, 602, 482];
+const _TILESIZE = 8;
+canvWidth
+_canvHeight
+
+const alphaVer
+
+var healthNum;
+var healthLine;
+
+//		settings
+_smoothing
+_collDebug
+_bgBlur
+
+const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft', 'KeyE', 'KeyQ', 'KeyZ'];
+
+//		screen
+_canvas
+_ctx
+
+
+----------------Entity.js----------------
+const _speedDivider = 16;
+
+
+----------------keyboard.js----------------
+_keyStates
+_lastKey
+
+
+----------------random_stuff.js----------------
+rainbow_gradient
+purple_gradient
+
+
+----------------TileCollider.js----------------
+__collisionStops		//setting

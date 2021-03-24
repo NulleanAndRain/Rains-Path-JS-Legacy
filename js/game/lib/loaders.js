@@ -7,7 +7,7 @@ let loadSky = () =>{
 
 		let lnrSky = Sky
 			.getContext('2d')
-			.createLinearGradient(0,0,0,Sky.height);
+			.createLinearGradient(0, 0, 0, Sky.height);
 		lnrSky.addColorStop(0,"#8FC2DB");
 		lnrSky.addColorStop(0.8,"#94DBDB");
 		Sky.getContext('2d').fillStyle = lnrSky;
@@ -24,17 +24,21 @@ let loadTiles = () =>{
 		bgTiles.defineMonocolorTile('shadow', '#000');
 
 		bgTiles.addTiles('grass')
+		.then(bgTiles=>bgTiles.addTiles('grassCorner', 2, 3))
+		.then(bgTiles=>bgTiles.addBigSprites('grassOuter', 'textures/grassOuter.png', 10, 10, 2, 2))
+		.then(bgTiles=>bgTiles.defineAtSpritesheet('grassOuter4', 6, 0, 8, 2))
+		.then(bgTiles=>bgTiles.defineAtSpritesheet('grassOuter5', 0, 6, 2, 8))
+		.then(bgTiles=>bgTiles.defineAtSpritesheet('grassOuter6', 18, 6, 2, 8))
+		.then(bgTiles=>bgTiles.defineAtSpritesheet('grassOuter7', 6, 18, 8, 2))
+		.then(bgTiles=>bgTiles.addSpriteFunc('grass', creategrassOuter, 5, 3))
 		.then(bgTiles=>copyTile(bgTiles, '_patternSolid', 'air'))
 		.then(bgTiles=>bgTiles.addTiles('dirt'))
-		.then(bgTiles=>copyTile(bgTiles, 'dirt6', 'grass6'))
 		.then(bgTiles=>bgTiles.addTiles('stone'))
 		.then(bgTiles=>bgTiles.addTiles('dirtToStone'))
 		.then(bgTiles=>bgTiles.addTiles('cobble'))
-		.then(bgTiles=>bgTiles.addTiles('animTest', 'textures', 6, 1))
-		.then(bgTiles=>bgTiles
-			.addBigSprites('grassCube', 'textures/grass.png', 8, 24, 3, 1))
 		.then(bgTiles=>bgTiles
 			.addBigSprites('campfire', 'textures/campfire.png', 8, 16, 8, 2))
+		.then(bgTiles=>bgTiles.addSpriteFunc('campfire', createCampfireParticles, 8, 2))
 		.then(bgTiles=>resolve(bgTiles));
 	});
 }
@@ -47,25 +51,26 @@ let copyTile = (tileset, copyTo, copyFrom) => {
 }
 
 let createFGTiles = (level, foregrounds, patterns, xOff=0, yOff=0) => {
-	function applyRangeFG(background, xStart, xLen, yStart, yLen) {
+	function applyRangeFG(tile, xStart, xLen, yStart, yLen) {
 		const xEnd = xStart + xLen;
 		const yEnd = yStart + yLen;
 		for (let x = xStart; x < xEnd; ++x) {
 			for (let y = yStart; y < yEnd; ++y) {
-				if(background.pattern){
+				if(tile.pattern){
 					createFGTiles(
 						level, 
-						patterns[background.pattern].tiles, 
+						patterns[tile.pattern].tiles, 
 						patterns, xOff+x, yOff+y);
-				} else if(background.animation){
+				} else if(tile.animation){
 					level.tiles.set(x+xOff, y+yOff, {
-						animation: background.animation,
-						type: background.type,
+						animation: tile.animation,
+						type: tile.type,
 					});
 				} else {
 					level.tiles.set(x+xOff, y+yOff, {
-						name: background.tile,
-						type: background.type,
+						name: tile.tile,
+						type: tile.type,
+						sublevel: tile.sublevel,
 					});
 				}
 			}
@@ -92,25 +97,26 @@ let createFGTiles = (level, foregrounds, patterns, xOff=0, yOff=0) => {
 
 
 let createBackingTiles = (level, backgrounds, patterns, xOff=0, yOff=0) => {
-	 function applyRangeBacking(background, xStart, xLen, yStart, yLen) {
+	 function applyRangeBacking(tile, xStart, xLen, yStart, yLen) {
 		const xEnd = xStart + xLen;
 		const yEnd = yStart + yLen;
 		for (let x = xStart; x < xEnd; ++x) {
 			for (let y = yStart; y < yEnd; ++y) {
-				if(background.pattern){
+				if(tile.pattern){
 					createBackingTiles(
 						level, 
-						patterns[background.pattern].tiles, 
+						patterns[tile.pattern].tiles, 
 						patterns, xOff+x, yOff+y);
-				} else if(background.animation){
+				} else if(tile.animation){
 					level.backing.set(x+xOff, y+yOff, {
-						animation: background.animation,
-						type: background.type,
+						animation: tile.animation,
+						type: tile.type,
 					});
 				} else {
 					level.backing.set(x+xOff, y+yOff, {
-						name: background.tile,
-						type: background.type,
+						name: tile.tile,
+						type: tile.type,
+						sublevel: tile.sublevel,
 					});
 				}
 			}
@@ -136,25 +142,26 @@ let createBackingTiles = (level, backgrounds, patterns, xOff=0, yOff=0) => {
 }
 
 let createBG = (level, bg, patterns, xOff=0, yOff=0) => {
-	function applyRangeBG(background, xStart, xLen, yStart, yLen) {
+	function applyRangeBG(tile, xStart, xLen, yStart, yLen) {
 		const xEnd = xStart + xLen;
 		const yEnd = yStart + yLen;
 		for (let x = xStart; x < xEnd; ++x) {
 			for (let y = yStart; y < yEnd; ++y) {
-				if(background.pattern){
+				if(tile.pattern){
 					createBG(
 						level, 
-						patterns[background.pattern].tiles, 
+						patterns[tile.pattern].tiles, 
 						patterns, xOff+x, yOff+y);
-				} else if(background.animation){
+				} else if(tile.animation){
 					level.bg.set(x+xOff, y+yOff, {
-						animation: background.animation,
-						type: background.type,
+						animation: tile.animation,
+						type: tile.type,
 					});
 				} else {
 					level.bg.set(x+xOff, y+yOff, {
-						name: background.tile,
-						type: background.type,
+						name: tile.tile,
+						type: tile.type,
+						sublevel: tile.sublevel,
 					});
 				}
 			}
@@ -242,6 +249,12 @@ function loadLevel(camera) {
 	])
 	.then(([levelSpec, sprites, particles]) => {
 		const level = new Level();
+
+		sprites.execFunc = (spriteName, posx, posy, ctx=_ctx, extension = 1) =>{
+			let func = sprites.spriteFunctions.get(spriteName);
+			if(!func) return;
+			func(camera, posx, posy, ctx, extension);
+		}
 
 
 		createFGTiles(level, levelSpec.foregrounds, levelSpec.patterns);

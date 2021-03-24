@@ -1,8 +1,9 @@
 var _keyStates = new Map();
 var _lastKey;
 
-let setKeyboardEvents = (player, keyJump, keyLeft, keyRight, keyRun, keyAttack, keySkill, keyTestEvent) =>{
-	window.addEventListener('keydown', (event)=>{
+let setKeyboardEvents = (player, timer, keyJump, keyLeft, keyRight, keyRun, keyAttack, keySkill, keyTestEvent) =>{
+	window.addEventListener('keydown', event=>{
+		if(timer.isPaused) return;
 		if(event.code==keyJump) {
 			player.jump();
 		}
@@ -70,4 +71,19 @@ let keyboardFunc = (player, keyLeft, keyRight) => {
 		}
 	}
 	setTimeout(()=> keyboardFunc(player, keyLeft, keyRight), 0);
+}
+
+let setPauseKey = (keyPause, keyPauseAlt, timer, intElems) =>{
+	window.addEventListener('keydown', event=>{
+		if(event.code==keyPause || event.code==keyPauseAlt){
+			if(timer.isPaused) {
+				intElems._func_Hide();
+				timer.continue();
+			}
+			else{
+				intElems._func_Show();
+				timer.pause();
+			}
+		}
+	});
 }

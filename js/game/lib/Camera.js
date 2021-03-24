@@ -22,6 +22,13 @@ class Camera {
 			} else {
 		 		this.pos.y = level.heightAt(player.pos.x)-this.size.y-_TILESIZE/2;
 				this.underMap = true;
+				if(player.health>0)
+					player.takeDamage(
+						player.maxHealth*2,
+						'#fcc',
+						player.facingReverse,
+						player.pos.x,
+						player.pos.y);
 			}
 		}
     }

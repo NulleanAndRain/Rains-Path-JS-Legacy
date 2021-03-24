@@ -2,8 +2,12 @@ var canvResize = 2;
 const resizeConst = [942, 744, 602, 482];
 const _TILESIZE = 8;
 var canvWidth = resizeConst[2];
+var _canvHeight;
 
-const alphaVer = 'v0.3.0.0 alpha';
+const alphaVer = 'v0.3.3.4 alpha';
+
+var healthNum;
+var healthLine;
 
 //		settings
 var _smoothing = false;		
@@ -21,6 +25,9 @@ var _ctx = _canvas.getContext('2d');
 window.onload = () =>{
 	const screen = document.getElementById('screen');
 	const context = screen.getContext('2d');
+
+	healthNum = document.getElementById('healthNum');
+	healthLine = document.getElementById('healthLine');
 
 	document.getElementById('alphaVer').innerHTML = alphaVer;
 
@@ -63,26 +70,13 @@ window.onload = () =>{
 
 		timer.start();
 
-		setKeyboardEvents(Rain, ...buttonsClassic);
+		setKeyboardEvents(Rain, timer, ...buttonsClassic);
 		let intElems = setupScreenInterface(screen, context, timer);
 
 		setPauseKey('Escape', 'Backquote', timer, intElems);
 
 		drawContent(screen, context, Rain, camera);
-	});
-}
 
-let setPauseKey = (keyPause, keyPauseAlt, timer, intElems) =>{
-	window.addEventListener('keydown', (event)=>{
-		if(event.code==keyPause || event.code==keyPauseAlt){
-			if(timer.isPaused) {
-				intElems._func_Hide();
-				timer.continue();
-			}
-			else{
-				intElems._func_Show();
-				timer.pause();
-			}
-		}
+		setupScreenSplash(Rain, camera, level);
 	});
 }

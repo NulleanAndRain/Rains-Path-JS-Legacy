@@ -5,6 +5,8 @@ class SpriteSheet{
 		this.height = height;
 		this.sprites = new Map();
 
+		this.spriteFunctions = new Map();
+
 		{
 			let buffer = document.createElement('canvas');
 			buffer.width = this.width;
@@ -62,6 +64,7 @@ class SpriteSheet{
 				posy,
 				buffer.width*extension,
 				buffer.height*extension);
+			this.execFunc(name, posx, posy, ctx, extension);
 		} else {
 			buffer = this.sprites.get('no texture');
 			ctx.drawImage(
@@ -76,6 +79,32 @@ class SpriteSheet{
 	drawTile(name, posx, posy, ctx=_ctx, extension=1){
 		this.draw(name, posx*this.width, posy*this.height, ctx, extension);
 	}
+
+	drawSpritePart(name, posx, posy, sWidth, sHeight, sx=0, sy=0, ctx=_ctx, extension=1){
+		let buffer = this.sprites.get(name);
+		if(buffer){
+			ctx.drawImage(
+				buffer,
+				sx, sy, sWidth, sHeight,
+				posx,
+				posy,
+				sWidth*extension,
+				sHeight*extension);
+			this.execFunc(name, posx, posy, ctx, extension);
+		} else {
+			buffer = this.sprites.get('no texture');
+			ctx.drawImage(
+				buffer,
+				0, 0, sWidth, sHeight,
+				posx,
+				posy,
+				sWidth*extension,
+				sHeight*extension);
+		}
+	}
+
+	execFunc(){}
+
 
 	spriteSize(name){
 		if(this.sprites.has(name)){
@@ -99,21 +128,28 @@ class SpriteSheet{
 		this.sprites.set(name, buffer);
 	}
 
-	addTiles(name, folder='textures', horCount=5, vertCount=3){
-	    return new Promise(resolve=>{
-	        this.image.src = `./img/${folder}/${name}.png`;
-	        this.image.onload = () => {
-            	if(horCount==1&&vertCount==1){
-                    this.define(`${name}`, 0, 0);
-            	} else {
-	            	for(let i=0; i<vertCount; i++){
-		                for(let j=0; j<horCount; j++){
-		                    this.define(`${name}${(i*5+j)}`, j, i);;
-		                }
-		            }
-		        }
-	            resolve(this);
-	        }
+	addTiles(name, horCount=5, vertCount=3, folder='textures'){
+		return new Promise(resolve=>{
+			this.image.src = `./img/${folder}/${name}.png`;
+			this.image.onload = () => {
+				if(horCount==1&&vertCount==1){
+					this.define(`${name}`, 0, 0);
+				} else {
+					for(let i=0; i<vertCount; i++){
+						for(let j=0; j<horCount; j++){
+							this.define(`${name}${(i*horCount+j)}`, j, i);;
+						}
+					}
+				}
+				resolve(this);
+			}
+		});
+	}
+
+	addSpriteFunc(spriteName, setupFunc, horCount=5, vertCount=3){
+		return new Promise(resolve=>{
+			setupFunc(this, spriteName, horCount, vertCount);
+			resolve(this);
 		});
 	}
 
@@ -196,6 +232,16 @@ class SpriteSheet{
 				}
 				resolve(this);
 			}
+		});
+	}
+
+	defineAtSpritesheet(name, posx, posy, width = this.width, height = this.height){
+		return new Promise(resolve=>{
+			this.defineAbs(
+				`${name}`,
+				posx, posy,
+				width, height);
+			resolve(this);
 		});
 	}
 

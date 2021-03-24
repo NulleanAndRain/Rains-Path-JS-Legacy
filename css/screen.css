@@ -2,6 +2,22 @@ body{
 	background-color: #8FC2DB;
 }
 
+@font-face{
+	font-family: "AtariRevue";
+	src: url("../fonts/AtariRevue.ttf") format("truetype");
+	font-style: normal;
+	font-weight: normal;
+}
+
+.fontLoader{
+	font-family: "AtariRevue";
+	position: fixed;
+	top: 0;
+	left: 0;
+	color: transparent;
+	font-size: 0;
+}
+
 #pause_bg{
 	z-index: 1;
 	position: fixed;

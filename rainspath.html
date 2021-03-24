@@ -11,18 +11,20 @@
 		<script src="js/lib/transparentInt.js"></script>
 		<script src="js/lib/setupScreenInterface.js"></script>
 	<!-- screen lib -->
-		<script src="js/lib/drawContent.js"></script>
-		<script src="js/lib/resizeAnim.js"></script>
+		<script src="js/game/lib/drawContent.js"></script>
+		<script src="js/game/lib/resizeAnim.js"></script>
 	<!-- game -->
 		<!-- game lib -->
 			<script src="js/game/lib/math.js"></script>
 			<script src="js/game/lib/Timer.js"></script>
 			<script src="js/game/lib/keyboard.js"></script>
 		<!-- level lib -->
+			<script src="js/game/lib/Camera.js"></script>
 			<script src="js/game/lib/Compositor.js"></script>
 			<script src="js/game/lib/TileResolver.js"></script>
 			<script src="js/game/lib/TileCollider.js"></script>
 			<script src="js/game/lib/SpriteSheet.js"></script>
+			<script src="js/game/lib/spriteCustomFunctions.js"></script>
 			<script src="js/game/lib/loaders.js"></script>
 			<script src="js/game/lib/layers.js"></script>
 		<!-- entities -->
@@ -35,10 +37,9 @@
 			<script src="js/game/lib/particleFactories.js"></script>
 		<!-- level -->
 			<script src="js/game/lib/Level.js"></script>
-		<!-- levels -->
 			<script src="js/game/levels/level1.js"></script>
-		<!-- display -->
-			<script src="js/game/lib/Camera.js"></script>
+		<!-- random stuff -->
+			<script src="js/game/lib/random_stuff.js"></script>
 	<!-- main script -->
 	<script src="js/game.js"></script>
 </head>
@@ -171,6 +172,8 @@
 		<div id="mobileButtonShift" class="flex-row mobile-button-small mobile-button-shift text-unselect">Shift</div>
 	<script src="./css/mobileInt.js"></script>
 	</div>
+
+	<div class="fontLoader">a</div>
 	
 </body>
 </html>

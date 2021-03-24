@@ -3,28 +3,54 @@ var __collisionStops = true;
 class TileCollider {
 	constructor(tileMatrix) {
 		this.tiles = new TileResolver(tileMatrix);
+
+		this.collisionLayer = document.createElement('canvas');
+			this.collisionLayer.width = _canvas.width;
+			this.collisionLayer.height = _canvas.height;
+		this.cctx = this.collisionLayer.getContext('2d');
+	}
+
+	drawCollisionLayer(camera, ctx=_ctx){
+		ctx.drawImage(this.collisionLayer, 0, 0);
+		this.cctx.clearRect(0, 0,
+			this.collisionLayer.width,
+			this.collisionLayer.height);
+
 	}
 
 	highlightHitbox(entity, camera){
-		_ctx.beginPath();
-		_ctx.strokeStyle = "green";
-		_ctx.rect(
+		this.cctx.beginPath();
+		this.cctx.strokeStyle = "green";
+		this.cctx.rect(
 			entity.pos.x-camera.pos.x,
 			entity.pos.y-camera.pos.y, 
 			entity.spritesheet.width,
 			entity.spritesheet.height);
-		_ctx.stroke();
-		_ctx.closePath();
+		this.cctx.stroke();
+		this.cctx.closePath();
 
-		_ctx.beginPath();
-		_ctx.strokeStyle = "blue";
-		_ctx.rect(
+		this.cctx.beginPath();
+		this.cctx.strokeStyle = "blue";
+		this.cctx.rect(
 			entity.pos.x-camera.pos.x + entity.offset.left,
 			entity.pos.y-camera.pos.y+entity.offset.top, 
 			entity.spritesheet.width-entity.offsetHor,
 			entity.spritesheet.height-entity.offsetVert);
-		_ctx.stroke();
-		_ctx.closePath();
+		this.cctx.stroke();
+		this.cctx.closePath();
+	}
+
+	highlightHitboxParticle(particle, camera){
+		if(!particle.canCollide) return;
+		this.cctx.beginPath();
+		this.cctx.strokeStyle = "yellow";
+		this.cctx.rect(
+			particle.pos.x-camera.pos.x,
+			particle.pos.y-camera.pos.y, 
+			particle.sprite.width,
+			particle.sprite.height);
+		this.cctx.stroke();
+		this.cctx.closePath();
 	}
 
 	checkX(entity, camera) {
@@ -45,16 +71,16 @@ class TileCollider {
 				return;
 			}
 
-		   if(_collDebug){
-				_ctx.beginPath();
-				_ctx.strokeStyle = "red";
-				_ctx.rect(
+			if(_collDebug){
+				this.cctx.beginPath();
+				this.cctx.strokeStyle = "red";
+				this.cctx.rect(
 					match.x1-camera.pos.x,
 					match.y1-camera.pos.y,
 					match.x2-match.x1,
 					match.y2-match.y1);
-				_ctx.stroke();
-				_ctx.closePath();
+				this.cctx.stroke();
+				this.cctx.closePath();
 			}
 			
 			if (entity.vel.x > 0) {
@@ -101,15 +127,15 @@ class TileCollider {
 
 			
 			if(_collDebug){
-				_ctx.beginPath();
-				_ctx.strokeStyle = "red";
-				_ctx.rect(
+				this.cctx.beginPath();
+				this.cctx.strokeStyle = "red";
+				this.cctx.rect(
 					match.x1-camera.pos.x,
 					match.y1-camera.pos.y, 
 					match.x2-match.x1,
 					match.y2-match.y1);
-				_ctx.stroke();
-				_ctx.closePath();
+				this.cctx.stroke();
+				this.cctx.closePath();
 			}
 
 			if (entity.vel.y > 0) {
@@ -134,18 +160,6 @@ class TileCollider {
 			x += entity.pos.x;
 		}
 
-		if(_collDebug){
-			_ctx.beginPath();
-			_ctx.strokeStyle = "yellow";
-			_ctx.rect(
-				entity.pos.x-camera.pos.x,
-				entity.pos.y-camera.pos.y, 
-				entity.sprite.width,
-				entity.sprite.height);
-			_ctx.stroke();
-			_ctx.closePath();
-		}
-
 		const matches = this.tiles.searchByRange(
 			x, x,
 			entity.pos.y, entity.pos.y + entity.sprite.height);
@@ -156,16 +170,16 @@ class TileCollider {
 				return;
 			}
 
-		   if(_collDebug){
-				_ctx.beginPath();
-				_ctx.strokeStyle = "red";
-				_ctx.rect(
+			if(_collDebug){
+				this.cctx.beginPath();
+				this.cctx.strokeStyle = "red";
+				this.cctx.rect(
 					match.x1-camera.pos.x,
 					match.y1-camera.pos.y,
 					match.x2-match.x1,
 					match.y2-match.y1);
-				_ctx.stroke();
-				_ctx.closePath();
+				this.cctx.stroke();
+				this.cctx.closePath();
 			}
 			
 			if (entity.vel.x > 0) {
@@ -207,15 +221,15 @@ class TileCollider {
 
 			
 			if(_collDebug){
-				_ctx.beginPath();
-				_ctx.strokeStyle = "red";
-				_ctx.rect(
+				this.cctx.beginPath();
+				this.cctx.strokeStyle = "red";
+				this.cctx.rect(
 					match.x1-camera.pos.x,
 					match.y1-camera.pos.y, 
 					match.x2-match.x1,
 					match.y2-match.y1);
-				_ctx.stroke();
-				_ctx.closePath();
+				this.cctx.stroke();
+				this.cctx.closePath();
 			}
 
 			if (entity.vel.y > 0) {

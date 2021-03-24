@@ -25,46 +25,45 @@ class Level {
 	heightAt(posx){
 		posx+=_TILESIZE/2;
 		let posX = (posx-posx%_TILESIZE)/_TILESIZE; 
+		if(posX<0) posX = 0;
 		return _TILESIZE*this.tiles.grid[posX].length;
 	}
 
 	entityUpdates(entity, deltaTime, camera){
-			entity.update(deltaTime, this.tileCollider, camera, this.gravity);
+		entity.update(deltaTime, this.tileCollider, camera, this.gravity);
 
-			if(_collDebug){
-				this.tileCollider.highlightHitbox(entity, camera);
+		if(entity.lifetime){
+			if(entity.lifetime<0){
+				entity.destructor();
+				this.entities.delete(entity);
 			}
+		}
 
-			if(entity.pos.y>this.heightAt(entity.pos.x)){
-				if(!entity.respTimed){
-					entity.respTimed = true;
-					setTimeout(() => {
-						if(entity.type=='player')
-							console.log(`Rain выпала из мира`);
-						entity.pos.x=128;
-						entity.pos.y-0;
-						entity.stopMoving();
-						entity.land(0);
-						camera.pos.x=0;
-						camera.underMap=false;
-						entity.respTimed = false
-					}, 1000);
-				}
+		entityCollision(entity, this.entities);
+
+		entity.childs.forEach(child => {
+			this.entityUpdates(child, deltaTime, camera);
+		})
+	}
+
+	playerUnderMapCheck(entity){
+		if(entity.parent) return;
+		if(entity.pos.y>this.heightAt(entity.pos.x)){
+			if(!entity.respTimed){
+				entity.respTimed = true;
+				setTimeout(() => {
+					if(entity.type=='player')
+						console.log(`Rain выпала из мира`);
+					entity.pos.x=128;
+					entity.pos.y-0;
+					entity.stopMoving();
+					entity.land(0);
+					camera.pos.x=0;
+					camera.underMap=false;
+					entity.respTimed = false
+				}, 1000);
 			}
-
-
-			if(entity.lifetime){
-				if(entity.lifetime<0){
-					entity.destructor();
-					this.entities.delete(entity);
-				}
-			}
-
-			entityCollision(entity, this.entities);
-
-			entity.childs.forEach(child => {
-				this.entityUpdates(child, deltaTime, camera);
-			})
+		}
 	}
 
 	update(deltaTime, camera) {
@@ -80,6 +79,7 @@ class Level {
 				particle.veliocityTick(deltaTime, this.tileCollider, this.gravity, camera);
 			}
 			if(particle.timeLeft<=0){
+				if(particle.destructor) particle.destructor(deltaTime, camera);
 				this.particles.delete(particle);
 			}
 		});
@@ -87,18 +87,31 @@ class Level {
 
 	drawFrame(camera) {
 		this.comp.draw(camera, _ctx);
+
+		this.particles.forEach(particle => {
+			if(!particle.drawFirst) return;
+			particle.draw(camera);
+			if(_collDebug) this.tileCollider.highlightHitboxParticle(particle, camera);
+		});
+
 		this.entities.forEach(entity => {
 			if(entity.parent) return;
 			entity.draw(camera);
+			if(_collDebug) this.tileCollider.highlightHitbox(entity, camera);
 
 			entity.childs.forEach(child => {
 				child.draw(camera);
+				if(_collDebug) this.tileCollider.highlightHitbox(child, camera);
 			});
 		});
 
 		this.particles.forEach(particle => {
+			if(particle.drawFirst) return;
 			particle.draw(camera);
+			if(_collDebug) this.tileCollider.highlightHitboxParticle(particle, camera);
 		});
+
+		if(_collDebug) this.tileCollider.drawCollisionLayer(camera);
 	}
 
 }

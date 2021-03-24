@@ -9,18 +9,22 @@ let _loadLevel1 = () =>{
 					[0, 210, 16],
 				]
 			},
+
 			{
 				'tile': 'grass1',
 				'type': 'solid',
+				'sublevel': true,
 				'ranges' : [
 					[0, 20, 13],
 					[22, 40, 13],
 					[42, 25, 13],
 					[70, 30, 13],
 					[110, 100, 13],
+					[12, 8, 9],
 				]
 
 			},
+
 			{
 				'tile': 'dirt6',
 				'type': 'solid',
@@ -30,11 +34,12 @@ let _loadLevel1 = () =>{
 					[42, 25, 14],
 					[70, 30, 14],
 					[110, 100, 14],
+					[12, 6, 10],
 				]
 
 			},
 			{
-				'tile': 'dirt1',
+				'tile': 'dirt11',
 				'type': 'solid',
 				'ranges' : [
 					[0, 20, 15],
@@ -67,7 +72,7 @@ let _loadLevel1 = () =>{
 					[2, 1, 11],
 					[10, 2, 10],
 					[10, 2, 10],
-					[9, 1, 1, 5]
+					// [9, 1, 1, 5]
 				]
 			},
 			{
@@ -79,7 +84,7 @@ let _loadLevel1 = () =>{
 					[50, 1, 10, 5],
 					[64, 5, 5, 5],
 					
-					[0, 210, 50, 5],
+					// [0, 210, 50, 5],
 				]
 			},
 			{
@@ -144,20 +149,6 @@ let _loadLevel1 = () =>{
 					[186, 7, 10],
 					[185, 8, 11],
 					[184, 9, 12]
-				]
-			},
-			{
-				"tile": "grass1",
-				"type": "solid",
-				"ranges": [
-					[12, 8, 9],
-				]
-			},
-			{
-				"tile": "grass6",
-				"type": "solid",
-				"ranges": [
-					[12, 6, 10],
 				]
 			},
 			{
@@ -273,7 +264,12 @@ let _loadLevel1 = () =>{
 					[26, 1, 0, 3],
 
 					[31, 5, 0],
-					[33, 1, 0, 5]
+					[33, 1, 0, 5],
+
+
+					[0, 1, 0, 51],
+
+					[150, 1, 0, 51],
 				]
 			},
 		],
@@ -298,7 +294,7 @@ let _loadLevel1 = () =>{
 		],
 
 
-		'patterns': {                                   //patterns
+		'patterns': {                                  //patterns
 			'pattern1': {
 				'tiles': [
 				{
@@ -312,38 +308,92 @@ let _loadLevel1 = () =>{
 				}
 				]
 			},
+
 			'grassCube' : {
 				'tiles' : [
 				{
-					"tile": "_patternSolid",
+					"tile": "grass0",
 					"type": "solid",
-					"ranges": [
-						[0, 3, 1, 2],
-					]
-				},
-				{
-					"tile": "grassCube0",
-					"type": "solid",
+					'sublevel': true,
 					"ranges": [
 						[0, 0],
 					]
 				},
 				{
-					"tile": "grassCube1",
+					"tile": "grass1",
 					"type": "solid",
+					'sublevel': true,
 					"ranges": [
 						[1, 0],
 					]
 				},
 				{
-					"tile": "grassCube2",
+					"tile": "grass2",
 					"type": "solid",
+					'sublevel': true,
 					"ranges": [
 						[2, 0],
 					]
 				},
+				{
+					"tile": "grass5",
+					"type": "solid",
+					'sublevel': true,
+					"ranges": [
+						[0, 1],
+					]
+				},
+				{
+					"tile": "grass6",
+					"type": "solid",
+					'sublevel': true,
+					"ranges": [
+						[1, 1, 1, 2],
+					]
+				},
+				{
+					"tile": "grass7",
+					"type": "solid",
+					'sublevel': true,
+					"ranges": [
+						[2, 1],
+					]
+				},
+				{
+					"tile": "grassCorner4",
+					"type": "solid",
+					'sublevel': true,
+					"ranges": [
+						[0, 2],
+					]
+				},
+				{
+					"tile": "grassCorner5",
+					"type": "solid",
+					'sublevel': true,
+					"ranges": [
+						[2, 2],
+					]
+				},
+				{
+					"tile": "dirt14",
+					"type": "solid",
+					'sublevel': true,
+					"ranges": [
+						[1, 3],
+					]
+				},
+				{
+					"tile": "dirt13",
+					"type": "solid",
+					'sublevel': true,
+					"ranges": [
+						[2, 3],
+					]
+				},
 				]
 			},
+
 			'stoneSlab3' : {
 				'tiles': [
 				{
@@ -355,6 +405,7 @@ let _loadLevel1 = () =>{
 				}
 				]
 			},
+
 			'campfire' : {
 				'tiles': [
 				{
@@ -376,16 +427,6 @@ let _loadLevel1 = () =>{
 		},
 
 		'animations': {                                //animations
-			'rainbow': {
-				'frames':[
-					'animTest0',
-					'animTest1',
-					'animTest2',
-					'animTest3',
-					'animTest4',
-					'animTest5',
-				],
-			},
 			'_campfireLeft': {
 				'frames':[
 					'campfire0',
