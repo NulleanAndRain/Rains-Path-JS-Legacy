@@ -29,10 +29,17 @@ class Level {
 		posx+=_TILESIZE/2;
 		let posX = (posx-posx%_TILESIZE)/_TILESIZE; 
 		if(posX<0) posX = 0;
+		if(posX>this.width()) posX = this.width();
 		return _TILESIZE*this.tiles.grid[posX].length;
 	}
 
 	entityUpdates(entity, deltaTime, camera){
+		if(entity.type != 'player'){
+			if( entity.pos.x < camera.pos.x - camera.size.x/2   ||
+				entity.pos.x > camera.pos.x + camera.size.x*1.5 ||
+				entity.pos.y < camera.pos.y - camera.size.y/2   ||
+				entity.pos.y > camera.pos.y - camera.offset.y + camera.size.y*1.5) return;
+		}
 		entity.update(deltaTime, this.tileCollider, camera, this.gravity);
 
 		if(entity.lifetime){
@@ -49,26 +56,6 @@ class Level {
 		entity.childs.forEach(child => {
 			this.entityUpdates(child, deltaTime, camera);
 		})
-	}
-
-	playerUnderMapCheck(entity){
-		if(entity.parent) return;
-		if(entity.pos.y>this.heightAt(entity.pos.x)){
-			if(!entity.respTimed){
-				entity.respTimed = true;
-				setTimeout(() => {
-					if(entity.type=='player')
-						console.log(`Rain выпала из мира`);
-					entity.pos.x=128;
-					entity.pos.y-0;
-					entity.stopMoving();
-					entity.land(0);
-					camera.pos.x=0;
-					camera.underMap=false;
-					entity.respTimed = false
-				}, 1000);
-			}
-		}
 	}
 
 	update(deltaTime, camera) {

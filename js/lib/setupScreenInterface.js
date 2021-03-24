@@ -266,7 +266,6 @@ let setupScreenInterface = (canvas, context, timer) => {
 
 	let setSizingButtons = (canvas, context) =>{
 		const currSize = document.getElementById('currSize');
-		
 		const zoomIn = document.getElementById('zoomIn');
 		zoomIn.onclick = () => {
 			if(canvResize<3){
@@ -275,6 +274,8 @@ let setupScreenInterface = (canvas, context, timer) => {
 				resizeAnim(resizeConst[canvResize], canvas, context);
 				resetButtons();
 				setTimeout(()=>setSizingButtons(canvas, context), 505);
+
+				localStorage.setItem('canvResize', canvResize);
 			}
 		}
 
@@ -286,6 +287,8 @@ let setupScreenInterface = (canvas, context, timer) => {
 				resizeAnim(resizeConst[canvResize], canvas, context);
 				resetButtons();
 				setTimeout(()=>setSizingButtons(canvas, context), 505);
+
+				localStorage.setItem('canvResize', canvResize);
 			}
 		}
 
@@ -297,7 +300,13 @@ let setupScreenInterface = (canvas, context, timer) => {
 				resizeAnim(resizeConst[canvResize], canvas, context);
 				resetButtons();
 				setTimeout(()=>setSizingButtons(canvas, context), 505);
+
+				localStorage.setItem('canvResize', canvResize);
 			}
+		}
+
+		if(!localStorage.getItem('canvResize')){} else {
+			currSize.innerHTML = `Приближение: ${canvResize}`;
 		}
 
 		window.addEventListener('keydown', e=>{

@@ -1,10 +1,10 @@
 let drawContent = function() {
 	let _renderPosX = 0;
 	let _renderPosY = 0;
-	return (canvas, context, player, camera, splashes) =>{
-		if(player.isDead){
+	return (canvas, context, player = null, camera = null, splashes = []) =>{
+		if(player) if(player.isDowned){
 			context.drawImage(_canvas, 
-				 _renderPosX,
+				 0,
 				 _renderPosY, 
 				 _canvas.width, 
 				 _canvas.height);
@@ -24,6 +24,18 @@ let drawContent = function() {
 		
 		context.imageSmoothingEnabled = _smoothing;	
 
+		if(!player){
+			context.drawImage(_canvas, 
+				 0, 0, 
+				 _canvas.width, 
+				 _canvas.height);
+			window.requestAnimationFrame(()=>{
+				drawContent(canvas, context);
+			});
+
+			return;
+		}
+
 		if(canvas.width==_canvas.width) _renderPosX=0;
 		else {
 			if(camera.pos.x==0 && player.pos.x<_canvas.width/2+_TILESIZE){
@@ -42,18 +54,24 @@ let drawContent = function() {
 			_renderPosX=-Math.round(_canvas.width-canvas.width);
 		}
 
-		camera.xOffset = _renderPosX;
-		camera.yOffset = _renderPosY;
 
 		context.drawImage(_canvas, 
-						 _renderPosX,
-						 _renderPosY, 
-						 _canvas.width, 
-						 _canvas.height);
+			 // _renderPosX, _renderPosY, 
+			 0, _renderPosY,
+			 _canvas.width, 
+			 _canvas.height);
 
 		splashes.forEach(splash =>{
 			splash.draw(context);
-		})
+		});
+		
+		camera.offset.x = _renderPosX;
+		camera.offset.y = _renderPosY;
+
+		camera.size.x = canvas.width;
+		camera.size.y = canvas.height;
+
+		camera.move(player);
 
 		window.requestAnimationFrame(()=>{
 			drawContent(canvas, context, player, camera, splashes);

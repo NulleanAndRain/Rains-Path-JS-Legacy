@@ -13,7 +13,7 @@ function vertResize(canvas){
 	canvas.width = currWidth;
 	canvas.height = canvHeight;
 
-	// console.log(_canvHeight);
+	// console.log(canvas.height);
 	if(typeof _canvHeight !== undefined){
 		_canvHeight = canvHeight;
 	}

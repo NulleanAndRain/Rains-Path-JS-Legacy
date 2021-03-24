@@ -63,7 +63,7 @@ function createForegroundLayer(level, sprites, cameraSize) {
 	const context = buffer.getContext('2d');
 
 	return function drawForegroundLayer(camera, context) {
-		const drawWidth = resolver.toIndex(camera.size.x);
+		const drawWidth = resolver.toIndex(camera.size.x)+1;
 		const drawFromX = resolver.toIndex(camera.pos.x);
 		const drawToX = drawFromX + drawWidth;
 
@@ -143,7 +143,7 @@ function createBackgroundLayer(level, sprites, cameraSize) {
 	const context = buffer.getContext('2d');
 
 	return function drawBackgroundLayer(camera, context) {
-		const drawWidth = resolver.toIndex(camera.size.x);
+		const drawWidth = resolver.toIndex(camera.size.x)+1;
 		const drawFromX = resolver.toIndex(camera.pos.x);
 		const drawToX = drawFromX + drawWidth;
 
@@ -234,11 +234,11 @@ function createBGLayer(level, sprites, cameraSize) {
 		const xMarg = 1/32;
 		const yMarg = 1/16;
 
-		const drawWidth = resolver.toIndex(camera.size.x);
+		const drawWidth = resolver.toIndex(camera.size.x/2)+1;
 		const drawFromX = resolver.toIndex((camera.pos.x)*xMarg);
 		const drawToX = drawFromX + drawWidth;
 
-		const drawHeight = resolver.toIndex(camera.size.y); 
+		const drawHeight = resolver.toIndex(camera.size.y/2)+1; 
 		const drawFromY = resolver.toIndex(camera.pos.y*yMarg);
 		const drawToY = drawFromY + drawHeight;
 

@@ -1,10 +1,17 @@
-var canvResize = 2;
+var canvResize
+if(!localStorage.getItem('canvResize')){
+	canvResize = 2;
+	localStorage.setItem('canvResize', canvResize);
+} else {
+	canvResize = localStorage.getItem('canvResize');
+}
+
 const resizeConst = [942, 744, 602, 482];
 const _TILESIZE = 8;
 var canvWidth = resizeConst[canvResize];
 var _canvHeight = 1;
 
-const alphaVer = 'v0.3.5.1 alpha';
+const alphaVer = 'v0.3.5.3 alpha';
 
 
 var healthNum;
@@ -16,8 +23,7 @@ var _bgBlur = true;
 var _autojump = true;
 var _shadowsEnabled = false;
 
-const _respawnTime = 10000;
-var _frametime = 0;
+const _respawnTime = 1000;
 
 const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft', 'KeyE', 'KeyQ', 'KeyZ'];
 
@@ -61,16 +67,20 @@ window.onload = () =>{
 		let Rain = new Player(LenaSprites, 128, 0);
 		level.entities.add(Rain);
 
-		let box = new Box(boxSprites, 240, 0);
-		level.entities.add(box);
+		window.Rain = Rain;
+
+		// let box = new Box(boxSprites, 240, 0);
+		// level.entities.add(box);
 
 		let splashes = new Set();
 
+		camera.getLevel = () =>{
+			return level;
+		}
 
 		let timer = new Timer(1000/144);
 		timer.update = (deltaTime) => {
 			level.update(deltaTime, camera);
-			camera.move(Rain, level);
 
 			splashes.forEach(splash =>{
 				splash.update(deltaTime);
@@ -85,27 +95,41 @@ window.onload = () =>{
 
 		setKeyboardEvents(Rain, timer, ...buttonsClassic);
 		let intElems = setupScreenInterface(screen, context, timer);
-
 		setPauseKey('Escape', 'Backquote', timer, intElems);
-
-		drawContent(screen, context, Rain, camera, splashes);
-
+		
 		setupScreenSplash(splashes);
+		drawContent(screen, context, Rain, camera, splashes);
 	});
 }
 
-if(localStorage.getItem('setting_debug')){
+
+if(localStorage.getItem('_collision_debug')){
 	_collDebug = true;
 }
 window.toggle_collDebug = () =>{
 	if(_collDebug){
 		_collDebug = false;
-		localStorage.removeItem('setting_debug');
+		localStorage.removeItem('_collision_debug');
 		return 'collision debug disabled';
 	}
 	else{
 		_collDebug = true;
-		localStorage.setItem('setting_debug', true);
+		localStorage.setItem('_collision_debug', true);
 		return 'collision debug enabled';
+	}
+}
+
+if(localStorage.getItem('_frametime_debug')){
+	_frametimeDebug = true;
+}
+window.toggle_framerate = () =>{
+	if(_frametimeDebug){
+		_frametimeDebug = false;
+		localStorage.removeItem('_frametime_debug');
+		return 'framerate disabled';
+	}
+	else{
+		_frametimeDebug = true;
+		localStorage.setItem('_frametime_debug', true);
 	}
 }

@@ -1,5 +1,3 @@
-const _speedDivider = 16;
-
 class Entity{
 	constructor(spritesheet, x=0, y=0){
 		this.pos = new Vect2(x, y);
@@ -17,7 +15,7 @@ class Entity{
 		this.canRegenerate = true;
 		this.regenInterval = 1500;
 		this.regenTimeout = 0;
-		this.isDead = false;
+		this.isDowned = false;
 		this.canInteract = true;
 
 		this.attacking = false;
@@ -59,10 +57,11 @@ class Entity{
 		return 'left';
 	}
 
-	moveLeft(){
+	moveLeft(deltaTime = 1000/144){
 		if(this.movement.right){
 			this.stopMoving();
-			this.moveLeft();
+			// this.moveLeft(deltaTime);
+			return;
 		} else {
 			this.facing = 'left';
 			this.movement.left = true;
@@ -75,19 +74,20 @@ class Entity{
 		if(this.vel.x == -this.speed*_spdmult){
 			return;
 		} else if(this.vel.x > -this.speed*_spdmult){
-			this.vel.x -= this.speed/_speedDivider;
+			this.vel.x -= this.speed*deltaTime/32;
 		} else if(this.vel.x < -this.speed*_spdmult && this.onGround){
-			this.vel.x += this.speed/_speedDivider;
+			this.vel.x = -this.speed*_spdmult;
 		}
 	}
 	isMovigLeft(){
 		return this.movement.left;
 	}
 
-	moveRight(){
+	moveRight(deltaTime = 1000/144){
 		if(this.movement.left){
 			this.stopMoving();
-			this.moveRight();
+			// this.moveRight(deltaTime);
+			return;
 		} else {
 			this.facing = 'right';
 			this.movement.right = true;
@@ -101,9 +101,9 @@ class Entity{
 		if(this.vel.x == this.speed*_spdmult){
 			return;
 		} else if(this.vel.x<this.speed*_spdmult){
-			this.vel.x += this.speed/_speedDivider;
+			this.vel.x += this.speed*deltaTime/32;
 		} else if(this.vel.x>this.speed*_spdmult && this.onGround){
-			this.vel.x -= this.speed/_speedDivider;
+			this.vel.x = this.speed*_spdmult;
 		}
 	}
 	isMovigRight(){
@@ -156,14 +156,16 @@ class Entity{
 	//entity updates
 
 	veliocityTick(deltaTime, tileCollider, camera, gravity){
-		this.addVel(0, gravity*deltaTime/32);
+		this.vel.y += gravity*deltaTime/32;
 
 		this.pos.y+=(this.vel.y*deltaTime/16);
-		if(this.canCollide) tileCollider.checkY(this, camera);
+		if(this.canCollide) tileCollider.checkY(this, deltaTime, gravity);
 
 		this.pos.x+=(this.vel.x*deltaTime/16);
-		if(this.canCollide) tileCollider.checkX(this, camera);
+		if(this.canCollide) tileCollider.checkX(this, deltaTime);
+		this.veliocityTickProxy(deltaTime, tileCollider, camera, gravity);
 	}
+	veliocityTickProxy(){}
 
 	updateProxy(deltaTime, tileCollider, camera, gravity){}
 
@@ -197,7 +199,7 @@ class Entity{
 			this.pos.x+8, 
 			this.pos.y-8,
 			`${amount}`, color,
-			5000);
+			2500);
 		createBloodSplash(posx, posy, facing);
 
 		if(this.health == -1) return;
@@ -222,12 +224,12 @@ class Entity{
 			this.pos.x+8, 
 			this.pos.y-8,
 			`${this.health - t}`, '#00F01F',
-			5000);
+			2500);
 	}
 
 	remove(level, deltaTime){
-		if(!this.isDead){
-			this.isDead = true;
+		if(!this.isDowned){
+			this.isDowned = true;
 			// this.canCollide = false;
 			this.canInteract = false;
 			this.canRegenerate = false;
@@ -254,7 +256,7 @@ class Entity{
 
 	setAnimFrame(name, frames){
 		if(this.onMove&&this.onGround){
-			let frame = Math.floor((this.distance/30)%frames);
+			let frame = Math.floor((this.distance/24)%frames);
 			this.state = `${name}${frame}`;
 			// console.log(frame);
 		} else {
@@ -270,7 +272,7 @@ class Entity{
 	}
 
 	updateSprite(){
-		if(this.isDead){
+		if(this.isDowned){
 			this.state = 'Downed';
 			return;
 		}

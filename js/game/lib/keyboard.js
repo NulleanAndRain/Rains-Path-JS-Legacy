@@ -4,7 +4,7 @@ var _lastKey;
 let setKeyboardEvents = (player, timer, keyJump, keyLeft, keyRight, keyRun, keyAttack, keySkill, keyTestEvent) =>{
 	window.addEventListener('keydown', event=>{
 		if(timer.isPaused) return;
-		if(player.isDead){
+		if(player.isDowned){
 			_keyStates.lenght = 0;
 			_lastKey = null;
 			return;
@@ -54,33 +54,39 @@ let setKeyboardEvents = (player, timer, keyJump, keyLeft, keyRight, keyRun, keyA
 		}
 	});
 
-	keyboardFunc(player, keyLeft, keyRight);
+	keyboardFunc(player, keyLeft, keyRight, timer);
 }
 
-let keyboardFunc = (player, keyLeft, keyRight) => {
-	if(player.isDead){
-		setTimeout(()=> keyboardFunc(player, keyLeft, keyRight), 0);
+let keyboardFunc = (player, keyLeft, keyRight, timer) => {
+	if(player.isDowned){
+		setTimeout(()=> keyboardFunc(player, keyLeft, keyRight, timer), 0);
 		return;
 	}
 
 	if(_keyStates.get(_lastKey)=='pressed'){
 		if(_lastKey==keyLeft){
-			player.moveLeft();
+			player.moveLeft(timer.deltaTime);
 		}
 		if(_lastKey==keyRight){
-			player.moveRight();
+			player.moveRight(timer.deltaTime);
 		}
 	} else if(_keyStates.get(_lastKey)=='released'){
 		if(_lastKey==keyLeft){
-			if(_keyStates.get(keyRight)=='pressed') player.moveRight();
+			if(_keyStates.get(keyRight)=='pressed'){
+				_lastKey = keyRight;
+				player.moveRight(timer.deltaTime);
+			}
 			else player.stopMoving();
 		}
 		if(_lastKey==keyRight){
-			if(_keyStates.get(keyLeft)=='pressed') player.moveLeft();
+			if(_keyStates.get(keyLeft)=='pressed'){
+				_lastKey = keyLeft;
+				player.moveLeft(timer.deltaTime);
+			}
 			else player.stopMoving();
 		}
 	}
-	setTimeout(()=> keyboardFunc(player, keyLeft, keyRight), 0);
+	setTimeout(()=> keyboardFunc(player, keyLeft, keyRight, timer), 0);
 }
 
 let setPauseKey = (keyPause, keyPauseAlt, timer, intElems) =>{

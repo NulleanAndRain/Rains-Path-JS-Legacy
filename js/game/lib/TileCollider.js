@@ -11,6 +11,7 @@ class TileCollider {
 
 		//_collDebug
 		this.collisions = new Set();
+		this.inboundCollisions = new Set();
 		this.autojumpMatch = undefined;
 
 		setupJumpCheck(this);
@@ -27,6 +28,17 @@ class TileCollider {
 		});
 
 		this.collisions.clear();
+
+		this.inboundCollisions.forEach(match=>{
+			this.cctx.strokeStyle = "cyan";
+			this.cctx.strokeRect(
+				match.x1-camera.pos.x,
+				match.y1-camera.pos.y,
+				match.x2-match.x1,
+				match.y2-match.y1);
+		});
+
+		this.inboundCollisions.clear();
 
 		if(this.autojumpMatch){
 			this.cctx.fillStyle = 'rgba(255, 0, 255, 0.4)';
@@ -80,7 +92,7 @@ class TileCollider {
 		this.cctx.closePath();
 	}
 
-	checkX(entity, camera) {
+	checkX(entity, deltaTime = 1000/144) {
 		let x = 0;
 		if (entity.vel.x >= 0) {
 			x += entity.pos.x + entity.spritesheet.width - entity.offset.right;
@@ -96,7 +108,7 @@ class TileCollider {
 		let bottomBlockColl = true;
 		let solidMatches = 0;
 
-		if(!entity.onGround || !entity.onMove) bottomBlockColl = false;
+		if(!entity.onGround || !entity.onMove || !entity.vel.y>0) bottomBlockColl = false;
 
 
 		matches.forEach(match => {
@@ -164,29 +176,64 @@ class TileCollider {
 		return false;
 	}
 
-	checkY(entity, camera) {
+	checkY(entity, deltaTime = 1000/144, gravity = 1) {
+		let yTop = entity.pos.y + entity.offset.top;
+		let yBot = entity.pos.y + entity.spritesheet.height - entity.offset.bottom;
+
 		let y1 = 0;
 		if (entity.vel.y >= 0) {
-			y1 += entity.pos.y + entity.spritesheet.height - entity.offset.bottom;
+			y1 += yBot;
 		} else {
-			y1 += entity.pos.y + entity.offset.top;
+			y1 += yTop;
 		}
 
-		let y2 = y1 + entity.vel.y;
+		let x1 = entity.pos.x + entity.offset.left;
+		let x2 = entity.pos.x + entity.spritesheet.width - entity.offset.right
 
 		const matches = this.tiles.searchByRange(
-			entity.pos.x + entity.offset.left,
-			entity.pos.x + entity.spritesheet.width - entity.offset.right,
-			y1, y2);
+			x1, x2,
+			y1, y1);
+
 		if(matches.length==0){
 			entity.onGround = false;
+
+			let y2, y3;
+			if(entity.vel.y > 0){
+				y2 = y1 + _TILESIZE;
+				y3 = y2 + entity.vel.y*deltaTime/16;
+
+			} else {
+				y3 = y1 - _TILESIZE;
+				y2 = y3 + entity.vel.y*deltaTime/16;
+			}
+
+			const matchesNext = this.tiles.searchByRange(
+				x1, x2, 
+				y2, y3);
+
+			matchesNext.forEach(match => {
+				if (match.tile.type != 'solid' || match.tile.type == undefined) {
+					return;
+				}
+				
+				if (entity.vel.y > 0) {
+					if (entity.pos.y + entity.vel.y + entity.spritesheet.height 
+						- entity.offset.bottom > match.y1){
+						entity.vel.y = (match.y1 
+							- entity.pos.y + entity.spritesheet.height 
+							- entity.offset.bottom)/deltaTime - gravity*deltaTime/16;
+						matchesNext.length = 0;
+					}
+				} else if (entity.vel.y < 0) {
+					if (entity.pos.y + entity.vel.y < match.y2 - entity.offset.top){
+						entity.vel.y /= 2; 
+					}
+				}
+			});
 			return;
 		}
 
-
 		matches.forEach(match => {
-			// console.log(match);
-
 			if (match.tile.type != 'solid' || match.tile.type == undefined) {
 				return;
 			}
@@ -206,6 +253,36 @@ class TileCollider {
 					entity.pos.y = match.y2 - entity.offset.top;
 					entity.vel.y = 0;
 				}
+			}
+		});
+
+
+		yTop = entity.pos.y + entity.offset.top;
+		yBot = entity.pos.y + entity.spritesheet.height - entity.offset.bottom;
+
+		const matchesInbound = this.tiles.searchByRange(
+			x1, x2,
+			yTop, yBot-2);
+
+		if(matchesInbound.length == 0) return;
+
+		entity.onGround = true;
+		matchesInbound.forEach(match=>{
+			if (match.tile.type != 'solid' || match.tile.type == undefined) {
+				return;
+			}
+
+			if(_collDebug){
+				this.inboundCollisions.add(match);
+			}
+
+			if(entity.vel.y >= 0){
+				entity.pos.y = match.y1 - entity.spritesheet.height
+				 - entity.offset.bottom;
+				entity.vel.y = 0;
+			} else if(entity.vel.y < 0){
+				entity.pos.y = match.y2 + entity.offset.top + 4;
+				entity.vel.y = 0;
 			}
 		});
 	}

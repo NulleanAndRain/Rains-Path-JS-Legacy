@@ -25,15 +25,7 @@ class Player extends Entity{
 		}
 	}
 
-	veliocityTick(deltaTime, tileCollider, camera, gravity){
-		this.addVel(0, gravity*deltaTime/32);
-
-		this.pos.y+=(this.vel.y*deltaTime/16);
-		if(this.canCollide) tileCollider.checkY(this, camera);
-
-		this.pos.x+=(this.vel.x*deltaTime/16);
-		if(this.canCollide) tileCollider.checkX(this, camera);
-
+	veliocityTickProxy(deltaTime, tileCollider, camera, gravity){
 		if(!this.respTimed){
 			if(this.pos.x<-this.offset.left){
 				this.stopMoving();
@@ -45,7 +37,6 @@ class Player extends Entity{
 			}
 		}
 	}
-
 	//attack and skills
 
 	skill(){}
@@ -92,7 +83,7 @@ class Player extends Entity{
 			this.pos.x+8, 
 			this.pos.y-8,
 			`${amount}`, color,
-			5000);
+			2500);
 		createBloodSplash(posx, posy, facing);
 
 		this.regenTimeout = this.regenInterval;
@@ -118,19 +109,19 @@ class Player extends Entity{
 			this.pos.x+8, 
 			this.pos.y-8,
 			`${this.health - t}`, '#00F01F',
-			5000);
+			2500);
 
 		healthNum.innerHTML = `${this.health}/${this.maxHealth}`;
 		healthLine.style.width = `${(this.health/this.maxHealth)*100}%`;
 	}
 
-	remove(level, deltaTime){
-		if(!this.isDead){
+	remove(level, deltaTime = 1000/144){
+		if(!this.isDowned){
 			createFullscreenSplash(
 				`You died`,
 				'#C43234');
 
-			this.isDead = true;
+			this.isDowned = true;
 			this.canCollide = false;
 			this._canRegenerate = this.canRegenerate;
 			this.canRegenerate = false;
@@ -138,26 +129,24 @@ class Player extends Entity{
 			this.stopMoving();
 			this.setVel(-0.8, -4.5);
 
-			this.removeTimeout = _respawnTime;
+			this.downTimeout = _respawnTime;
 
 			this._stopMoving = this.stopMoving;
 		} else {
-			this.removeTimeout -= deltaTime;
-			if(this.removeTimeout <= _respawnTime-1000){
-				this.setVel(0, 0);
-			}
-			if(this.removeTimeout <= 0){
+			this.downTimeout -= deltaTime;
+			if(this.downTimeout <= 0){
 				this.stopMoving = this._stopMoving;
 				this._stopMoving = undefined;
 
-				this.removeTimeout = undefined;
+				this.downTimeout = undefined;
 				this.canCollide = true;
-				this.isDead = false;
+				this.isDowned = false;
 				this.canRegenerate = this._canRegenerate;
 
 
-				this.pos.x = level.respswn.x;
-				this.pos.y = level.respswn.y;
+				this.setPos(
+					level.respswn.x,
+					level.respswn.y);
 				this.setVel(0, 0);
 
 				this.health = this.maxHealth;

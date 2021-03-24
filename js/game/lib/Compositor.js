@@ -134,6 +134,8 @@ class Compositor {
 	}
 
 	draw(camera, ctx=_ctx) {
+		ctx.clearRect(0, 0, _canvas.width, _canvas.height);
+
 		this.layers.forEach(layer => {
 			layer(camera, ctx);
 		});

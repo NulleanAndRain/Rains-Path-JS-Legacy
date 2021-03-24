@@ -1,11 +1,13 @@
 class Timer{
 	constructor(deltaTime){
-		this.deltaTime=deltaTime;
+		this.deltaTime = deltaTime;
 		this.time=16; 
 		this.lastTime=0;
 		this.accumulatedTime=0;
 
 		this.isPaused=true;
+
+		this._frametime = performance.now();
 	}
 
 	update(){}
@@ -28,16 +30,17 @@ class Timer{
 
 		this.drawFrame();
 
-		_frametime = performance.now() - _frametime;
-		this.deltaTime = _frametime;
-		if(_frametimeDebug)console.log(1000/_frametime);
-		_frametime=performance.now();
+		this._frametime = performance.now() - this._frametime;
+		this.deltaTime = this._frametime;
+		if(_frametimeDebug) console.log(1000/this._frametime);
+		this._frametime=performance.now();
 		
 		if(!this.isPaused) window.requestAnimationFrame(() => this.updateProxy());
-		// if(!this.isPaused) setTimeout(() => this.updateProxy(), 3);
+		// if(!this.isPaused) setTimeout(() => this.updateProxy(), 16);
 	}
 
 	start(){
+		this._frametime = performance.now();
 		this.accumulatedTime=0;
 		this.time = new Date().getTime();
 		this.lastTime = this.time-16;
@@ -49,10 +52,14 @@ class Timer{
 		if(this.isPaused) return;
 		this.isPaused=true;
 		this.accumulatedTime=0;
+		// while(this.isPaused){
+			this.drawFrame();
+		// }
 	}
 
 	continue(){
 		if(!this.isPaused) return;
+		this._frametime = performance.now();
 		this.time = new Date().getTime();
 		this.lastTime = this.time-16;
 		this.isPaused=false;

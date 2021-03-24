@@ -251,7 +251,7 @@ function loadLevel(camera) {
 		loadParticles(),
 		loadSky(),
 	])
-	.then(([levelSpec, sprites, particles, Sky]) => {
+	.then(([levelSpec, sprites, particles, sky]) => {
 		const level = new Level();
 
 		sprites.execFunc = (spriteName, posx, posy, ctx=_ctx, extension = 1) =>{
@@ -264,8 +264,8 @@ function loadLevel(camera) {
 		createBackingTiles(level, levelSpec.backgrounds,levelSpec.patterns);
 		createBG(level, levelSpec.bg, levelSpec.patterns);
 
-		level.comp.layers.push(()=>{
-			_ctx.drawImage(Sky, 0, 0);
+		level.comp.layers.push((camera, ctx)=>{
+			ctx.drawImage(sky, 0, 0);
 		});
 
 		const bg = createBGLayer(level, sprites, camera.size);
