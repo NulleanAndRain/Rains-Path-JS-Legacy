@@ -10,7 +10,6 @@ const alphaVer
 
 //		settings
 _smoothing
-_collDebug
 _bgBlur
 _autojump
 _shadowsEnabled
@@ -24,6 +23,10 @@ _ctx
 
 healthNum;
 healthLine;
+
+//debug
+_collDebug
+_frametime
 
 ----------------Entity.js----------------
 const _speedDivider = 16;

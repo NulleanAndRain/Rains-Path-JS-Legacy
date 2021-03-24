@@ -4,7 +4,7 @@ const _TILESIZE = 8;
 var canvWidth = resizeConst[canvResize];
 var _canvHeight = 1;
 
-const alphaVer = 'v0.3.5.0 alpha';
+const alphaVer = 'v0.3.5.1 alpha';
 
 
 var healthNum;
@@ -24,7 +24,7 @@ const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft', 'KeyE', 'KeyQ', 'K
 //debug
 var _collDebug = false;
 var _frametime = 0;
-
+var _frametimeDebug = false;
 
 var _canvas = document.createElement('canvas');
 	_canvas.width=958;

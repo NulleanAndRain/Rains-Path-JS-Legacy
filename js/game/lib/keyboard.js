@@ -54,10 +54,10 @@ let setKeyboardEvents = (player, timer, keyJump, keyLeft, keyRight, keyRun, keyA
 		}
 	});
 
-	keyboardFunc(player, keyLeft, keyRight);
+	keyboardFunc(player, keyLeft, keyRight, timer);
 }
 
-let keyboardFunc = (player, keyLeft, keyRight) => {
+let keyboardFunc = (player, keyLeft, keyRight, timer) => {
 	if(player.isDead){
 		setTimeout(()=> keyboardFunc(player, keyLeft, keyRight), 0);
 		return;
@@ -65,10 +65,10 @@ let keyboardFunc = (player, keyLeft, keyRight) => {
 
 	if(_keyStates.get(_lastKey)=='pressed'){
 		if(_lastKey==keyLeft){
-			player.moveLeft();
+			player.moveLeft(timer.deltaTime);
 		}
 		if(_lastKey==keyRight){
-			player.moveRight();
+			player.moveRight(timer.deltaTime);
 		}
 	} else if(_keyStates.get(_lastKey)=='released'){
 		if(_lastKey==keyLeft){
@@ -80,7 +80,7 @@ let keyboardFunc = (player, keyLeft, keyRight) => {
 			else player.stopMoving();
 		}
 	}
-	setTimeout(()=> keyboardFunc(player, keyLeft, keyRight), 0);
+	setTimeout(()=> keyboardFunc(player, keyLeft, keyRight, timer), 0);
 }
 
 let setPauseKey = (keyPause, keyPauseAlt, timer, intElems) =>{
