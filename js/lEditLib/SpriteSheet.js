@@ -10,19 +10,13 @@ class SpriteSheet{
 			buffer.width = this.width;
 			buffer.height = this.height;
 			let bctx = buffer.getContext('2d');
-
-			for(let x=0; x<this.width; x+=8){
-				for(let y=0; y<this.height; y+=8){
-					bctx.fillStyle = '#000';
-					bctx.fillRect(x, y, 4, 4);
-					bctx.fillRect((x+4), (y+4), 4, 4);
-					bctx.fillStyle = '#f0f';
-					bctx.fillRect(x, (y+4), 4, 4);
-					bctx.fillRect((x+4), y, 4, 4);
-				}
-			}
-
-			this.sprites.set('noTexture', buffer);
+			bctx.fillStyle = '#000';
+			bctx.fillRect(0, 0, 2, 2);
+			bctx.fillRect(2, 2, 2, 2);
+			bctx.fillStyle = '#f0f';
+			bctx.fillRect(0, 2, 2, 2);
+			bctx.fillRect(2, 0, 2, 2);
+			this.sprites.set('no texture', buffer);
 		}
 	}
 
@@ -31,7 +25,7 @@ class SpriteSheet{
 		if(buffer){
 			return buffer;
 		} else {
-			return this.sprites.get('noTexture');
+			return this.sprites.get('no texture');
 		}
 	}
 
@@ -64,7 +58,7 @@ class SpriteSheet{
 				buffer.width*extension,
 				buffer.height*extension);
 		} else {
-			buffer = this.sprites.get('noTexture');
+			buffer = this.sprites.get('no texture');
 			ctx.drawImage(
 				buffer,
 				posx,
@@ -144,6 +138,13 @@ class SpriteSheet{
 				}
 				resolve(this);
 			}
+		});
+	}
+
+	addSpriteFunc(spriteName, setupFunc, horCount=5, vertCount=3){
+		return new Promise(resolve=>{
+			setupFunc(this, spriteName, horCount, vertCount);
+			resolve(this);
 		});
 	}
 
@@ -244,22 +245,6 @@ class SpriteSheet{
 			this.sprites.set(newName, this.sprites.get(oldName));
 			this.sprites.delete(oldName);
 			resolve(this);
-		});
-	}
-
-	customLoad(func){
-		return new Promise(resolve=>{
-			func(this)
-			.then(resolve);
-		});
-	}
-
-	setNewImg(url){
-		return new Promise(resolve=>{
-			this.image.src = url;
-			this.image.onload = () =>{
-				resolve(this);
-			}
 		});
 	}
 };

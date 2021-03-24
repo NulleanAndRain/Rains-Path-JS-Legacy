@@ -13,8 +13,7 @@ const _CHUNKPIXELS = _TILESIZE*_CHUNKSIZE;
 var canvWidth = resizeConst[canvResize];
 var _canvHeight = 1;
 
-const alphaVer = 'v0.4.0.0 alpha';
-
+const alphaVer = 'v0.4.0.5 alpha';
 
 var healthNum;
 var healthLine;
@@ -67,13 +66,14 @@ window.onload = () =>{
 		loadBoxSprite(),
 	]).then(([level, LenaSprites, boxSprites])=>{
 
-		let Rain = new Player(LenaSprites, 128, 0);
+		let pos = level.respswn;
+		let Rain = new Player(LenaSprites, pos.x, pos.y);
 		level.entities.add(Rain);
 
 		window.Rain = Rain;
 
-		// let box = new Box(boxSprites, 240, 0);
-		// level.entities.add(box);
+		let box = new Box(boxSprites, 20, 0);
+		level.entities.add(box);
 
 		let splashes = new Set();
 

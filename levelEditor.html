@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Level Editor</title>
+
+	<link rel="stylesheet" href="./css/levelEditor.css">
+
+	<script src="js/levelEditor.js"></script>
+	<script src="js/lEditLib/draw.js"></script>
+	<script src="js/lEditLib/screenDrawing.js"></script>
+	<script src="js/lEditLib/int.js"></script>
+
+	<script src="js/game/lib/level/LevelMap.js"></script>
+	<script src="js/lEditLib/IDResolver.js"></script>
+	<script src="js/game/lib/level/Chunk.js"></script>
+	<script src="js/game/lib/level/ChunkColumn.js"></script>
+
+	<script src="js/lEditLib/Camera.js"></script>
+	<script src="js/game/lib/rnd/math.js"></script>
+
+	<script src="js/lEditLib/SpriteSheet.js"></script>
+
+	<script src="levelEditorJSONs/fg.json"></script>
+	<script src="levelEditorJSONs/back.json"></script>
+	<script src="levelEditorJSONs/bg.json"></script>
+	<script src="levelEditorJSONs/ids.json"></script>
+	<script src="levelEditorJSONs/colorIds.json"></script>
+</head>
+<body>
+	<!-- 	level creating and editing tool		 -->
+
+<!-- 
+	keyboard:
+		w a s d - move
+
+		mouse left - draw selected block
+		mouse mid - select block under cursor
+		mouse right - erase (draw air)
+
+		q - log IDResolver json to console
+		e r t - log layers jsons to console
+
+	console:
+		set layers:
+
+		levelFront(json)
+		levelBack(json)
+		levelBG(json)
+
+
+		get layers:
+
+		getLevelFront()
+		getLevelBack()
+		getLevelBG()
+
+ -->
+	<canvas id="screen"></canvas>
+	<canvas id="screenAlt"></canvas>
+
+	<div id="blockSelect">
+		<div class="id idSelected">
+			<div class="tilecolor" style="background-color: #DAFAEA"></div>
+			<div class="tileinfo"> 0: air</div>
+		</div>
+
+<!-- 		<div class="id">
+			<div class="tilecolor" style="background-color: #1AB53E"></div>
+			<div class="tileinfo"> 1: grass</div>
+		</div>
+
+		<div class="id">
+			<div class="tilecolor" style="background-color: #A96423"></div>
+			<div class="tileinfo"> 2: dirt</div>
+		</div>
+
+		<div class="id">
+			<div class="tilecolor" style="background-color: #6D6E6A"></div>
+			<div class="tileinfo"> 3: stone</div>
+		</div> -->
+	</div>
+	<div id="idCreater">
+		<span>
+			color:
+			<input type="color" name="tilecol" id="color">
+		</span><br><br>
+		<span>
+			tile name:
+			<input type="text" name="tilename" id="name" value="block">
+		</span><br><br>
+
+		<span>
+			tile type:
+			<input type="text" name="tiletype" id="type" value="solid">
+		</span><br><br>
+
+		<span>
+			<button id="addTile">add</button>
+			<button id="toggleGrid"> toggle grid </button>
+		</span>
+	</div>
+
+	<div id="selectFront" class="idSelected">Foregrounds</div>
+	<div id="selectBack">Foregrounds back</div>
+	<div id="selectBG">Backgrounds</div>
+	
+</body>
+</html>

@@ -3,6 +3,7 @@ class Camera {
 		this.pos = new Vect2(0, 0);
 		this.size = new Vect2(width, heigth);
 		this.subcamera = undefined;
+		//		spec camera for level editor 
 	}
 
 	createSubcamera(){
@@ -10,33 +11,20 @@ class Camera {
 		this.subcamera.isSubcamera = true;
 	}
 
-	getLevel(){}
-
-	move(player, renderPosY){
-		if(player.isDowned){
-			return;
-		}
-
-		this.pos.x = player.pos.x + player.spritesheet.width/2 - this.size.x/2;
-		this.pos.y = player.pos.y-this.size.y*3/5 + 4.5 + renderPosY;
-	}
-
 	update(){
 		this.drawFromX = Math.floor(this.pos.x/_CHUNKPIXELS);
-		this.deposX = 0;
-		if(this.drawFromX < 0 && this.pos.x % _CHUNKPIXELS != 0){
+		if(this.drawFromX < 0 && this.pos.x % _CHUNKPIXELS != 0)
 			this.deposX = _CHUNKPIXELS;
-		}
-		this.drawToX = Math.ceil((this.pos.x + this.size.x + this.deposX)/_CHUNKPIXELS)+2;
+		else
+			this.deposX = 0;
+		this.drawToX = Math.ceil((this.pos.x + this.size.x + this.deposX)/_CHUNKPIXELS);
 
-		this.drawFromY = Math.floor(this.pos.y/(_CHUNKPIXELS))+1;
-		this.drawToY = Math.ceil((this.pos.y + this.size.y + this.deposY)/(_CHUNKPIXELS))+4;
-		this.deposY = -_CHUNKPIXELS;
-		if(this.drawFromY > 0 && this.pos.y % _CHUNKPIXELS != 0){
-			// this.drawFromY++;
-		} else {
-			this.drawFromY++;
-		}
+		this.drawFromY = Math.floor(this.pos.y/(_CHUNKPIXELS));
+		if(this.drawFromY < 0 && this.pos.y % _CHUNKPIXELS != 0)
+			this.deposY = _CHUNKPIXELS;
+		else
+			this.deposY = 0;
+		this.drawToY = Math.ceil((this.pos.y + this.size.y + this.deposY)/(_CHUNKPIXELS));
 
 		if(this.subcamera){
 			this.subcamera.pos.x = (this.pos.x + this.size.x/2 - this.subcamera.size.x)/2;
@@ -46,27 +34,19 @@ class Camera {
 			this.subcamera.drawToX = Math.ceil(
 				((this.pos.x + this.size.x)/2)/(_CHUNKPIXELS*2))+2;
 			this.subcamera.deposX = _CHUNKPIXELS*2;
-			this.subcamera.deposX = 0;
+				this.subcamera.deposX = 0;
 			if(this.subcamera.pos.x < 0 && this.subcamera.pos.x % (_CHUNKPIXELS*2) !=0){
 				this.subcamera.deposX = _CHUNKPIXELS*2;
 			}
 
 
-			this.subcamera.drawFromY = Math.floor(this.subcamera.pos.y/(_CHUNKPIXELS*2))-1;
+			this.subcamera.drawFromY = Math.floor(this.subcamera.pos.y/(_CHUNKPIXELS*2));
 			this.subcamera.drawToY = Math.ceil(
 				((this.pos.y + this.size.y)/4)/(_CHUNKPIXELS*4))+2;
 				this.subcamera.deposY = 0;
 			if(this.subcamera.pos.y < 0 && this.subcamera.pos.y % (_CHUNKPIXELS*4) !=0){
-				this.subcamera.drawFromY++;
-			} else {
+				this.subcamera.deposY = _CHUNKPIXELS*2;
 			}
 		}
-	}
-
-	resize(newWidth, newHeigth){
-		this.size.x = newWidth;
-		this.size.y = newHeigth;
-
-		if(this.subcamera) this.subcamera.resize(newWidth/2, newHeigth/2);
 	}
 }

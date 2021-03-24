@@ -19,9 +19,8 @@ let drawContent = function() {
 
 		camera.resize(canvas.width, canvas.height);
 		
-		camera.move(player);
-
-		camera.pos.y += _renderPosY;
+		camera.move(player, _renderPosY);
+		// camera.pos.y += _renderPosY;
 
 		context.drawImage(_canvas,
 			 0, _renderPosY,

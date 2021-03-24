@@ -20,7 +20,6 @@ class IDResolver{
 				y*_TILESIZE,
 				ctx
 			);
-			if(tile.func) tile.func();
 		} else {
 			this.spritesheet.draw(
 				'noTexture',

@@ -49,34 +49,33 @@ let fastCos = x =>{
 }
 
 
-let rand = () =>{}
 let fastRand = () =>{}
-
-let _setupRand = () =>{
+let rand = function() {
 	var x = (new Date().getTime()%1022+1)/1024;
 	const constC = 3.9943652676605887;
-	const postProcConst = 0.95;
-
-	let postProc = t =>{
-		t+=postProcConst;
-		if(t>1) t = (1-t);
-		t-=postProcConst;
-		if(t<0) t*=-1;
-		t /= (1-postProcConst);
-		t %= 1;
-		return t;
-	}
-
-	rand = () =>{
-		for(let i=0; i<3*x; i++) 
-			x = (constC*(1+(x - 0.5)*0.008))*x*(1-x);
-		return postProc(x);
-	}
+	const postProcessConst = 0.95;
 
 	fastRand = () =>{
 		x = (constC*(1+(x - 0.5)*0.008))*x*(1-x);
 		return x;
-	} //slower than Math.random()
-}
+	} //		slower than Math.random()
 
-_setupRand();
+	let postProcess = t =>{
+		t+=postProcessConst;
+		if(t>1) t = (1-t);
+		t-=postProcessConst;
+		if(t<0) t*=-1;
+		t /= (1-postProcessConst);
+		t %= 1;
+		if(t>1 || t<0)
+			console.log(t);
+
+		return t;
+	}
+
+	return function(){
+		for(let i=0; i<3*x; i++) 
+			x = (constC*(1+(x - 0.5)*0.008))*x*(1-x);
+		return postProcess(x);
+	}
+}();

@@ -92,7 +92,7 @@ class TileCollider {
 		this.cctx.closePath();
 	}
 
-	checkX(entity, deltaTime = 1000/144) {
+	checkX(entity, deltaTime = 1000/144, gravity = 1) {
 		let x = 0;
 		if (entity.vel.x >= 0) {
 			x += entity.pos.x + entity.spritesheet.width - entity.offset.right;
@@ -105,11 +105,11 @@ class TileCollider {
 			entity.pos.y + entity.offset.top, entity.pos.y
 			 + entity.spritesheet.height - entity.offset.bottom);
 
-		let bottomBlockColl = true;
-		let solidMatches = 0;
-
-		if(!entity.onGround || !entity.onMove || !entity.vel.y>0) bottomBlockColl = false;
-
+		if(_autojump){
+			var bottomBlockColl = true;
+			var solidMatches = 0;
+			if(!entity.onGround || !entity.onMove || entity.vel.y != 0 ) bottomBlockColl = false;
+		}
 
 		matches.forEach(match => {
 			if (match.tile.type != 'solid' || match.tile.type == undefined) {
@@ -194,7 +194,36 @@ class TileCollider {
 			x1, x2,
 			y1, y1);
 
-		if(matches.length==0){
+		let hasSolid = false;
+
+		matches.forEach(match => {
+			if (match.tile.type != 'solid' || match.tile.type == undefined) {
+				return;
+			}
+
+			hasSolid = true;
+
+			
+			if(_collDebug){
+				this.collisions.add(match);
+			}
+
+			if (entity.vel.y > 0) {
+				if (entity.pos.y + entity.spritesheet.height 
+					- entity.offset.bottom > match.y1){
+					entity.land(match.y1-entity.spritesheet.height+entity.offset.bottom);
+				}
+			} else if (entity.vel.y < 0) {
+				if (entity.pos.y < match.y2 - entity.offset.top){
+					entity.pos.y = match.y2 - entity.offset.top;
+					entity.vel.y = 0;
+				}
+			}
+		});
+
+		if(hasSolid){
+			entity.onGround = true;
+		} else {
 			entity.onGround = false;
 
 			let y2, y3;
@@ -233,29 +262,6 @@ class TileCollider {
 			return;
 		}
 
-		matches.forEach(match => {
-			if (match.tile.type != 'solid' || match.tile.type == undefined) {
-				return;
-			}
-
-			
-			if(_collDebug){
-				this.collisions.add(match);
-			}
-
-			if (entity.vel.y > 0) {
-				if (entity.pos.y + entity.spritesheet.height 
-					- entity.offset.bottom > match.y1){
-					entity.land(match.y1-entity.spritesheet.height+entity.offset.bottom);
-				}
-			} else if (entity.vel.y < 0) {
-				if (entity.pos.y < match.y2 - entity.offset.top){
-					entity.pos.y = match.y2 - entity.offset.top;
-					entity.vel.y = 0;
-				}
-			}
-		});
-
 
 		yTop = entity.pos.y + entity.offset.top;
 		yBot = entity.pos.y + entity.spritesheet.height - entity.offset.bottom;
@@ -266,11 +272,11 @@ class TileCollider {
 
 		if(matchesInbound.length == 0) return;
 
-		entity.onGround = true;
 		matchesInbound.forEach(match=>{
-			if (match.tile.type != 'solid' || match.tile.type == undefined) {
+			if (match.tile.type != 'solid' || match.tile.type == undefined || match.tile.type == 'air'){
 				return;
 			}
+		entity.onGround = true;
 
 			if(_collDebug){
 				this.inboundCollisions.add(match);

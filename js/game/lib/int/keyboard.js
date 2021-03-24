@@ -102,4 +102,11 @@ let setPauseKey = (keyPause, keyPauseAlt, timer, intElems) =>{
 			}
 		}
 	});
+
+	window.onblur = () =>{
+		if(!timer.isPaused) {
+			intElems._func_Show();
+			timer.pause();
+		}
+	}
 }

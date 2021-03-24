@@ -162,7 +162,7 @@ class Entity{
 		if(this.canCollide) tileCollider.checkY(this, deltaTime, gravity);
 
 		this.pos.x+=(this.vel.x*deltaTime/16);
-		if(this.canCollide) tileCollider.checkX(this, deltaTime);
+		if(this.canCollide) tileCollider.checkX(this, deltaTime, gravity);
 		this.veliocityTickProxy(deltaTime, tileCollider, camera, gravity);
 	}
 	veliocityTickProxy(){}
@@ -268,7 +268,6 @@ class Entity{
 			let frame = Math.floor(this.animTime/dt)%frames;
 			this.state = `${name}${frame}`;
 		}
-
 	}
 
 	updateSprite(){
@@ -282,7 +281,9 @@ class Entity{
 			return;
 		}
 
+			// console.log(this.onGround);
 		if(!this.onGround){
+			// console.log(this.onGround);
 			if(this.vel.y>0){
 				if(this.facing=='right') this.setAnimFrame('JumpRightDown', 4);
 				else if(this.facing=='left') this.setAnimFrame('JumpLeftDown', 4);
@@ -294,10 +295,12 @@ class Entity{
 			this.distance+=Math.abs(this.vel.x);
 			if(this.facing=='right') this.setAnimFrame('RunRight', 4);
 			else if(this.facing=='left') this.setAnimFrame('RunLeft', 4);
-		} else {
+		} else if(this.onGround){
 			if(this.facing=='right') this.setAnimFrame('IdleRight', 4);
 			else if(this.facing=='left') this.setAnimFrame('IdleLeft', 4);
 			else this.state = 'Confused';
+		} else {
+			this.state = 'Confused';
 		}
 
 		if(this.attacking){
@@ -315,12 +318,12 @@ class Entity{
 
 	draw(camera, ctx=_ctx){
 		this.updateSprite();
-		_ctx.imageSmoothingEnabled=false;
+		ctx.imageSmoothingEnabled=false;
 		this.spritesheet.draw(
 			this.state,
 			(this.pos.x - camera.pos.x),
 			(this.pos.y - camera.pos.y), ctx);
-		_ctx.imageSmoothingEnabled=_smoothing;
+		ctx.imageSmoothingEnabled=_smoothing;
 	}
 
 	setOffset(left, right, top=this.offset.top, bottom=this.offset.bottom){

@@ -43,7 +43,7 @@ class Chunk{
 		return this._IDResolver.getTile(this.grid[y][x]);
 	}
 
-	redraw(){
+	redraw(chunkX, chunkY){
 		if(!this.buffer){
 			this.buffer = document.createElement('canvas');
 			this.buffer.width = _CHUNKPIXELS;
@@ -51,7 +51,8 @@ class Chunk{
 			this.bctx = this.buffer.getContext('2d');
 		}
 
-		if(this.grid.length == 0) this.__initChunk();
+		if(this.grid.length == 0) return;
+			// this.__initChunk();
 
 		this.bctx.clearRect(0, 0, this.buffer.width, this.buffer.height);
 		for(let y=0; y<_CHUNKSIZE; y++){

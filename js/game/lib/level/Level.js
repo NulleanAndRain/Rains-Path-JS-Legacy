@@ -12,9 +12,9 @@ class Level {
 
 		this.entities = new Set();
 		this.particles = new Set();
-		// this.lightsources = new Set();
+		this.tileEntities = new Set();
 
-		this.respswn = {x:0, y:0};
+		this.respswn = new Vect2(0, 0);
 		this.globalTime = 0;
 
 
@@ -44,17 +44,27 @@ class Level {
 		return 0;
 	}
 
+	tileEntityUpdates(entity, deltaTime, camera){
+		if(entity.type != 'player' && !entity.parent){
+			if( entity.pos.x < (camera.drawFromX - 1)*_CHUNKPIXELS	||
+				entity.pos.x > (camera.drawToX   + 1)*_CHUNKPIXELS	||
+				entity.pos.y < (camera.drawFromY - 1)*_CHUNKPIXELS	||
+				entity.pos.y > (camera.drawToY   + 1)*_CHUNKPIXELS) return;
+		}
+		entity.update(deltaTime, this.tileCollider, camera, this.gravity);
+	}
+
 	entityUpdates(entity, deltaTime, camera){
-		if(entity.type != 'player'){
-			if( entity.pos.x < camera.pos.x - camera.size.x/2   ||
-				entity.pos.x > camera.pos.x + camera.size.x*1.5 ||
-				entity.pos.y < camera.pos.y - camera.size.y/2   ||
-				entity.pos.y > camera.pos.y + camera.size.y*1.5) return;
+		if(entity.type != 'player' && !entity.parent){
+			if( entity.pos.x < (camera.drawFromX - 1)*_CHUNKPIXELS	||
+				entity.pos.x > (camera.drawToX   + 1)*_CHUNKPIXELS	||
+				entity.pos.y < (camera.drawFromY - 1)*_CHUNKPIXELS	||
+				entity.pos.y > (camera.drawToY   + 1)*_CHUNKPIXELS) return;
 		}
 		entity.update(deltaTime, this.tileCollider, camera, this.gravity);
 
 		if(entity.lifetime){
-			if(entity.lifetime<0){
+			if(entity.lifetime <= 0){
 				entity.destructor();
 				this.entities.delete(entity);
 			}
@@ -66,11 +76,27 @@ class Level {
 
 		entity.childs.forEach(child => {
 			this.entityUpdates(child, deltaTime, camera);
-		})
+		});
+
+		if(entity.pos.y > this.heightAt(entity.pos.x) + _CHUNKPIXELS){
+			if(entity.health > 0)
+				entity.takeDamage(
+					entity.maxHealth*2,
+					'#f33',
+					entity.facing,
+					entity.pos.x+8,
+					entity.pos.y+12);
+		}
 	}
 
 	update(deltaTime, camera) {
 		this.globalTime += deltaTime;
+
+		this.tileEntities.forEach(entity => {
+			this.tileEntityUpdates(entity, deltaTime, camera);
+		});
+
+
 		this.entities.forEach(entity => {
 			if(entity.parent) return;
 			this.entityUpdates(entity, deltaTime, camera);
@@ -113,28 +139,36 @@ class Level {
 
 		ctx.drawImage(this.sky, 0, 0);
 
+	_ctx.imageSmoothingEnabled = _smoothing;
+
 		ctx.filter = 'brightness(120%) blur(3px)';
 		ctx.drawImage(
 			this.bg,
-			// 0, 0,
 			-camera.subcamera.pos.x % (_CHUNKPIXELS*2) - (camera.subcamera.deposX),
 			-camera.subcamera.pos.y % (_CHUNKPIXELS*2) - (camera.subcamera.deposY),
 			_canvas.width  + _CHUNKPIXELS*4,
 			_canvas.height + _CHUNKPIXELS*4);
 
-		ctx.filter = 'brightness(50%)';
+		if(_bgBlur)
+			ctx.filter = 'brightness(75%) blur(0.6px)';
+		else
+			ctx.filter = 'brightness(75%)';
 		ctx.drawImage(
 			this.back,
-			// 0, 0);
 			-camera.pos.x % _CHUNKPIXELS - (camera.deposX),
 			-camera.pos.y % _CHUNKPIXELS - (camera.deposY));
 
 		ctx.filter = 'none';
 		ctx.drawImage(
 			this.front,
-			// 0, 0);
 			-camera.pos.x % _CHUNKPIXELS - (camera.deposX),
 			-camera.pos.y % _CHUNKPIXELS - (camera.deposY));
+
+
+		this.tileEntities.forEach(entity => {
+			entity.draw(camera);
+			if(_collDebug) this.tileCollider.highlightHitbox(entity, camera);
+		});
 
 
 
@@ -144,7 +178,10 @@ class Level {
 			if(_collDebug) this.tileCollider.highlightHitboxParticle(particle, camera);
 		});
 
+
 		this.entities.forEach(entity => {
+	if(entity.type == 'player') _ctx.imageSmoothingEnabled = false;
+	else _ctx.imageSmoothingEnabled = _smoothing;
 			if(entity.parent) return;
 			entity.draw(camera);
 			if(_collDebug) this.tileCollider.highlightHitbox(entity, camera);
@@ -154,7 +191,7 @@ class Level {
 				if(_collDebug) this.tileCollider.highlightHitbox(child, camera);
 			});
 		});
-
+_ctx.imageSmoothingEnabled = _smoothing;
 		this.particles.forEach(particle => {
 			if(particle.drawFirst) return;
 			particle.draw(camera);

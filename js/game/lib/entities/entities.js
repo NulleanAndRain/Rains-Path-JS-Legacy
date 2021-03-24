@@ -25,18 +25,6 @@ class Player extends Entity{
 		}
 	}
 
-	veliocityTickProxy(deltaTime, tileCollider, camera, gravity){
-		if(!this.respTimed){
-			if(this.pos.x<-this.offset.left){
-				this.stopMoving();
-				this.pos.x=-this.offset.left;
-			}
-			if(this.pos.x>camera.pos.x+camera.size.x-this.spritesheet.width+this.offset.right){
-				this.stopMoving();
-				this.pos.x=camera.pos.x+camera.size.x-this.spritesheet.width+this.offset.right;
-			}
-		}
-	}
 	//attack and skills
 
 	skill(){}

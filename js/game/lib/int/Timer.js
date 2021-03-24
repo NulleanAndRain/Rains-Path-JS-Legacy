@@ -52,9 +52,6 @@ class Timer{
 		if(this.isPaused) return;
 		this.isPaused=true;
 		this.accumulatedTime=0;
-		// while(this.isPaused){
-			this.drawFrame();
-		// }
 	}
 
 	continue(){

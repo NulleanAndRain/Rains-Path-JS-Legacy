@@ -1,0 +1,9 @@
+const TileEntitiesJSON = `[
+	{
+		"name" : "campfire",
+		"positions" : [
+			[16, 9],
+			[48, 6]
+		]
+	}
+]`
