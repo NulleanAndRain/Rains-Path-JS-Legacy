@@ -27,6 +27,7 @@ healthLine;
 //debug
 _collDebug
 _frametime
+_frametimeDebug
 
 ----------------Entity.js----------------
 const _speedDivider = 16;

@@ -1,4 +1,4 @@
-const _speedDivider = 2;
+const _speedDivider = 16;
 
 class Entity{
 	constructor(spritesheet, x=0, y=0){
@@ -59,11 +59,10 @@ class Entity{
 		return 'left';
 	}
 
-	moveLeft(deltaTime = 1000/144){
+	moveLeft(){
 		if(this.movement.right){
 			this.stopMoving();
 			this.moveLeft();
-			return;
 		} else {
 			this.facing = 'left';
 			this.movement.left = true;
@@ -76,20 +75,19 @@ class Entity{
 		if(this.vel.x == -this.speed*_spdmult){
 			return;
 		} else if(this.vel.x > -this.speed*_spdmult){
-			this.vel.x -= this.speed*(deltaTime/16)/_speedDivider;
+			this.vel.x -= this.speed/_speedDivider;
 		} else if(this.vel.x < -this.speed*_spdmult && this.onGround){
-			this.vel.x += this.speed*(deltaTime/16)/_speedDivider;
+			this.vel.x += this.speed/_speedDivider;
 		}
 	}
 	isMovigLeft(){
 		return this.movement.left;
 	}
 
-	moveRight(deltaTime = 1000/144){
+	moveRight(){
 		if(this.movement.left){
 			this.stopMoving();
 			this.moveRight();
-			return;
 		} else {
 			this.facing = 'right';
 			this.movement.right = true;
@@ -103,9 +101,9 @@ class Entity{
 		if(this.vel.x == this.speed*_spdmult){
 			return;
 		} else if(this.vel.x<this.speed*_spdmult){
-			this.vel.x += this.speed*(deltaTime/16)/_speedDivider;
+			this.vel.x += this.speed/_speedDivider;
 		} else if(this.vel.x>this.speed*_spdmult && this.onGround){
-			this.vel.x -= this.speed*(deltaTime/16)/_speedDivider;
+			this.vel.x -= this.speed/_speedDivider;
 		}
 	}
 	isMovigRight(){
@@ -256,7 +254,7 @@ class Entity{
 
 	setAnimFrame(name, frames){
 		if(this.onMove&&this.onGround){
-			let frame = Math.floor((this.distance/16)%frames);
+			let frame = Math.floor((this.distance/30)%frames);
 			this.state = `${name}${frame}`;
 			// console.log(frame);
 		} else {

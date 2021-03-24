@@ -17,14 +17,15 @@ var _autojump = true;
 var _shadowsEnabled = false;
 
 const _respawnTime = 10000;
+var _frametime = 0;
 
 const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft', 'KeyE', 'KeyQ', 'KeyZ'];
 
 
 //debug
 var _collDebug = false;
-var _frametime = 0;
 var _frametimeDebug = false;
+
 
 var _canvas = document.createElement('canvas');
 	_canvas.width=958;

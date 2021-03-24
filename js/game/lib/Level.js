@@ -26,13 +26,9 @@ class Level {
 	}
 
 	heightAt(posx){
-		// posx+=_TILESIZE/2;
+		posx+=_TILESIZE/2;
 		let posX = (posx-posx%_TILESIZE)/_TILESIZE; 
-		if(posx<0) posX = 0;
-		if(!this.tiles.grid[posX]){
-			// console.log(posX);
-			// console.log(posx);
-		}
+		if(posX<0) posX = 0;
 		return _TILESIZE*this.tiles.grid[posX].length;
 	}
 

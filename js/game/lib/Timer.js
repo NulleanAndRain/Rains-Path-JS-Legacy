@@ -30,13 +30,11 @@ class Timer{
 
 		_frametime = performance.now() - _frametime;
 		this.deltaTime = _frametime;
-		if(_frametimeDebug){
-			console.log(1000/_frametime);
-		}
+		if(_frametimeDebug)console.log(1000/_frametime);
 		_frametime=performance.now();
 		
 		if(!this.isPaused) window.requestAnimationFrame(() => this.updateProxy());
-		// if(!this.isPaused) setTimeout(() => this.updateProxy(), this.deltaTime/3);
+		// if(!this.isPaused) setTimeout(() => this.updateProxy(), 3);
 	}
 
 	start(){
@@ -45,8 +43,6 @@ class Timer{
 		this.lastTime = this.time-16;
 		this.isPaused=false;
 		this.updateProxy();
-
-		_frametime=performance.now();
 	}
 
 	pause(){
