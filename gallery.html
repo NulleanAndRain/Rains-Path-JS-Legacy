@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Gallery</title>
+ 	<!-- <link rel="shortcut icon" href="./img/test4.png" type="image/x-icon"> -->
+	<link rel="stylesheet" href="css/style.css">
+	<!-- lib -->
+		<script src="js/lib/vertResize.js"></script>
+		<script src="js/lib/drawContent.js"></script>
+		<script src="js/lib/bgLoad.js"></script>
+		<script src="js/lib/elemHiding.js"></script>
+		<script src="js/lib/transparentInt.js"></script>
+	<!-- main script -->
+		<script src="js/gallery.js"></script>
+</head>
+<body>
+<!-- IE -->
+<!--[if IE]>
+<style>
+	.interface, .bot-button-wrapper{
+		display:none;
+	}
+</style> 
+<p style="color: #fff">If you see this message, please use other browser</p>
+<![endif]-->
+<script src="./css/ie.js"></script>
+<!-- adaptivity -->
+<script src="./css/adaptivity.js"></script>
+<!-- body -->
+	<canvas id="bg" width="1920" height="1080"></canvas>
+	<div id="blackscreen" class="blackscreen"></div>
+	<div class="flex-menu interface">
+		<div id="menu_container">
+<script src="./css/menu_containerResize.js"></script>
+			<div id="nav" class="flex-nav nav">
+				<div id="galleryLeftButton" class="flex-row nav_button nav_square text-unselect">◄</div>
+				<div class="flex-row gallery-title text-unselect">Галерея</div>
+				<div id="pageName" class="flex-row text-unselect">Gallery testing</div>
+				<div id="galleryPageNum" class="flex-row nav_square text-unselect">1/1</div>
+				<div id="galleryRightButton" class="flex-row nav_button nav_square text-unselect">►</div>
+				<div class="_verticalPlaceholder"></div>
+				<div class="_horLine"></div>
+			</div>
+			<div id="main" class="main">
+				<div class="flex-col menu-tab">
+					<div class="flex-col tab_80perc">
+						<div id="galleryLine1" class="flex-row gallery-line">
+							<div class="flex-col gallery-item">
+								<div class="flex-col gallery-image">
+									<img src="" alt="">
+								</div>
+							</div>
+							<div class="flex-col gallery-item">
+								<div class="flex-col gallery-image">
+									<img src="" alt="">
+								</div>
+							</div>
+							<div class="flex-col gallery-item">
+								<div class="flex-col gallery-image">
+									<img src="" alt="">
+								</div>
+							</div>
+							<div class="flex-col gallery-item">
+								<div class="flex-col gallery-image">
+									<img src="" alt="">
+								</div>
+							</div>
+						</div>
+						<div id="galleryLine2" class="flex-row gallery-line">
+							<div class="flex-col gallery-item">
+								<div class="flex-col gallery-image">
+									<img src="" alt="">
+								</div>
+							</div>
+							<div class="flex-col gallery-item">
+								<div class="flex-col gallery-image">
+									<img src="" alt="">
+								</div>
+							</div>
+							<div class="flex-col gallery-item">
+								<div class="flex-col gallery-image">
+									<img src="" alt="">
+								</div>
+							</div>
+							<div class="flex-col gallery-item">
+								<div class="flex-col gallery-image">
+									<img src="" alt="">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="flex-col tab_20perc">
+							<a href="index.html" class="flex-row tab-button gallery-tab_button text-unselect">
+								Назад
+							</a>
+					</div>
+				</div>
+			</div>
+			<script src="./css/newStyle/darkTheme.js"></script>
+			<script src="./css/newStyle/Gallery.js"></script>
+			<div id="toggleTheme" class="flex-row text-unselect">🌙</div>
+			<div id="toggleStyle" class="flex-row">
+				<div class="toggleStyle_icon">
+					<div class="toggleStyle_icon_elem1"></div>
+					<div class="toggleStyle_icon_elem1"></div>
+					<div class="toggleStyle_icon_elem1"></div>
+					<div class="toggleStyle_icon_elem2"></div>
+				</div>
+			</div>
+			<script src="./css/restyle.js"></script>
+		</div>
+	</div>
+		<div class="bot-button-wrapper">
+		<div id="show_button" class="flex-row bot-button bot-button__pale text-unselect transition03s hidden">
+			⯅
+		</div>
+		<div id="hide_button" class="flex-row bot-button text-unselect transition03s">
+			⯆
+		</div>
+	</div>
+	<div id="galleryOverlay" class="flex-col hidden">
+		<div id="activeImg" class="galleryOverlay-image">
+			<img src="" alt="">
+			<div id="closeImg" class="flex-col text-unselect">x</div>
+		</div>
+	</div>
+</body>
+</html>

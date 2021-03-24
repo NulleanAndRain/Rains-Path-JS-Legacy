@@ -1,0 +1,285 @@
+#pause_bg{
+	z-index: 1;
+	position: fixed;
+	top:0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.5);
+	transition: background-color 0.3s, color 0.3s;
+}
+
+#pauseIco{
+	z-index: -1;
+}
+
+#pauseIco img{
+	width:5%;
+	image-rendering: pixelated;
+}
+
+.pause_container{
+	overflow: hidden;
+	z-index: 2;
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	width: 24em;
+	max-width: 67%;
+	/*height: 30em;*/
+	max-height: 100%;
+	box-shadow: 0 0 2em 0.2em rgba(0,0,0,0.6);
+}
+
+.pause_nav{
+	font-size: 3em;
+	color: #fff;
+	height: 16.666667%;
+	box-shadow: inset 0 -0.3em 1em -0.6em #000, 0 0 5em 2.5em #fff;
+	overflow: hidden;
+}
+.nav_bright{
+	background-color: #018786;
+}
+
+.main{
+	background-color: rgba(255,255,255,0.4);
+	transition: background-color 0.3s;
+}
+.main_bright{
+	background-color: #fff;
+}
+
+
+#pauseMenu{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#pauseTitle{
+	transition: color 0.3s;
+}
+
+#pauseSettings{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.tab_80perc{
+	margin-top: 10%;
+	height: 70%;
+}
+
+#fullscreen{
+	font-size: 1em;
+	padding-left: 0.2em;
+	width: 21em;
+	height: 2.5em;
+}
+
+/*---*/
+
+#screen{
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -3;
+	background-color: #8FC2DB;
+    transition: 0.2s;
+}
+
+
+.sizing{
+	font-size: 1.8em;
+	position: fixed;
+	right: 5%;
+	top: 3em;
+	z-index: 0;
+
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	align-content: center;
+	flex-direction: column;
+	
+	flex-shrink: 0;
+	width: 7em;
+	height: 2.2em;
+}
+
+.sizing__top-line{
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	align-content: center;
+	flex-direction: row;
+	width: 7em;
+	height: 2.2em;
+	flex-shrink: 0;
+}
+
+.sizingButton{
+	position: relative;
+	width: 2em;
+	height: 2em;
+	background-color: rgba(0,0,0,0.5);
+	color: rgba(255,255,255,0.8);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+	flex-direction: column;
+
+	transition: background-color 0.3s, color 0.3s;
+}
+
+.sizingButton:hover{
+	cursor: pointer;
+	color: #fff;
+	background-color: rgba(0,0,0,0.8);
+}
+
+
+.zoomSize{
+	font-size: 0.6em;
+	width: 9em;
+	display: flex;
+	flex-direction: row;
+	cursor: default;
+
+	background-color: rgba(0,0,0,0);
+	color: rgba(255,255,255,0);
+
+	transition: background-color 0.3s, color 0.3s, visibility 0.3s;
+
+	visibility: hidden;
+}
+#zoomSize:hover{
+	background-color: rgba(0,0,0,0.8);
+	visibility: visible;
+	color: #fff;
+}
+
+.zoomSize_active{
+	background-color: rgba(0,0,0,0.8);
+	visibility: visible;
+	color: #fff;
+	transition: background-color 0.3s, color 0.3s, visibility 0.3s;
+}
+
+
+/**/
+
+#healthBar{
+	font-size: 2em;
+	position: fixed;
+	top: 2.5em;
+	left: 5%;
+	background-color: rgba(0,0,0,0.5);
+	height: 1.5em;
+	width: 10em;
+	justify-content: flex-start;
+	outline: 1px solid #000;
+	outline-offset: -1px;
+	overflow: hidden;
+}
+
+.healthLine{
+	background-color: rgba(240,20,20,0.5);
+	height: 100%;
+	width: 100%;
+	transition: background-color 0.3s;
+}
+.healthLine_bright{
+	background-color: rgba(200,20,20,1);
+}
+
+.healthNum{
+	font-family: "Minecraft Rus";
+	position: absolute;
+	left: 1em;
+	bottom: -0.3em;
+	color: rgba(255,255,255,0.6);
+	height: 2em;
+	transition: color 0.3s;
+}
+.healthNum_bright{
+	color: #fff;
+}
+
+
+.alphaVer{
+	position: fixed;
+	bottom: 0;
+	left: 0.5em;
+	z-index: 5;
+}
+
+/* ---------mobile-interface--------- */
+
+#mobileInt{
+	font-family: "Minecraft Rus";
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: -2;
+	width: 100%;
+	height: 100%;
+}
+
+.mobile-button, .mobile-button-small{
+	font-size: 3em;
+	z-index: -1;
+	position: fixed;
+	bottom: 1em;
+	background-color: rgba(0, 0, 0, 0.4);
+	color: rgba(255, 255, 255, 0.8);
+	transition: background-color 0.3s, color 0.3s;
+}
+.mobile-button:hover, .mobile-button-small:hover{
+	background-color: rgba(0, 0, 0, 0.8);
+	color: rgba(255, 255, 255, 1);
+}
+.mobile-button{
+	width: 3em;
+	height: 2.8em;
+	padding-top: 0.2em;
+}
+.mobile-button-small{
+	width: 2em;
+	height: 2em;
+}
+
+.mobile-button-shift{
+	font-size: 2em;
+	width: 4em;
+	height: 2em;
+	padding-right: 1em;
+}
+.mobile-button-shift_active{
+	outline: 0.1em solid #00ffcc;
+	font-weight: bold;
+	outline-offset: -0.2em;
+}
+
+#mobileButtonLeft{
+	left: 1em;
+}
+#mobileButtonRight{
+	left: 4.5em;
+}
+#mobileButtonJump{
+	right: 1em;
+	align-items: flex-end;
+	height: 1.8em;
+	padding-bottom: 0.2em;
+}
+#mobileButtonShift{
+	bottom: 6.75em;
+	left: 2em;
+}

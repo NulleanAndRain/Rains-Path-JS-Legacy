@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Rain's Path</title>
+ 	<!-- <link rel="shortcut icon" href="./img/test4.png" type="image/x-icon"> -->
+	<link rel="stylesheet" href="css/style.css">
+	<!-- lib -->
+		<script src="js/lib/vertResize.js"></script>
+		<script src="js/lib/drawContent.js"></script>
+		<script src="js/lib/bgLoad.js"></script>
+		<script src="js/lib/elemHiding.js"></script>
+		<script src="js/lib/buttonSelect.js"></script>
+		<script src="js/lib/transparentInt.js"></script>
+	<!-- main script -->
+		<script src="js/menu.js"></script>
+</head>
+<body>
+<!-- IE -->
+<!--[if IE]>
+<style>
+	.interface, .bot-button-wrapper{
+		display:none;
+	}
+</style> 
+<p style="color: #fff">If you see this message, please use other browser</p>
+<![endif]-->
+<script src="./css/ie.js"></script>
+<!-- adaptivity -->
+<script src="./css/adaptivity.js"></script>
+<!-- body -->
+	<canvas id="bg" width="1920" height="1080"></canvas>
+	<div id="blackscreen" class="blackscreen"></div>
+	<div id="portraitOrient" class="flex-row portraitOrient">
+		<p>Вертикальное положение экрана не рекомендуется</p>
+		<div id="portraitOk" class="flex-row text-unselect">Ок</div>
+	</div>
+	<div class="flex-menu interface">
+		<div id="menu_container">
+<script src="./css/menu_containerResize.js"></script>
+			<div id="nav" class="flex-nav nav">
+				<div id="gameNavButton" class="nav_button flex-row text-unselect nav_button__selected">Игра</div>
+				<div id="settingsNavButton" class="nav_button flex-row text-unselect">Настройки</div>
+				<div id="helpNavButton" class="nav_button flex-row text-unselect">Помощь</div>
+				<div id="aboutNavButton" class="nav_button flex-row text-unselect">О авторе</div>
+			</div>
+			<div id="main" class="main">
+				<div id="game-tab" class="flex-col menu-tab">
+					<div class="flex-col game-tab_title">
+						<h1 class="text-unselect">Rain's Path</h1>
+					</div>
+					<div class="flex-col game-tab_buttons">
+						<a href="rainspath.html" id="playButton" class="flex-row tab-button game-tab_button text-unselect">
+							Играть
+						</a>
+						<a href="gallery.html" id="galleryButton" class="flex-row tab-button game-tab_button text-unselect">
+							Галерея
+						</a>
+					</div>
+					<div style="height: 10%"></div>
+				</div>
+
+				<div id="settings-tab" class="flex-col menu-tab hidden">
+					<div class="flex-col tab_80perc">
+						<div id="setting_smoothing" class="flex-row game-tab_button setting text-unselect">
+							<div class="flex-row setting_checkbox">
+								<div id="setting_smoothing_slider" class="flex-row setting_checkbox_slider text-unselect">•</div>
+							</div>
+							Размытие движения
+						</div>
+						<div id="setting_debug" class="flex-row game-tab_button setting text-unselect">
+							<div class="flex-row setting_checkbox">
+								<div id="setting_debug_slider" class="flex-row setting_checkbox_slider text-unselect">•</div>
+							</div>
+							Дебаг столкновений
+						</div>
+						<div id="setting_bgBlur" class="flex-row game-tab_button setting text-unselect">
+							<div class="flex-row setting_checkbox">
+								<div id="setting_bgBlur_slider" class="flex-row setting_checkbox_slider text-unselect setting_checkbox_slider__active">•</div>
+							</div>
+							Размытие стен
+						</div>
+						<div id="setting_pauseIco" class="flex-row game-tab_button setting text-unselect">
+							<div class="flex-row setting_checkbox">
+								<div id="setting_pauseIco_slider" class="flex-row setting_checkbox_slider text-unselect setting_checkbox_slider__active">•</div>
+							</div>
+							Иконка паузы
+						</div>
+						<div id="setting_mobile_ScreenTouchStop" class="flex-row game-tab_button setting text-unselect hidden">
+							<div class="flex-row setting_checkbox">
+								<div id="setting_mobile_ScreenTouchStop_slider" class="flex-row setting_checkbox_slider text-unselect setting_checkbox_slider__active">•</div>
+							</div>
+							<span>
+								Остановиться по касанию экрана 
+							</span>
+						</div>
+					</div>
+					<div class="flex-row settings-tab_buttons">
+						<div id="settingsReset" class="flex-row text-unselect tab-button settings-tab_button">Сбросить</div>
+					</div>
+				</div>
+
+				<div id="help-tab" class="flex-col menu-tab hidden">
+					<div class="_fullspace">
+						<div id="helpPC" class="flex-col tab_100perc">
+							<div class="flex-row keyboard_info_spacer"></div>
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key keyboard_key_square text-unselect">F11</div>
+								</div>
+								<div class="keyboard_key_description"> Переключить полноэкранный режим </div>
+							</div>
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key keyboard_key_square text-unselect">Esc</div>
+									<div class="keyboard_key keyboard_key_square text-unselect">~</div>
+								</div>
+								<div class="keyboard_key_description">
+									Пауза
+								</div>
+							</div>
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key keyboard_key_square text-unselect">A</div> 
+									<div class="keyboard_key keyboard_key_square text-unselect">D</div> 
+								</div>
+								<div class="keyboard_key_description"> Движение вправо/влево </div>
+							</div>
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key text-unselect">Space</div>
+								</div>
+								<div class="keyboard_key_description">
+									Прыжок
+								</div>
+							</div>
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key text-unselect">LShift</div>
+								</div>
+								<div class="keyboard_key_description">
+									Бег
+								</div>
+							</div>
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key keyboard_key_square text-unselect">+</div>
+									<div class="keyboard_key keyboard_key_square text-unselect">-</div>
+								</div>
+								<div class="keyboard_key_description">
+									Приблизить/отдалить
+								</div>
+							</div>
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key text-unselect">Backspace</div>
+								</div>
+								<div class="keyboard_key_description">
+									Сбросить приближение
+								</div>
+							</div>
+							<div class="flex-row keyboard_info_spacer"></div>
+						</div>
+
+						<div id="helpMobile" class="flex-col tab_100perc hidden">
+							<div class="flex-row keyboard_info_spacer"></div>
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key_alt keyboard_key_square_alt text-unselect"><</div> 
+									<div class="keyboard_key_alt keyboard_key_square_alt text-unselect">></div> 
+								</div>
+								<div class="keyboard_key_description"> Переключить движение вправо/влево </div>
+							</div>
+
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key_alt keyboard_key_square_alt text-unselect">^</div>
+								</div>
+								<div class="keyboard_key_description">
+									Прыжок
+								</div>
+							</div>
+
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key_alt text-unselect">Shift</div>
+								</div>
+								<div class="keyboard_key_description">
+									Переключить бег
+								</div>
+							</div>
+
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key_alt _freescpaceInfo text-unselect">
+										Свободное место на экране
+									</div>
+								</div>
+								<div class="keyboard_key_description">
+									Остановиться (можно выключить в настройках)
+								</div>
+							</div>
+
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key_alt keyboard_key_square_alt text-unselect">+</div>
+									<div class="keyboard_key_alt keyboard_key_square_alt text-unselect">-</div>
+								</div>
+								<div class="keyboard_key_description">
+									Приблизить/отдалить
+								</div>
+							</div>
+
+							<div class="flex-row keyboard_info">
+								<div class="flex-row keyboard_keys">
+									<div class="keyboard_key_alt keyboard_key_square_alt text-unselect">=</div>
+								</div>
+								<div class="keyboard_key_description">
+									Сбросить приближение
+								</div>
+							</div>
+							<div class="flex-row keyboard_info_spacer"></div>
+						</div>
+					</div>
+
+				</div>
+
+				<div id="about-tab" class="flex-col menu-tab hidden">
+					<div class="flex-col tab_100perc about-tab">
+						<div class="flex-row about_link-wrapper"></div>
+						<div class="flex-row about_link-wrapper">
+							<a href="https://vk.com/mrlean" class="flex-row about_link">
+								<span id="vk" class="flex-row"><img src="./img/ico/vk.png" alt=""></span>
+								@mrlean
+							</a>
+						</div>
+						<div class="flex-row about_link-wrapper">
+							<a href="mailto: mr000lean@gmail.com" class="flex-row about_link">
+								<span id="gm" class="flex-row"><img src="./img/ico/gm.png" alt=""></span>
+								mr000lean@gmail.com
+							</a>
+						</div>
+						<div class="flex-row about_link-wrapper"></div>
+						<div class="flex-row about_link-wrapper"></div>
+						<div class="flex-row about_link-wrapper" style="justify-content: space-around">
+							<span id="copy">Nullean and Rain &copy;</span>
+							<script>
+								let year = new Date().getYear();
+								year+=1900;
+								if(year==2020) document.getElementById('copy').innerHTML += year;
+								else document.getElementById('copy').innerHTML += `2020-${year}`;
+							</script>
+						</div>
+					</div>
+				</div>
+			</div>
+			<script src="./css/newStyle/darkTheme.js"></script>
+			<script src="./css/newStyle/Main.js"></script>
+			<div id="toggleTheme" class="flex-row text-unselect">🌙</div>
+			<div id="toggleStyle" class="flex-row">
+				<div class="toggleStyle_icon">
+					<div class="toggleStyle_icon_elem1"></div>
+					<div class="toggleStyle_icon_elem1"></div>
+					<div class="toggleStyle_icon_elem1"></div>
+					<div class="toggleStyle_icon_elem2"></div>
+				</div>
+			</div>
+			<script src="./css/restyle.js"></script>
+		</div>
+	</div>
+	<div class="bot-button-wrapper">
+		<div id="show_button" class="flex-row bot-button bot-button__pale transition03s text-unselect hidden">
+			⯅
+		</div>
+		<div id="hide_button" class="flex-row bot-button text-unselect transition03s">
+			⯆
+		</div>
+	</div>
+</body>
+</html>

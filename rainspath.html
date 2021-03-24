@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Rain's Path</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/screen.css">
+	<!-- interface lib -->
+		<script src="js/lib/elemHiding.js"></script>
+		<script src="js/lib/vertResize.js"></script>
+		<script src="js/lib/transparentInt.js"></script>
+		<script src="js/lib/setupScreenInterface.js"></script>
+	<!-- screen lib -->
+		<script src="js/lib/drawContent.js"></script>
+		<script src="js/lib/resizeAnim.js"></script>
+	<!-- game -->
+		<!-- game lib -->
+			<script src="js/game/lib/math.js"></script>
+			<script src="js/game/lib/Timer.js"></script>
+			<script src="js/game/lib/keyboard.js"></script>
+		<!-- level lib -->
+			<script src="js/game/lib/Compositor.js"></script>
+			<script src="js/game/lib/TileResolver.js"></script>
+			<script src="js/game/lib/TileCollider.js"></script>
+			<script src="js/game/lib/SpriteSheet.js"></script>
+			<script src="js/game/lib/loaders.js"></script>
+			<script src="js/game/lib/layers.js"></script>
+		<!-- level -->
+			<script src="js/game/lib/Entity.js"></script>
+			<script src="js/game/lib/Level.js"></script>
+		<!-- levels -->
+			<script src="js/game/levels/level1.js"></script>
+		<!-- display -->
+			<script src="js/game/lib/Camera.js"></script>
+	<!-- main script -->
+	<script src="js/game.js"></script>
+</head>
+<body>
+<!-- IE -->
+<!--[if IE]>
+<style>
+	.interface, .bot-button-wrapper{
+		display:none;
+	}
+</style> 
+<p style="color: #fff">If you see this message, please use other browser</p>
+<![endif]-->
+<script src="./css/ie.js"></script>
+<!-- adaptivity -->
+<script src="./css/adaptivity.js"></script>
+<!-- body -->
+	<canvas id="screen"></canvas>
+	<div class="sizing">
+		<div id="sizing__topLine" class="flex-row sizing__top-line">
+			<div id="zoomIn" class="sizingButton text-unselect">+</div>
+			<div id="zoomOut" class="sizingButton text-unselect">−</div>
+			<div id="zoomReset" class="sizingButton text-unselect">=</div>
+		</div>
+		<div id="zoomSize" class="sizingButton zoomSize text-unselect"><span id="currSize" class="text-unselect">Приближение: 2</span></div>
+	</div>
+
+	<div id="healthBar" class="flex-row">
+		<div id="healthLine" class="healthLine"></div>
+		<div id="healthNum" class="flex-row healthNum text-unselect">100/100</div>
+	</div>
+
+	<div id="pauseIco" class="interface flex-col hidden">
+		<img id="_pauseIcoIMG" src="./img/ico/pause.png" alt="">
+	</div>
+
+	<div id="pause_bg" class="flex-row interface hidden">
+		<div id="pause_container" class="pause_container">
+<script src="./css/pause_containerResize.js"></script>
+			<div id="nav" class="flex-row nav pause_nav">
+				<div id="pauseTitle" class="text-unselect"> Пауза </div>
+			</div>
+			<div id="main" class="main">
+				<div id="pauseMenu" class="flex-col tab_100perc">
+					<div href="gallery.html" id="continueButton" class="flex-row tab-button game-tab_button text-unselect">
+						Продолжить
+					</div>
+					<div id="settingsButton" class="flex-row tab-button game-tab_button text-unselect">
+						Настройки
+					</div>
+					<div id="restartButton" class="flex-row tab-button game-tab_button text-unselect">
+						Сначала
+					</div>
+					<a href="index.html" id="exitButton" class="flex-row tab-button game-tab_button text-unselect">
+						Выход
+					</a>
+				</div>
+				<div id="pauseSettings" class="flex-col tab_100perc hidden">
+					<div class="tab_80perc flex-col">
+						<div id="fullscreen" class="flex-row tab-button game-tab_button text-unselect">Переключить полноэкранный режим [F11]</div>
+						<div id="setting_smoothing" class="flex-row game-tab_button setting text-unselect">
+							<div class="flex-row setting_checkbox">
+								<div id="setting_smoothing_slider" class="flex-row setting_checkbox_slider text-unselect">•</div>
+							</div>
+							Размытие движения
+						</div>
+						<div id="setting_debug" class="flex-row game-tab_button setting text-unselect">
+							<div class="flex-row setting_checkbox">
+								<div id="setting_debug_slider" class="flex-row setting_checkbox_slider text-unselect">•</div>
+							</div>
+							Дебаг столкновений
+						</div>
+						<div id="setting_bgBlur" class="flex-row game-tab_button setting text-unselect">
+							<div class="flex-row setting_checkbox">
+								<div id="setting_bgBlur_slider" class="flex-row setting_checkbox_slider text-unselect setting_checkbox_slider__active">•</div>
+							</div>
+							Размытие стен
+						</div>
+						<div id="setting_pauseIco" class="flex-row game-tab_button setting text-unselect">
+							<div class="flex-row setting_checkbox">
+								<div id="setting_pauseIco_slider" class="flex-row setting_checkbox_slider text-unselect setting_checkbox_slider__active">•</div>
+							</div>
+							Иконка паузы
+						</div>
+						<div id="setting_mobile_ScreenTouchStop" class="flex-row game-tab_button setting text-unselect hidden">
+							<div class="flex-row setting_checkbox">
+								<div id="setting_mobile_ScreenTouchStop_slider" class="flex-row setting_checkbox_slider text-unselect setting_checkbox_slider__active">•</div>
+							</div>
+							<span>
+								Остановиться по касанию экрана 
+							</span>
+						</div>
+					</div>
+					<div class="flex-row tab_20perc">
+						<div id="settingsReset" class="flex-row text-unselect tab-button settings-tab_button">Сбросить</div>
+						<div id="pauseSettingsBack" class="flex-row tab-button settings-tab_button text-unselect">Назад
+						</div>
+					</div>
+				</div>
+			</div>
+			<script src="./css/newStyle/darkTheme.js"></script>
+			<script src="./css/newStyle/Pause.js"></script>
+			<div id="toggleTheme" class="flex-row text-unselect">🌙</div>
+			<div id="toggleStyle" class="flex-row">
+				<div class="toggleStyle_icon">
+					<div class="toggleStyle_icon_elem1"></div>
+					<div class="toggleStyle_icon_elem1"></div>
+					<div class="toggleStyle_icon_elem1"></div>
+					<div class="toggleStyle_icon_elem2"></div>
+				</div>
+			</div>
+			<script src="./css/restylePause.js"></script>
+	<div id='alphaVer' class="flex-row healthNum text-unselect alphaVer"></div>
+		</div>
+	</div>
+	<div class="bot-button-wrapper">
+		<div id="show_button" class="flex-row bot-button bot-button__pale text-unselect transition03s">
+			⯅
+		</div>
+		<div id="hide_button" class="flex-row bot-button text-unselect transition03s hidden">
+			⯆
+		</div>
+	</div>
+
+<!-- mobile interface -->
+	<div id="mobileInt" class="hidden">
+		<div id="mobileButtonLeft" class="flex-row mobile-button text-unselect"><</div>
+		<div id="mobileButtonRight" class="flex-row mobile-button text-unselect">></div>
+		<div id="mobileButtonJump" class="flex-row mobile-button-small text-unselect">^</div>
+		<div id="mobileButtonShift" class="flex-row mobile-button-small mobile-button-shift text-unselect">Shift</div>
+	<script src="./css/mobileInt.js"></script>
+	</div>
+	
+</body>
+</html>
