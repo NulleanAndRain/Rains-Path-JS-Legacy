@@ -6,6 +6,9 @@ class Camera {
     }
 
     move(player, level){
+		if(player.isDead){
+			return;
+		}
     	//x
 		this.pos.x=player.pos.x+player.spritesheet.width/2-this.size.x/2;
     	if(this.pos.x<=0) this.pos.x = 0;
@@ -25,7 +28,7 @@ class Camera {
 				if(player.health>0)
 					player.takeDamage(
 						player.maxHealth*2,
-						'#fcc',
+						'#f33',
 						player.facingReverse,
 						player.pos.x,
 						player.pos.y);

@@ -17,6 +17,8 @@ class Entity{
 		this.canRegenerate = true;
 		this.regenInterval = 1500;
 		this.regenTimeout = 0;
+		this.isDead = false;
+		this.canInteract = true;
 
 		this.attacking = false;
 		this.spritesheet = spritesheet;
@@ -28,7 +30,6 @@ class Entity{
 		this.distance = 0;
 		this.animTime = 0;
 
-		this.respTimed = false;
 		this.type = 'entity';
 	}
 
@@ -58,7 +59,7 @@ class Entity{
 		return 'left';
 	}
 
-	moveLeft(speed=this.speed){
+	moveLeft(){
 		if(this.movement.right){
 			this.stopMoving();
 			this.moveLeft();
@@ -83,7 +84,7 @@ class Entity{
 		return this.movement.left;
 	}
 
-	moveRight(speed=this.speed){
+	moveRight(){
 		if(this.movement.left){
 			this.stopMoving();
 			this.moveRight();
@@ -121,7 +122,7 @@ class Entity{
 	}
 
 	jump(){
-		if(this.onGround){
+		if(this.onGround && canJump(this)){
 			this.onGround=false;
 			this.vel.y = this.jumpVec;
 
@@ -155,7 +156,7 @@ class Entity{
 	//entity updates
 
 	veliocityTick(deltaTime, tileCollider, camera, gravity){
-		this.addVel(0, gravity*deltaTime/30);
+		this.addVel(0, gravity*deltaTime/32);
 
 		this.pos.y+=(this.vel.y*deltaTime/16);
 		if(this.canCollide) tileCollider.checkY(this, camera);
@@ -192,7 +193,6 @@ class Entity{
 	//damage and heal
 
 	takeDamage(amount, color, facing, posx, posy){
-		this.health -= amount;
 		createTextParticle(
 			this.pos.x+8, 
 			this.pos.y-8,
@@ -200,6 +200,10 @@ class Entity{
 			5000);
 		createBloodSplash(posx, posy, facing);
 
+		if(this.health == -1) return;
+
+		this.health -= amount;
+		if(this.health <= 0) this.health=0;
 		this.regenTimeout = this.regenInterval;
 	}
 
@@ -219,6 +223,31 @@ class Entity{
 			this.pos.y-8,
 			`${this.health - t}`, '#00F01F',
 			5000);
+	}
+
+	remove(level, deltaTime){
+		if(!this.isDead){
+			this.isDead = true;
+			// this.canCollide = false;
+			this.canInteract = false;
+			this.canRegenerate = false;
+
+			this.stopMoving();
+			// this.setVel(-0.6, -2.5);
+
+			this.removeTimeout = 3000;
+
+			this._stopMoving = undefined;
+		} else {
+			this.removeTimeout -= deltaTime;
+			if(this.removeTimeout <= _respawnTime-1000){
+				this.setVel(0, 0);
+			}
+			if(this.removeTimeout <= 0){
+				this.destructor();
+				level.entities.delete(this);
+			}
+		}
 	}
 
 	//sprites
@@ -241,6 +270,10 @@ class Entity{
 	}
 
 	updateSprite(){
+		if(this.isDead){
+			this.state = 'Downed';
+			return;
+		}
 		let oldState = `${this.facing}${this.onMove}${this.onGround}`;
 		if(this.facing=='none'){
 			this.state = 'Confused';

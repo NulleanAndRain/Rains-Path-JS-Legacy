@@ -5,7 +5,6 @@ let createRainbowTextParticle = () =>{}
 let createPixelParticle = () =>{}
 let createEmptyParticle = () =>{}
 
-let createFullscreenSplash = () =>{}
 
 let setupParticleFactories = (level, particles) =>{
 	createEmptyParticle = (x=0, y=0, time=5000) =>{
@@ -242,7 +241,7 @@ let setupParticleFactories = (level, particles) =>{
 
 
 		particle.veliocityTick = (deltaTime, tileCollider, gravity, camera) =>{
-			particle.addVel(0, gravity*deltaTime/30);
+			particle.addVel(0, gravity*deltaTime/32);
 
 			particle.pos.y+=(particle.vel.y*deltaTime/particle.speedDivider);
 			tileCollider.checkYparticle(particle, camera);
@@ -386,86 +385,5 @@ let createCampfireSmoke = (x, y) =>{
 		let velY = -rand()*1-1;
 		velY/=10;
 		particle.vel.y = velY;
-	}
-}
-
-let setupScreenSplash = (player, camera, level) =>{
-		createFullscreenSplash = (text, color='#fff', time=5000) =>{
-		let particle = new Particle(0, 0, time);
-		particle.text = text;
-
-		let buffer = document.createElement('canvas');
-		buffer.height = canvWidth/10;
-		buffer.width = particle.text.length*buffer.height*0.7;
-
-		particle.screenWidth = canvWidth;
-
-		let bctx = buffer.getContext('2d');
-
-		bctx.font = `${buffer.height*1.5}px AtariRevue`;
-		bctx.fillStyle = color;
-		bctx.strokeStyle = 'rgba(0,0,0,0.6)';
-		bctx.strokeText(particle.text, 2, buffer.height*0.9+1);
-		bctx.fillText(particle.text, 1, buffer.height*0.9);
-		particle.sprite = buffer;
-
-
-		particle.upd1 = false;
-		particle.upd2 = false;
-
-		particle.vel.y = 0;
-
-		particle.draw = (camera, ctx=_ctx) =>{
-			if(particle.screenWidth != canvWidth){
-				bctx.clearRect(0, 0, buffer.width, buffer.height);
-				buffer.height = canvWidth/10;
-				buffer.width = particle.text.length*buffer.height*0.7;
-
-				bctx.imageSmoothingEnabled=true;
-
-				bctx.font = `${buffer.height*1.5}px AtariRevue`;
-				bctx.fillStyle = color;
-				bctx.strokeStyle = 'rgba(0,0,0,0.6)';
-				bctx.strokeText(particle.text, 2, buffer.height*0.9+1);
-				bctx.fillText(particle.text, 1, buffer.height*0.9);
-				particle.sprite = buffer;
-
-				particle.screenWidth = canvWidth;
-			}
-
-			ctx.imageSmoothingEnabled=true;
-			ctx.drawImage(
-				particle.sprite,
-				(particle.pos.x - camera.pos.x),
-				(particle.pos.y - camera.pos.y));
-			ctx.imageSmoothingEnabled=_smoothing;
-		}
-		particle.updateProxy = () =>{
-			particle.pos.x = canvWidth/2 + camera.pos.x - camera.xOffset - buffer.width/2;
-			particle.pos.y = _canvHeight/2 + camera.pos.y - camera.yOffset - buffer.height*2/3;
-
-			if(particle.timeLeft<150 && !particle.upd1){
-				particle.upd1 = true;
-				let bctx = buffer.getContext('2d');
-				bctx.imageSmoothingEnabled=false;
-
-				bctx.clearRect(0, 0, buffer.width, buffer.height);
-				bctx.fillStyle = 'rgba(255, 0, 0, 0.6)';
-				bctx.fillText(particle.text, 1, buffer.height*0.9);
-			}
-
-			if(particle.timeLeft<50 && !particle.upd2){
-				particle.upd2 = true;
-				let bctx = buffer.getContext('2d');
-				bctx.imageSmoothingEnabled=false;
-
-				bctx.clearRect(0, 0, buffer.width, buffer.height);
-				bctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-				bctx.fillText(particle.text, 1, buffer.height*0.9);
-			}
-		}
-
-		level.particles.add(particle);
-		return particle;
 	}
 }

@@ -98,7 +98,7 @@ let setupScreenInterface = (canvas, context, timer) => {
 		}
 
 		setting_smoothing.onclick = () =>{
-			if(setting_smoothing_slider.classList.contains('setting_checkbox_slider__active')){
+			if(localStorage.getItem('setting_smoothing')){
 				setting_smoothing_slider.classList.remove('setting_checkbox_slider__active');
 				_smoothing=false;
 				localStorage.removeItem('setting_smoothing');
@@ -110,23 +110,23 @@ let setupScreenInterface = (canvas, context, timer) => {
 			_ctx.imageSmoothingEnabled = _smoothing;
 		}
 
-		const setting_debug = document.getElementById('setting_debug');
-		const setting_debug_slider = document.getElementById('setting_debug_slider');
+		const setting_autojump = document.getElementById('setting_autojump');
+		const setting_autojump_slider = document.getElementById('setting_autojump_slider');
 
-		if(localStorage.getItem('setting_debug')){
-			setting_debug_slider.classList.add('setting_checkbox_slider__active');
-			_collDebug = true;
+		if(localStorage.getItem('setting_autojump')){
+			setting_autojump_slider.classList.remove('setting_checkbox_slider__active');
+			_autojump = false;
 		}
 
-		setting_debug.onclick = () =>{
-			if(setting_debug_slider.classList.contains('setting_checkbox_slider__active')){
-				setting_debug_slider.classList.remove('setting_checkbox_slider__active');
-				_collDebug = false;
-				localStorage.removeItem('setting_debug');
+		setting_autojump.onclick = () =>{
+			if(localStorage.getItem('setting_autojump')){
+				setting_autojump_slider.classList.add('setting_checkbox_slider__active');
+				_autojump = true;
+				localStorage.removeItem('setting_autojump');
 			} else {
-				setting_debug_slider.classList.add('setting_checkbox_slider__active');
-				_collDebug = true;
-				localStorage.setItem('setting_debug', true);
+				setting_autojump_slider.classList.remove('setting_checkbox_slider__active');
+				_autojump = false;
+				localStorage.setItem('setting_autojump', true);
 			}
 		}
 
@@ -139,7 +139,7 @@ let setupScreenInterface = (canvas, context, timer) => {
 		}
 
 		setting_bgBlur.onclick = () =>{
-			if(setting_bgBlur_slider.classList.contains('setting_checkbox_slider__active')){
+			if(!localStorage.getItem('setting_bgBlur')){
 				setting_bgBlur_slider.classList.remove('setting_checkbox_slider__active');
 				_bgBlur = false;
 				localStorage.setItem('setting_bgBlur', true);
@@ -162,7 +162,7 @@ let setupScreenInterface = (canvas, context, timer) => {
 		}
 
 		setting_pauseIco.onclick = () => {
-			if(setting_pauseIco_slider.classList.contains('setting_checkbox_slider__active')){
+			if(!localStorage.getItem('setting_pauseIcoOff')){
 				_pauseIcoIMG.classList.add('hidden');
 				setting_pauseIco_slider.classList.remove('setting_checkbox_slider__active');
 				localStorage.setItem('setting_pauseIcoOff', true);
@@ -202,10 +202,13 @@ let setupScreenInterface = (canvas, context, timer) => {
 			_smoothing=false;
 			_ctx.imageSmoothingEnabled = _smoothing;
 			localStorage.removeItem('setting_smoothing');
-			
-			setting_debug_slider.classList.remove('setting_checkbox_slider__active');
-			_collDebug = false;
+
 			localStorage.removeItem('setting_debug');
+			_collDebug = false;
+			
+			setting_autojump_slider.classList.add('setting_checkbox_slider__active');
+			_autojump = true;
+			localStorage.removeItem('setting_autojump');
 
 			setting_bgBlur_slider.classList.add('setting_checkbox_slider__active');
 			_bgBlur = true;

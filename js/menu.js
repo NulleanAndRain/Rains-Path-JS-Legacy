@@ -1,7 +1,3 @@
-//bgLoad, vertResize, drawBg from lib/bgLoad.js
-//hideElem, showElem, bottomButtonsEvents from lib/elemHiding.js
-//selectButton, unselectButton from lib/buttonSelect.js
-
 window.onload = () => {
 	bgLoad("./img/mainMenuBgLineart.png");			//animated pixel art tbd here
 
@@ -95,17 +91,17 @@ let menuButtons = () =>{
 	const setting_debug = document.getElementById('setting_debug');
 	const setting_debug_slider = document.getElementById('setting_debug_slider');
 
-	if(localStorage.getItem('setting_debug')){
-		setting_debug_slider.classList.add('setting_checkbox_slider__active');
+	if(localStorage.getItem('setting_autojump')){
+		setting_autojump_slider.classList.remove('setting_checkbox_slider__active');
 	}
 
-	setting_debug.onclick = () =>{
-		if(setting_debug_slider.classList.contains('setting_checkbox_slider__active')){
-			setting_debug_slider.classList.remove('setting_checkbox_slider__active');
-			localStorage.removeItem('setting_debug');
+	setting_autojump.onclick = () =>{
+		if(setting_autojump_slider.classList.contains('setting_checkbox_slider__active')){
+			setting_autojump_slider.classList.add('setting_checkbox_slider__active');
+			localStorage.removeItem('setting_autojump');
 		} else {
-			setting_debug_slider.classList.add('setting_checkbox_slider__active');
-			localStorage.setItem('setting_debug', true);
+			setting_autojump_slider.classList.remove('setting_checkbox_slider__active');
+			localStorage.setItem('setting_autojump', true);
 		}
 	}
 
@@ -181,8 +177,10 @@ if(_user.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|W
 		setting_smoothing_slider.classList.remove('setting_checkbox_slider__active');
 		localStorage.removeItem('setting_smoothing');
 
-		setting_debug_slider.classList.remove('setting_checkbox_slider__active');
 		localStorage.removeItem('setting_debug');
+
+		setting_autojump_slider.classList.add('setting_checkbox_slider__active');
+		localStorage.removeItem('setting_autojump');
 
 		setting_bgBlur_slider.classList.add('setting_checkbox_slider__active');
 		localStorage.removeItem('setting_bgBlur');

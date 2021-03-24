@@ -4,6 +4,11 @@ var _lastKey;
 let setKeyboardEvents = (player, timer, keyJump, keyLeft, keyRight, keyRun, keyAttack, keySkill, keyTestEvent) =>{
 	window.addEventListener('keydown', event=>{
 		if(timer.isPaused) return;
+		if(player.isDead){
+			_keyStates.lenght = 0;
+			_lastKey = null;
+			return;
+		}
 		if(event.code==keyJump) {
 			player.jump();
 		}
@@ -53,6 +58,11 @@ let setKeyboardEvents = (player, timer, keyJump, keyLeft, keyRight, keyRun, keyA
 }
 
 let keyboardFunc = (player, keyLeft, keyRight) => {
+	if(player.isDead){
+		setTimeout(()=> keyboardFunc(player, keyLeft, keyRight), 0);
+		return;
+	}
+
 	if(_keyStates.get(_lastKey)=='pressed'){
 		if(_lastKey==keyLeft){
 			player.moveLeft();

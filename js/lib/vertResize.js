@@ -12,6 +12,10 @@ function vertResize(canvas){
 
 	canvas.width = currWidth;
 	canvas.height = canvHeight;
-	if(!_canvHeight || _canvHeight>0) _canvHeight = canvHeight;
+
+	// console.log(_canvHeight);
+	if(typeof _canvHeight !== undefined){
+		_canvHeight = canvHeight;
+	}
 	window.requestAnimationFrame(()=>vertResize(canvas));
 }

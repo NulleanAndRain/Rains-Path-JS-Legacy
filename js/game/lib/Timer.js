@@ -28,8 +28,9 @@ class Timer{
 
 		this.drawFrame();
 
-		// console.timeEnd('frame time');
-		// console.time('frame time');
+		_frametime = performance.now() - _frametime;
+		console.log(1000/_frametime);
+		_frametime=performance.now();
 		
 		if(!this.isPaused) window.requestAnimationFrame(() => this.updateProxy());
 		// if(!this.isPaused) setTimeout(() => this.updateProxy(), 3);

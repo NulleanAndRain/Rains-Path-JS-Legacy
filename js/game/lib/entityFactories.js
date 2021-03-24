@@ -16,14 +16,15 @@ let setupEntityFactories = level =>{
 		if(entity.facing == 'left')
 			__xOff *= -1;
 
-		let offsFar = [12, 9, 2, 9, 14];
+		let offsR = [12, 9, 2, 9, 14];
+		let offsL = [8, 6, 0, 0, 12];
 
 		let part = new EntityPart(entity, __xOff, _yOff, spriteRight, lifetime);
 
 		if(entity.facing == 'left')
-			part.setOffset(offsFar[0], 4, 2, 2);
+			part.setOffset(offsL[0], 4, 2, 2);
 		else
-			part.setOffset(4, offsFar[0], 2, 2);
+			part.setOffset(4, offsR[0], 2, 2);
 		part.animTime = 0;
 
 		part.type = 'weapon';
@@ -44,35 +45,40 @@ let setupEntityFactories = level =>{
 				let frame = Math.floor(((part.animTime-15)/part.frameDuration)%
 					part.spriteAlt.animationFrames);
 				if(frame<0) frame = 0;
-				part.setOffset(offsFar[frame], 4, 2, 2);
+				part.setOffset(offsL[frame], 4, 2, 2);
 			} else {
 				let frame = Math.floor(((part.animTime-15)/part.frameDuration)%
 					part.spriteAlt.animationFrames);
 				if(frame<0) frame = 0;
-				part.setOffset(4, offsFar[frame], 2, 2);
+				part.setOffset(4, offsR[frame], 2, 2);
 			}
 		}
 
 		part.updateSprite = () =>{
 			if(part.parent.facing == 'right'){
-				part.pos.x = part.parent.pos.x+_xOff;
 				part.relPos.x = _xOff;
-
-
 				if(part.sprite.animationFrames == 1){
 					part.state = `part${part.sprite.spriteName}`;
+					part.spritesheet.width = part.parent.spritesheet
+						.spriteSize(`part${part.sprite.spriteName}`).width;
 				} else {
 					part.setAnimFrame(part.sprite.spriteName, part.sprite.animationFrames);
+					part.spritesheet.width =  part.parent.spritesheet
+						.spriteSize(`part${part.sprite.spriteName}0`).width;
 				}
 			}
+
 			if(part.parent.facing == 'left'){
-				part.pos.x = part.parent.pos.x-_xOff;
-				part.relPos.x = -_xOff;
 				if(part.spriteAlt.animationFrames == 1){
 					part.state = `part${part.spriteAlt.spriteName}`;
+					part.spritesheet.width = part.parent.spritesheet
+						.spriteSize(`part${part.spriteAlt.spriteName}`).width;
 				} else {
 					part.setAnimFrame(part.spriteAlt.spriteName, part.spriteAlt.animationFrames);
+					part.spritesheet.width = part.parent.spritesheet
+						.spriteSize(`part${part.spriteAlt.spriteName}0`).width;
 				}
+				part.relPos.x = _xOff - part.spritesheet.width
 			}
 		}
 

@@ -7,13 +7,14 @@ _canvHeight
 
 const alphaVer
 
-var healthNum;
-var healthLine;
 
 //		settings
 _smoothing
 _collDebug
 _bgBlur
+_autojump
+_shadowsEnabled
+const _respawnTime = 10000;
 
 const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft', 'KeyE', 'KeyQ', 'KeyZ'];
 
@@ -21,6 +22,8 @@ const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft', 'KeyE', 'KeyQ', 'K
 _canvas
 _ctx
 
+healthNum;
+healthLine;
 
 ----------------Entity.js----------------
 const _speedDivider = 16;
@@ -33,7 +36,7 @@ _lastKey
 
 ----------------random_stuff.js----------------
 rainbow_gradient
-purple_gradient
+blue_gradient
 
 
 ----------------TileCollider.js----------------

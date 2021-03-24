@@ -16,6 +16,9 @@ class Level {
 
 		this.entities = new Set();
 		this.particles = new Set();
+		this.lightsources = new Set();
+
+		this.respswn = {x:128, y:0};
 	}
 
 	width(){
@@ -37,6 +40,8 @@ class Level {
 				entity.destructor();
 				this.entities.delete(entity);
 			}
+		} else if(entity.health == 0){
+			entity.remove(this, deltaTime);
 		}
 
 		entityCollision(entity, this.entities);
@@ -86,6 +91,9 @@ class Level {
 	}
 
 	drawFrame(camera) {
+		if(_shadowsEnabled){
+			this.comp.createShadows(camera, this.tiles, this.backing, this.lightsources);
+		}
 		this.comp.draw(camera, _ctx);
 
 		this.particles.forEach(particle => {

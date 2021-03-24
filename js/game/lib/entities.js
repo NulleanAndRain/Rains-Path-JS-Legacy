@@ -6,13 +6,27 @@ class Player extends Entity{
 
 		this.attackTime = 375;
 
+		this.respTimed = false;
+
 		this.skill = this._skill_proxy;
 		this.attack = this._attack_proxy;
 		this.buttonTestEvent = this._buttonTestEvent_proxy;
 	}
 
+	jump(){
+		if(this.onGround){
+			this.onGround=false;
+			this.vel.y = this.jumpVec;
+
+			if(this.onMove){
+				this.vel.x *= 1.5;
+				this.acceleratedJump = true;
+			}
+		}
+	}
+
 	veliocityTick(deltaTime, tileCollider, camera, gravity){
-		this.addVel(0, gravity*deltaTime/30);
+		this.addVel(0, gravity*deltaTime/32);
 
 		this.pos.y+=(this.vel.y*deltaTime/16);
 		if(this.canCollide) tileCollider.checkY(this, camera);
@@ -41,22 +55,17 @@ class Player extends Entity{
 		// 	this.pos.y    + (rand()-0.5)*10,);
 
 
-		createGradientTextParticle(
-			this.pos.x+8, 
-			this.pos.y+4,
-			`Ебаный рот этого казино, блядь`,
-			rainbow_gradient);
+		// createGradientTextParticle(
+		// 	this.pos.x+8, 
+		// 	this.pos.y+4,
+		// 	`Ебаный рот этого казино, блядь`,
+		// 	rainbow_gradient);
 
 		createGradientTextParticle(
 			this.pos.x+8, 
 			this.pos.y+12,
-			`Ты кто такой, сука, чтобы это делать, блядь?`,
-			purple_gradient);
-
-		createFullscreenSplash(
-			`You died`,
-			'#C43234');
-
+			`${this}`,
+			blue_gradient);
 		// this.heal(100);
 
 		// createCampfireSmoke(this.pos.x+8, this.pos.y+12);
@@ -113,6 +122,49 @@ class Player extends Entity{
 
 		healthNum.innerHTML = `${this.health}/${this.maxHealth}`;
 		healthLine.style.width = `${(this.health/this.maxHealth)*100}%`;
+	}
+
+	remove(level, deltaTime){
+		if(!this.isDead){
+			createFullscreenSplash(
+				`You died`,
+				'#C43234');
+
+			this.isDead = true;
+			this.canCollide = false;
+			this._canRegenerate = this.canRegenerate;
+			this.canRegenerate = false;
+
+			this.stopMoving();
+			this.setVel(-0.8, -4.5);
+
+			this.removeTimeout = _respawnTime;
+
+			this._stopMoving = this.stopMoving;
+		} else {
+			this.removeTimeout -= deltaTime;
+			if(this.removeTimeout <= _respawnTime-1000){
+				this.setVel(0, 0);
+			}
+			if(this.removeTimeout <= 0){
+				this.stopMoving = this._stopMoving;
+				this._stopMoving = undefined;
+
+				this.removeTimeout = undefined;
+				this.canCollide = true;
+				this.isDead = false;
+				this.canRegenerate = this._canRegenerate;
+
+
+				this.pos.x = level.respswn.x;
+				this.pos.y = level.respswn.y;
+				this.setVel(0, 0);
+
+				this.health = this.maxHealth;
+				healthNum.innerHTML = `${this.health}/${this.maxHealth}`;
+				healthLine.style.width = `${(this.health/this.maxHealth)*100}%`;
+			}
+		}
 	}
 
 	//update
@@ -178,7 +230,6 @@ class EntityPart extends Entity{
 	}
 
 	destructor(){
-		// console.log('deleted');
 		this.parent.childs.delete(this);
 	}
 
@@ -208,6 +259,11 @@ class Box extends Entity{
 	constructor(spritesheet, x=0, y=0){
 		super(spritesheet, x, y);
 		this.type = 'box';
+
+		this.maxHealth = -1;
+		this.health = this.maxHealth;
+
+		this.canRegenerate = false;
 	}
 
 	updateSprite = () =>{}

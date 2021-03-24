@@ -1,20 +1,29 @@
 var canvResize = 2;
 const resizeConst = [942, 744, 602, 482];
 const _TILESIZE = 8;
-var canvWidth = resizeConst[2];
-var _canvHeight;
+var canvWidth = resizeConst[canvResize];
+var _canvHeight = 1;
 
-const alphaVer = 'v0.3.3.4 alpha';
+const alphaVer = 'v0.3.5.0 alpha';
+
 
 var healthNum;
 var healthLine;
 
 //		settings
-var _smoothing = false;		
-var _collDebug = false;
+var _smoothing = false;
 var _bgBlur = true;
+var _autojump = true;
+var _shadowsEnabled = false;
+
+const _respawnTime = 10000;
 
 const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft', 'KeyE', 'KeyQ', 'KeyZ'];
+
+
+//debug
+var _collDebug = false;
+var _frametime = 0;
 
 
 var _canvas = document.createElement('canvas');
@@ -36,19 +45,17 @@ window.onload = () =>{
 	vertResize(screen);
 
 	//game
-	_ctx.imageSmoothingEnabled = _smoothing;	//tbd in settings
+	_ctx.imageSmoothingEnabled = _smoothing;
 
 	//  const buttonsAlt = ['ArrowUp', 'ArrowLeft', 'ArrowRight'];
 
 	const camera = new Camera(_canvas.width, _canvas.height);
-	// const camera = new Camera(screen.width, screen.height);
 	
 	Promise.all([
-		loadSky(),
 		loadLevel(camera),
 		loadLenaSprite(),
 		loadBoxSprite(),
-	]).then(([Sky, level, LenaSprites, boxSprites])=>{
+	]).then(([level, LenaSprites, boxSprites])=>{
 
 		let Rain = new Player(LenaSprites, 128, 0);
 		level.entities.add(Rain);
@@ -56,15 +63,20 @@ window.onload = () =>{
 		let box = new Box(boxSprites, 240, 0);
 		level.entities.add(box);
 
+		let splashes = new Set();
+
 
 		let timer = new Timer(1000/144);
 		timer.update = (deltaTime) => {
 			level.update(deltaTime, camera);
 			camera.move(Rain, level);
+
+			splashes.forEach(splash =>{
+				splash.update(deltaTime);
+			})
 		}
 
 		timer.drawFrame  = () => {
-			_ctx.drawImage(Sky, 0, 0);
 			level.drawFrame(camera);
 		}
 
@@ -75,8 +87,24 @@ window.onload = () =>{
 
 		setPauseKey('Escape', 'Backquote', timer, intElems);
 
-		drawContent(screen, context, Rain, camera);
+		drawContent(screen, context, Rain, camera, splashes);
 
-		setupScreenSplash(Rain, camera, level);
+		setupScreenSplash(splashes);
 	});
+}
+
+if(localStorage.getItem('setting_debug')){
+	_collDebug = true;
+}
+window.toggle_collDebug = () =>{
+	if(_collDebug){
+		_collDebug = false;
+		localStorage.removeItem('setting_debug');
+		return 'collision debug disabled';
+	}
+	else{
+		_collDebug = true;
+		localStorage.setItem('setting_debug', true);
+		return 'collision debug enabled';
+	}
 }

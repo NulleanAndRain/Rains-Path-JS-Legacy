@@ -69,7 +69,7 @@ let rainbow_gradient = [
 	},
 ]
 
-let purple_gradient = [
+let blue_gradient = [
 	{
 		color: '#8585DA', //'#B7B6F6',
 		pos: 0.05

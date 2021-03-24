@@ -1,18 +1,19 @@
 let loadSky = () =>{
 	return new Promise(resolve=>{
-		let Sky = document.createElement('canvas');
+		let sky = document.createElement('canvas');
 
-		Sky.width=_canvas.width;
-		Sky.height=_canvas.height;
+		sky.width=_canvas.width;
+		sky.height=_canvas.height;
 
-		let lnrSky = Sky
+		let lnrSky = sky
 			.getContext('2d')
-			.createLinearGradient(0, 0, 0, Sky.height);
+			.createLinearGradient(0, 0, 0, sky.height);
 		lnrSky.addColorStop(0,"#8FC2DB");
 		lnrSky.addColorStop(0.8,"#94DBDB");
-		Sky.getContext('2d').fillStyle = lnrSky;
-		Sky.getContext('2d').fillRect(0,0,Sky.width,Sky.height);
-		resolve(Sky);
+		sky.getContext('2d').fillStyle = lnrSky;
+		sky.getContext('2d').fillRect(0,0,sky.width,sky.height);
+
+		resolve(sky);
 	});
 }
 
@@ -221,6 +222,8 @@ let loadLenaSprite = () =>{
 				.addSpritePart('Lena', 'racketR', 'sprites', 1, 5, 20, 12))
 			.then(LenaSprites=>LenaSprites
 				.addSpritePart('Lena', 'racketL', 'sprites', 1, 4, 16, 8))
+			.then(LenaSprites=>LenaSprites
+				.addSprites('Lena','Downed', 'sprites', 1, 1))
 			.then(LenaSprites=>resolve(LenaSprites));
 	});
 }
@@ -245,9 +248,10 @@ function loadLevel(camera) {
 	return Promise.all([
 		loadLevelJSON(),
 		loadTiles(),
-		loadParticles()
+		loadParticles(),
+		loadSky(),
 	])
-	.then(([levelSpec, sprites, particles]) => {
+	.then(([levelSpec, sprites, particles, Sky]) => {
 		const level = new Level();
 
 		sprites.execFunc = (spriteName, posx, posy, ctx=_ctx, extension = 1) =>{
@@ -256,10 +260,13 @@ function loadLevel(camera) {
 			func(camera, posx, posy, ctx, extension);
 		}
 
-
 		createFGTiles(level, levelSpec.foregrounds, levelSpec.patterns);
 		createBackingTiles(level, levelSpec.backgrounds,levelSpec.patterns);
 		createBG(level, levelSpec.bg, levelSpec.patterns);
+
+		level.comp.layers.push(()=>{
+			_ctx.drawImage(Sky, 0, 0);
+		});
 
 		const bg = createBGLayer(level, sprites, camera.size);
 		level.comp.layers.push(bg);

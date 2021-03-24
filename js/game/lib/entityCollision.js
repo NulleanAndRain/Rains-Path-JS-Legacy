@@ -1,5 +1,7 @@
 let entityCollision = (subject, entities) =>{
+	if(!subject.canInteract) return;
    entities.forEach(target => {
+		if(!target.canInteract) return;
 		if(target == subject) return;
 		if(target == subject.parent) return;
 		if(target.parent == subject) return;

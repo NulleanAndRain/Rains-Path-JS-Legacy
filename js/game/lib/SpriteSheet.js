@@ -45,7 +45,6 @@ class SpriteSheet{
 				this.image,
 				posx, posy,
 				width, height,
-
 				0,0,
 				width, height);
 		this.sprites.set(name, buffer);
@@ -111,6 +110,7 @@ class SpriteSheet{
 			const buffer = this.sprites.get(name);
 			return {width: buffer.width, height: buffer.height};
 		} else {
+			// console.log('no texture', name, 'at', this.sprites);
 			return {width: this.width, height: this.height};
 		}
 	}
