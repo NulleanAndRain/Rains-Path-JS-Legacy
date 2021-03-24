@@ -1,5 +1,5 @@
 class SpriteSheet{
-	constructor(image=new Image(), width=_TILESIZE, height=_TILESIZE){
+	constructor(width=_TILESIZE, height=_TILESIZE, image=new Image()){
 		this.image = image;
 		this.width = width;
 		this.height = height;
@@ -21,6 +21,15 @@ class SpriteSheet{
 				bctx.fillRect((x+4), y, 4, 4);
 			}}
 			this.sprites.set('no texture', buffer);
+		}
+	}
+
+	getSprite(name){
+		let buffer = this.sprites.get(name);
+		if(buffer){
+			return buffer;
+		} else {
+			return this.sprites.get('no texture');
 		}
 	}
 
@@ -73,7 +82,7 @@ class SpriteSheet{
 			const buffer = this.sprites.get(name);
 			return {width: buffer.width, height: buffer.height};
 		} else {
-			return null;
+			return {width: this.width, height: this.height};
 		}
 	}
 
@@ -99,7 +108,7 @@ class SpriteSheet{
             	} else {
 	            	for(let i=0; i<vertCount; i++){
 		                for(let j=0; j<horCount; j++){
-			                    this.define(`${name}${(i*5+j)}`, j, i);;
+		                    this.define(`${name}${(i*5+j)}`, j, i);;
 		                }
 		            }
 		        }
@@ -109,20 +118,57 @@ class SpriteSheet{
 	}
 
 	addSprites(entity, state, folder, horCount=5, vertCount=3){
-	    return new Promise(resolve=>{
-	        this.image.src = `./img/${folder}/${entity}/${state}.png`;
-	        this.image.onload = () => {
-            	if(horCount==1&&vertCount==1){
-                    this.define(`${state}`, 0, 0);
-            	} else {
-		            for(let i=0; i<vertCount; i++){
-		                for(let j=0; j<horCount; j++){
-		                    this.define(`${state}${(i*5+j)}`, j, i);;
-		                }
-		            }
-		        }
-	            resolve(this);
-	        }
+		return new Promise(resolve=>{
+			this.image.src = `./img/${folder}/${entity}/${state}.png`;
+			this.image.onload = () => {
+				if(horCount==1&&vertCount==1){
+					this.define(`${state}`, 0, 0);
+				} else {
+					for(let i=0; i<vertCount; i++){
+						for(let j=0; j<horCount; j++){
+							this.define(`${state}${(i*horCount+j)}`, j, i);;
+						}
+					}
+				}
+				resolve(this);
+			}
+		});
+	}
+
+	addSpritePart(entity, name, folder, horCount=5, vertCount=3, width=this.width, height=this.height){
+		return new Promise(resolve=>{
+			this.image.src = `./img/${folder}/${entity}/parts/${name}.png`;
+			this.image.onload = () => {
+				if(horCount==1&&vertCount==1){
+					this.defineAbs(`part${name}`, 0, 0, width, height);
+				} else {
+					for(let i=0; i<vertCount; i++){
+						for(let j=0; j<horCount; j++){
+							this.defineAbs(`part${name}${(i*horCount+j)}`, width*j, height*i, width, height);;
+							// console.log(`added part${name}${(i*horCount+j)}`);
+						}
+					}
+				}
+				resolve(this);
+			}
+		});
+	}
+
+	addParticles(name, horCount=5, vertCount=3){
+		return new Promise(resolve=>{
+			this.image.src = `./img/particles/${name}.png`;
+			this.image.onload = () => {
+				if(horCount==1&&vertCount==1){
+					this.define(`${name}`, 0, 0);
+				} else {
+					for(let i=0; i<vertCount; i++){
+						for(let j=0; j<horCount; j++){
+							this.define(`${name}${(i*horCount+j)}`, j, i);;
+						}
+					}
+				}
+				resolve(this);
+			}
 		});
 	}
 

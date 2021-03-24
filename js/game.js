@@ -3,17 +3,14 @@ const resizeConst = [942, 744, 602, 482];
 const _TILESIZE = 8;
 var canvWidth = resizeConst[2];
 
-const __TEST_AREA = false;
-
-const alphaVer = 'v0.1.2.1 alpha';
-
+const alphaVer = 'v0.3.0.0 alpha';
 
 //		settings
 var _smoothing = false;		
 var _collDebug = false;
 var _bgBlur = true;
 
-const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft'];
+const buttonsClassic = ['Space', 'KeyA', 'KeyD', 'ShiftLeft', 'KeyE', 'KeyQ', 'KeyZ'];
 
 
 var _canvas = document.createElement('canvas');
@@ -24,10 +21,6 @@ var _ctx = _canvas.getContext('2d');
 window.onload = () =>{
 	const screen = document.getElementById('screen');
 	const context = screen.getContext('2d');
-
-	// screen.addEventListener('contextmenu', () => {
-	// 	preventDefault();
-	// });
 
 	document.getElementById('alphaVer').innerHTML = alphaVer;
 
@@ -50,24 +43,22 @@ window.onload = () =>{
 		loadBoxSprite(),
 	]).then(([Sky, level, LenaSprites, boxSprites])=>{
 
-		let Rain = new Entity(LenaSprites, 128, 0);
-		Rain.type = 'player';
-		Rain.setOffset(4, 4, 2);
+		let Rain = new Player(LenaSprites, 128, 0);
 		level.entities.add(Rain);
 
-		let box = new Entity(boxSprites, 144, 0);
-		// box.setOffset(2, 2, 2, 2);
-		box.type = 'box';
-		box.updateSprite = () =>{}
+		let box = new Box(boxSprites, 240, 0);
 		level.entities.add(box);
-
 
 
 		let timer = new Timer(1000/144);
 		timer.update = (deltaTime) => {
-			_ctx.drawImage(Sky, 0, 0);
 			level.update(deltaTime, camera);
 			camera.move(Rain, level);
+		}
+
+		timer.drawFrame  = () => {
+			_ctx.drawImage(Sky, 0, 0);
+			level.drawFrame(camera);
 		}
 
 		timer.start();

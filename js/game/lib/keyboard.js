@@ -1,7 +1,7 @@
 var _keyStates = new Map();
 var _lastKey;
 
-let setKeyboardEvents = (player, keyJump, keyLeft, keyRight, keyRun) =>{
+let setKeyboardEvents = (player, keyJump, keyLeft, keyRight, keyRun, keyAttack, keySkill, keyTestEvent) =>{
 	window.addEventListener('keydown', (event)=>{
 		if(event.code==keyJump) {
 			player.jump();
@@ -18,7 +18,19 @@ let setKeyboardEvents = (player, keyJump, keyLeft, keyRight, keyRun) =>{
 		}
 
 		if(event.code==keyRun){
-			_keyStates.set(keyRun, 'pressed');
+			player.run();
+		}
+
+		if(event.code==keyAttack){
+			player.attack();
+		}
+		if(event.code==keySkill){
+			player.skill();
+		}
+
+
+		if(event.code==keyTestEvent){
+			player.buttonTestEvent();
 		}
 	});
 
@@ -32,14 +44,14 @@ let setKeyboardEvents = (player, keyJump, keyLeft, keyRight, keyRun) =>{
 		}
 
 		if(event.code==keyRun){
-			_keyStates.set(keyRun, 'released');
+			player.stopRun();
 		}
 	});
 
-	keyboardFunc(player, keyLeft, keyRight, keyRun);
+	keyboardFunc(player, keyLeft, keyRight);
 }
 
-let keyboardFunc = (player, keyLeft, keyRight, keyRun) => {
+let keyboardFunc = (player, keyLeft, keyRight) => {
 	if(_keyStates.get(_lastKey)=='pressed'){
 		if(_lastKey==keyLeft){
 			player.moveLeft();
@@ -57,13 +69,5 @@ let keyboardFunc = (player, keyLeft, keyRight, keyRun) => {
 			else player.stopMoving();
 		}
 	}
-
-	if(_keyStates.get(keyRun)=='pressed'){
-		player.run();
-	} else if(_keyStates.get(keyRun)=='released'){
-		player.stopRun();
-	}
-
-
-	setTimeout(()=> keyboardFunc(player, keyLeft, keyRight, keyRun), 0);
+	setTimeout(()=> keyboardFunc(player, keyLeft, keyRight), 0);
 }

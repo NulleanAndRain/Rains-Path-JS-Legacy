@@ -1,22 +1,23 @@
-const _speedDivider = 8;
+const _speedDivider = 16;
 
 class Entity{
 	constructor(spritesheet, x=0, y=0){
 		this.pos = new Vect2(x, y);
 		this.vel = new Vect2(0, 0);
 		this.canCollide = true;
-		this.gravity = 1;
 		this.onGround=false;
 		this.movement = {left: false, right: false};
 		this.speed=1.5;
 		this.running = false;
-		this.offset = {'left': 0, 'right': 0, 'top': 0, 'bottom':0};
 		this.jumpVec=-9;
 		this.acceleratedJump = false;
 
+		this.attacking = false;
 		this.spritesheet = spritesheet;
 		this.state = 'Idle';
 		this.facing = 'right';
+		this.offset = {'left': 0, 'right': 0, 'top': 0, 'bottom':0};
+		this.childs = new Set();
 
 		this.distance = 0;
 		this.animTime = 0;
@@ -24,6 +25,8 @@ class Entity{
 		this.respTimed = false;
 		this.type = 'entity';
 	}
+
+	destructor(){}
 
 	//entity moving
 
@@ -101,8 +104,6 @@ class Entity{
 		this.movement.right = false;
 		this.setVel(0, this.vel.y);
 
-		this.running = false;
-
 		if(__collisionStops){
 			this.distance = 0;
 		}
@@ -128,7 +129,7 @@ class Entity{
 		}
 
 		this.onGround = true;
-		this.pos.y=y;
+		this.pos.y = y;
 		this.vel.y = 0;
 	}
 
@@ -146,40 +147,47 @@ class Entity{
 		this.addVel(0, gravity*deltaTime/30);
 
 		this.pos.y+=(this.vel.y*deltaTime/16);
-        if(this.canCollide) tileCollider.checkY(this, camera);
+		if(this.canCollide) tileCollider.checkY(this, camera);
 
 		this.pos.x+=(this.vel.x*deltaTime/16);
 		if(this.canCollide) tileCollider.checkX(this, camera);
-
-		if(this.type=='player')
-			if(!this.respTimed){
-				if(this.pos.x<-this.offset.left){
-					this.stopMoving();
-					this.pos.x=-this.offset.left;
-				}
-				if(this.pos.x>camera.pos.x+camera.size.x-this.spritesheet.width+this.offset.right){
-					this.stopMoving();
-					this.pos.x=camera.pos.x+camera.size.x-this.spritesheet.width+this.offset.right;
-				}
-			}
 	}
+
+	updateProxy(deltaTime, tileCollider, camera, gravity){}
 
 	update(deltaTime, tileCollider, camera, gravity){
 		this.veliocityTick(deltaTime, tileCollider, camera, gravity);
 		this.animTime+=deltaTime;
+		this.updateProxy(deltaTime, tileCollider, camera, gravity);
+	}
+
+	// skills and attack
+
+	attack(){}
+	skill(){}
+
+	takeDamage(amount, color, facing, posx, posy){
+		createTextParticle(
+			this.pos.x+8, 
+			this.pos.y-8,
+			`${amount}`, color,
+			5000);
+		crateBloodSplash(posx, posy, facing);
 	}
 
 	//sprites
 
-	setAnimFrame(name, frames=3){
+	setAnimFrame(name, frames){
 		if(this.onMove&&this.onGround){
 			let frame = Math.floor((this.distance/30)%frames);
 			this.state = `${name}${frame}`;
 			// console.log(frame);
 		} else {
 			let dt;
-			if(this.onGround) dt = 250;
+			if(this.onGround) dt = 150;
 			else dt=100;
+
+			if(this.attacking) dt = 75;
 			let frame = Math.floor(this.animTime/dt)%frames;
 			this.state = `${name}${frame}`;
 		}
@@ -192,6 +200,7 @@ class Entity{
 			this.state = 'Confused';
 			return;
 		}
+
 		if(!this.onGround){
 			if(this.vel.y>0){
 				if(this.facing=='right') this.setAnimFrame('JumpRightDown', 4);
@@ -209,7 +218,17 @@ class Entity{
 			else if(this.facing=='left') this.setAnimFrame('IdleLeft', 4);
 			else this.state = 'Confused';
 		}
-		if(`${this.facing}${this.onMove}${this.onGround}`!=oldState) this.animTime = 0;
+
+		if(this.attacking){
+			if(!this.onGround){
+
+			} else if(this.onMove){
+
+			} else {
+				if(this.facing == 'right') this.setAnimFrame('AttackIdleRight', 5);
+			}
+		} else if(
+			`${this.facing}${this.onMove}${this.onGround}`!=oldState) this.animTime = 0;
 	}
 
 
