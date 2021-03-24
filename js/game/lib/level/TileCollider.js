@@ -1,8 +1,8 @@
 var __collisionStops = true;
 
 class TileCollider {
-	constructor(tileMatrix) {
-		this.tiles = new TileResolver(tileMatrix);
+	constructor(levelMap) {
+		this.tiles = new TileResolver(levelMap);
 
 		this.collisionLayer = document.createElement('canvas');
 			this.collisionLayer.width = _canvas.width;

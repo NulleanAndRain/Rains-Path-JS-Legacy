@@ -10,37 +10,44 @@
 		<script src="js/lib/vertResize.js"></script>
 		<script src="js/lib/transparentInt.js"></script>
 		<script src="js/lib/setupScreenInterface.js"></script>
-		<script src="js/game/lib/screenSplashesFactories.js"></script>
+		<script src="js/game/lib/particles/screenSplashesFactories.js"></script>
 	<!-- screen lib -->
 		<script src="js/lib/drawContent.js"></script>
-		<script src="js/game/lib/resizeAnim.js"></script>
+		<script src="js/game/lib/int/resizeAnim.js"></script>
 	<!-- game -->
 		<!-- game lib -->
-			<script src="js/game/lib/math.js"></script>
-			<script src="js/game/lib/Timer.js"></script>
-			<script src="js/game/lib/keyboard.js"></script>
+			<script src="js/game/lib/rnd/math.js"></script>
+			<script src="js/game/lib/int/Timer.js"></script>
+			<script src="js/game/lib/int/keyboard.js"></script>
+			<script src="js/game/lib/int/Camera.js"></script>
 		<!-- level lib -->
-			<script src="js/game/lib/Camera.js"></script>
-			<script src="js/game/lib/Compositor.js"></script>
-			<script src="js/game/lib/TileResolver.js"></script>
-			<script src="js/game/lib/TileCollider.js"></script>
-			<script src="js/game/lib/SpriteSheet.js"></script>
-			<script src="js/game/lib/spriteCustomFunctions.js"></script>
-			<script src="js/game/lib/loaders.js"></script>
-			<script src="js/game/lib/layers.js"></script>
+			<!-- <script src="js/game/lib/Compositor.js"></script> -->
+			<script src="js/game/lib/level/TileResolver.js"></script>
+			<script src="js/game/lib/level/TileCollider.js"></script>
+			<script src="js/game/lib/level/SpriteSheet.js"></script>
+			<script src="js/game/lib/level/IDResolver.js"></script>
+			<script src="js/game/lib/level/LevelMap.js"></script>
+			<script src="js/game/lib/level/ChunkColumn.js"></script>
+			<script src="js/game/lib/level/Chunk.js"></script>
+			<!-- <script src="js/game/lib/spriteCustomFunctions.js"></script> -->
+			<script src="js/game/lib/level/loaders.js"></script>
+			<script src="js/game/lib/level/Level.js"></script>
+			<!-- <script src="js/game/lib/layers.js"></script> -->
 		<!-- entities -->
-			<script src="js/game/lib/Entity.js"></script>
-			<script src="js/game/lib/entities.js"></script>
-			<script src="js/game/lib/entityFactories.js"></script>
-			<script src="js/game/lib/entityCollision.js"></script>
+			<script src="js/game/lib/entities/Entity.js"></script>
+			<script src="js/game/lib/entities/entities.js"></script>
+			<script src="js/game/lib/entities/entityFactories.js"></script>
+			<script src="js/game/lib/entities/entityCollision.js"></script>
 		<!-- particles -->
-			<script src="js/game/lib/Particle.js"></script>
-			<script src="js/game/lib/particleFactories.js"></script>
+			<script src="js/game/lib/particles/Particle.js"></script>
+			<script src="js/game/lib/particles/particleFactories.js"></script>
 		<!-- level -->
-			<script src="js/game/lib/Level.js"></script>
-			<script src="js/game/levels/level1.js"></script>
+			<script src="js/game/levels/level0/back.json"></script>
+			<script src="js/game/levels/level0/bg.json"></script>
+			<script src="js/game/levels/level0/fg.json"></script>
+			<script src="js/game/levels/level0/ids.json"></script>
 		<!-- random stuff -->
-			<script src="js/game/lib/random_stuff.js"></script>
+			<script src="js/game/lib/rnd/random_stuff.js"></script>
 	<!-- main script -->
 	<script src="js/game.js"></script>
 </head>

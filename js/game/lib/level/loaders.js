@@ -31,7 +31,7 @@ let loadTiles = () =>{
 		.then(bgTiles=>bgTiles.defineAtSpritesheet('grassOuter5', 0, 6, 2, 8))
 		.then(bgTiles=>bgTiles.defineAtSpritesheet('grassOuter6', 18, 6, 2, 8))
 		.then(bgTiles=>bgTiles.defineAtSpritesheet('grassOuter7', 6, 18, 8, 2))
-		.then(bgTiles=>bgTiles.addSpriteFunc('grass', creategrassOuter, 5, 3))
+		// .then(bgTiles=>bgTiles.addSpriteFunc('grass', creategrassOuter, 5, 3))
 		.then(bgTiles=>copyTile(bgTiles, '_patternSolid', 'air'))
 		.then(bgTiles=>bgTiles.addTiles('dirt'))
 		.then(bgTiles=>bgTiles.addTiles('stone'))
@@ -39,7 +39,7 @@ let loadTiles = () =>{
 		.then(bgTiles=>bgTiles.addTiles('cobble'))
 		.then(bgTiles=>bgTiles
 			.addBigSprites('campfire', 'textures/campfire.png', 8, 16, 8, 2))
-		.then(bgTiles=>bgTiles.addSpriteFunc('campfire', createCampfireParticles, 8, 2))
+		// .then(bgTiles=>bgTiles.addSpriteFunc('campfire', createCampfireParticles, 8, 2))
 		.then(bgTiles=>resolve(bgTiles));
 	});
 }
@@ -187,12 +187,6 @@ let createBG = (level, bg, patterns, xOff=0, yOff=0) => {
 	});
 }
 
-let loadLevelJSON = () =>{
-	return new Promise(resolve=>{ //tbd with json later
-		resolve(_loadLevel1());
-	}
-	);
-}
 
 let loadLenaSprite = () =>{
 	return new Promise(resolve=>{
@@ -246,13 +240,19 @@ let loadParticles = () => {
 
 function loadLevel(camera) {
 	return Promise.all([
-		loadLevelJSON(),
 		loadTiles(),
 		loadParticles(),
 		loadSky(),
 	])
-	.then(([levelSpec, sprites, particles, sky]) => {
-		const level = new Level();
+	.then(([sprites, particles, sky]) => {
+		var _IDResolver = new IDResolver(sprites, TileIDsJSON);
+
+		let levelMapFG 	 = new LevelMap(levelFGJSON);
+		let levelMapBack = new LevelMap(levelBackJSON);
+		let levelMapBG   = new LevelMap(levelBGJSON);
+
+		const level = new Level(levelMapFG, levelMapBack, levelMapBG, sky);
+
 
 		sprites.execFunc = (spriteName, posx, posy, ctx=_ctx, extension = 1) =>{
 			let func = sprites.spriteFunctions.get(spriteName);
@@ -260,29 +260,8 @@ function loadLevel(camera) {
 			func(camera, posx, posy, ctx, extension);
 		}
 
-		createFGTiles(level, levelSpec.foregrounds, levelSpec.patterns);
-		createBackingTiles(level, levelSpec.backgrounds,levelSpec.patterns);
-		createBG(level, levelSpec.bg, levelSpec.patterns);
-
-		level.comp.layers.push((camera, ctx)=>{
-			ctx.drawImage(sky, 0, 0);
-		});
-
-		const bg = createBGLayer(level, sprites, camera.size);
-		level.comp.layers.push(bg);
-
-		const backgroundLayer = createBackgroundLayer(
-			level, sprites, camera.size);
-		level.comp.layers.push(backgroundLayer);
-
-		const foregroundLayer = createForegroundLayer(
-			level, sprites, camera.size);
-		level.comp.layers.push(foregroundLayer);
-
 		setupParticleFactories(level, particles);
 		setupEntityFactories(level);
-
-		level.animations = levelSpec.animations;
 
 		return level;
 	});

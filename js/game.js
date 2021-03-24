@@ -8,10 +8,12 @@ if(!localStorage.getItem('canvResize')){
 
 const resizeConst = [942, 744, 602, 482];
 const _TILESIZE = 8;
+const _CHUNKSIZE = 16;
+const _CHUNKPIXELS = _TILESIZE*_CHUNKSIZE;
 var canvWidth = resizeConst[canvResize];
 var _canvHeight = 1;
 
-const alphaVer = 'v0.3.5.3 alpha';
+const alphaVer = 'v0.4.0.0 alpha';
 
 
 var healthNum;
@@ -22,6 +24,7 @@ var _smoothing = false;
 var _bgBlur = true;
 var _autojump = true;
 var _shadowsEnabled = false;
+var _chunkGrid = false;
 
 const _respawnTime = 1000;
 
@@ -34,8 +37,8 @@ var _frametimeDebug = false;
 
 
 var _canvas = document.createElement('canvas');
-	_canvas.width=958;
-	_canvas.height=445;
+	_canvas.width  = 958 + 2*_CHUNKPIXELS;
+	_canvas.height = 445 + 2*_CHUNKPIXELS;
 var _ctx = _canvas.getContext('2d');
 
 window.onload = () =>{
@@ -77,6 +80,7 @@ window.onload = () =>{
 		camera.getLevel = () =>{
 			return level;
 		}
+		camera.createSubcamera();
 
 		let timer = new Timer(1000/144);
 		timer.update = (deltaTime) => {
@@ -98,7 +102,7 @@ window.onload = () =>{
 		setPauseKey('Escape', 'Backquote', timer, intElems);
 		
 		setupScreenSplash(splashes);
-		drawContent(screen, context, Rain, camera, splashes);
+		drawContent(screen, context, Rain, camera, splashes, level);
 	});
 }
 
@@ -131,5 +135,18 @@ window.toggle_framerate = () =>{
 	else{
 		_frametimeDebug = true;
 		localStorage.setItem('_frametime_debug', true);
+	}
+}
+
+
+if(localStorage.getItem('_chunkGrid'))
+	_chunkGrid = true;
+window.toggle_chunkGrid = () =>{
+	if(_chunkGrid){
+		_chunkGrid = false;
+		localStorage.removeItem('_chunkGrid');
+	} else {
+		_chunkGrid = true;
+		localStorage.setItem('_chunkGrid', true);
 	}
 }

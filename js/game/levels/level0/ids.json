@@ -1,0 +1,3 @@
+const TileIDsJSON =`
+[{"name":"air","type":"air"},{"name":"grass1","type":"solid"},{"name":"dirt6","type":"solid"},{"name":"stone6","type":"solid"}]
+`;

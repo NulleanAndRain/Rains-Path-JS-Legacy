@@ -1,6 +1,6 @@
 class TileResolver {
-	constructor(matrix) {
-		this.matrix = matrix;
+	constructor(levelMap) {
+		this.levelMap = levelMap;
 		this.tileSize = _TILESIZE;
 	}
 
@@ -9,18 +9,19 @@ class TileResolver {
 	}
 
 	toIndexRange(pos1, pos2) {
-		const pMax = Math.ceil(pos2 / this.tileSize) * this.tileSize;
+		const pMax = Math.ceil(pos2 / this.tileSize);
 		const range = [];
-		let pos = pos1;
+		let pos = this.toIndex(pos1);
 		do {
-			range.push(this.toIndex(pos));
-			pos += this.tileSize;
+			range.push(pos);
+			pos++;
+			// pos += this.tileSize;
 		} while (pos < pMax);
 		return range;
 	}
 
 	getByIndex(indexX, indexY) {
-		const tile = this.matrix.get(indexX, indexY);
+		const tile = this.levelMap.getTile(indexX, indexY);
 		if (tile) {
 			const x1 = indexX * this.tileSize;
 			const x2 = x1 + this.tileSize;

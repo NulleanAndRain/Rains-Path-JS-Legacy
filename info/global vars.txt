@@ -2,6 +2,8 @@
 canvResize
 const resizeConst = [942, 744, 602, 482];
 const _TILESIZE = 8;
+const _CHUNKSIZE = 16;
+const _CHUNKPIXELS = _TILESIZE*_CHUNKSIZE;
 canvWidth
 _canvHeight
 

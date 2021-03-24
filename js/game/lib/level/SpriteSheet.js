@@ -5,23 +5,17 @@ class SpriteSheet{
 		this.height = height;
 		this.sprites = new Map();
 
-		this.spriteFunctions = new Map();
-
 		{
 			let buffer = document.createElement('canvas');
 			buffer.width = this.width;
 			buffer.height = this.height;
 			let bctx = buffer.getContext('2d');
-
-			for(let x=0; x<this.width; x+=8){
-				for(let y=0; y<this.height; y+=8){
-				bctx.fillStyle = '#000';
-				bctx.fillRect(x, y, 4, 4);
-				bctx.fillRect((x+4), (y+4), 4, 4);
-				bctx.fillStyle = '#f0f';
-				bctx.fillRect(x, (y+4), 4, 4);
-				bctx.fillRect((x+4), y, 4, 4);
-			}}
+			bctx.fillStyle = '#000';
+			bctx.fillRect(0, 0, 2, 2);
+			bctx.fillRect(2, 2, 2, 2);
+			bctx.fillStyle = '#f0f';
+			bctx.fillRect(0, 2, 2, 2);
+			bctx.fillRect(2, 0, 2, 2);
 			this.sprites.set('no texture', buffer);
 		}
 	}
@@ -63,7 +57,6 @@ class SpriteSheet{
 				posy,
 				buffer.width*extension,
 				buffer.height*extension);
-			this.execFunc(name, posx, posy, ctx, extension);
 		} else {
 			buffer = this.sprites.get('no texture');
 			ctx.drawImage(
@@ -102,8 +95,6 @@ class SpriteSheet{
 		}
 	}
 
-	execFunc(){}
-
 
 	spriteSize(name){
 		if(this.sprites.has(name)){
@@ -116,16 +107,20 @@ class SpriteSheet{
 	}
 
 	defineMonocolorTile(name, color){
-		const buffer = document.createElement('canvas');
-		buffer.width = this.width;
-		buffer.height = this.height;
-		buffer
-			.getContext('2d')
-			.fillStyle = color;
-		buffer
-			.getContext('2d')
-			.fillRect(0, 0, this.width, this.height);
-		this.sprites.set(name, buffer);
+		return new Promise(resolve=>{
+			const buffer = document.createElement('canvas');
+			buffer.width = this.width;
+			buffer.height = this.height;
+			buffer
+				.getContext('2d')
+				.fillStyle = color;
+			buffer
+				.getContext('2d')
+				.fillRect(0, 0, this.width, this.height);
+			this.sprites.set(name, buffer);
+
+			resolve(this);
+		});
 	}
 
 	addTiles(name, horCount=5, vertCount=3, folder='textures'){
